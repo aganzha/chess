@@ -1,5 +1,6 @@
 import interfaces = module("chess/interfaces")
 
+
 export class Utils{
     static flyWeightId="_chessFlyWeightId";
     static makeFlyWeight(){
