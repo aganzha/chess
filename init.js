@@ -35,37 +35,35 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
     })();
     exports.Utils = Utils;    
     var BaseCell = (function () {
-        function BaseCell() { }
-        BaseCell.prototype.makeClassName = function () {
-            var funcNameRegex = /function (.{1,})\(/;
-            var func = (this).constructor.toString();
-            var results = (funcNameRegex).exec(func);
-            return (results && results.length > 1) ? results[1] : "";
-        };
+        function BaseCell(classes, id) {
+            this.classes = classes;
+            this.id = id;
+        }
         BaseCell.prototype.fillElAttrs = function (el) {
-            el.className = this.makeClassName();
-            if(this.classes) {
-                for(var i = 0, l = this.classes.length; i < l; i++) {
-                    el.className += " " + this.classes[i];
-                }
+            for(var i = 0, l = this.classes.length; i < l; i++) {
+                el.className += " " + this.classes[i];
+            }
+            if(this.id) {
+                el.id = this.id;
             }
         };
-        BaseCell.prototype.makeEl = function () {
+        BaseCell.prototype.createEl = function () {
             var div = document.createElement('div');
-            this.fillElAttrs(div);
             return div;
         };
-        BaseCell.prototype.append = function (view) {
+        BaseCell.prototype.prepareEl = function () {
             if(!this.el) {
-                this.el = this.makeEl();
+                this.el = this.createEl();
+                this.fillElAttrs(this.el);
             }
+        };
+        BaseCell.prototype.append = function (view) {
+            this.prepareEl();
             this.el.appendChild(view.render());
             view.parent = this;
         };
         BaseCell.prototype.render = function () {
-            if(!this.el) {
-                this.el = this.makeEl();
-            }
+            this.prepareEl();
             return this.el;
         };
         return BaseCell;
@@ -77,27 +75,35 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             _super.apply(this, arguments);
 
         }
-        ViewPort.prototype.makeEl = function () {
+        ViewPort.prototype.createEl = function () {
             return document.getElementsByTagName('body')[0];
         };
         return ViewPort;
     })(BaseCell);    
     var App = (function () {
         function App(board, pieces) {
-            var topMost = new ViewPort();
+            var topMost = new ViewPort([], '');
             this.resolveCells(board, pieces, topMost);
         }
         App.prototype.resolveCells = function (board, pieces, parent) {
             for(var key in board) {
-                var className = key.split('-')[0];
-                if(!pieces[className]) {
-                    console.log('no such class in pieces: ' + className);
+                var klasses = key.split('.');
+                var cons = klasses[0].split('#')[0];
+                if(!pieces[cons]) {
                     continue;
                 }
-                var cell = new pieces[className]();
+                var id = '';
+                var classes = [];
+                for(var c = 0, l = klasses.length; c < l; c++) {
+                    var splitted = klasses[c].split('#');
+                    classes.push(splitted[0]);
+                    if(splitted.length > 0) {
+                        id = splitted[1];
+                    }
+                }
+                var cell = new pieces[cons](classes, id);
                 parent.append(cell);
                 this.resolveCells(board[key], pieces, cell);
-                break;
             }
         };
         return App;
