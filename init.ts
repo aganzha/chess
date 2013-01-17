@@ -101,14 +101,11 @@ export class App{
         window['application'] =this
         this.topMost = new ViewPort({cons:'',id:'',classes:[]});
         this.screens = <interfaces.ScreenMap>{}
-        for(var i=0,l=modules.length;i<l;i++){
-            for(var screen in modules[i]){
-                var record = this.getCellRecord(screen)
-                this.screens[screen] = new modules[i][screen](record)
-            }
-        }
+	for(var cons in board){
+	    this.screens[cons] = this.instantiate(cons)
+	}
     }
-    getClass(record:interfaces.CellRecord){
+    getCellClass(record:interfaces.CellRecord){
         var klass = null
         for(var i=0,l=this.modules.length;i<l;i++){
             if(this.modules[i][record.cons]){
@@ -121,17 +118,20 @@ export class App{
         }
         return klass
     }
+    instantiate(record:string){
+	var record = this.getCellRecord(record)
+	var klass = this.getCellClass(record)
+	return new klass(record)
+    }
     resolve(selector:interfaces.ScreenSelector){
-        var screen = selector(this.screens)
+        var screen = selector(this.screens)	
         var cons = screen.record.cons
         this.topMost.append(screen)
         this.resolveCells(this.board[cons], screen)
     }
     resolveCells(board:{}, parent:interfaces.Cell){
         for(var recordString in board){
-            var record = this.getCellRecord(recordString)
-	    var klass = this.getClass(record)
-            var cell = <interfaces.Cell>new klass(record)//new pieces[record.cons](record)
+	    var cell = this.instantiate(recordString)
             parent.append(cell)
             this.resolveCells(board[recordString], cell)
         }

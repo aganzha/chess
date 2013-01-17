@@ -98,14 +98,11 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             });
             this.screens = {
             };
-            for(var i = 0, l = modules.length; i < l; i++) {
-                for(var screen in modules[i]) {
-                    var record = this.getCellRecord(screen);
-                    this.screens[screen] = new modules[i][screen](record);
-                }
+            for(var cons in board) {
+                this.screens[cons] = this.instantiate(cons);
             }
         }
-        App.prototype.getClass = function (record) {
+        App.prototype.getCellClass = function (record) {
             var klass = null;
             for(var i = 0, l = this.modules.length; i < l; i++) {
                 if(this.modules[i][record.cons]) {
@@ -118,6 +115,11 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             }
             return klass;
         };
+        App.prototype.instantiate = function (record) {
+            var record = this.getCellRecord(record);
+            var klass = this.getCellClass(record);
+            return new klass(record);
+        };
         App.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             var cons = screen.record.cons;
@@ -126,10 +128,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         };
         App.prototype.resolveCells = function (board, parent) {
             for(var recordString in board) {
-                var record = this.getCellRecord(recordString);
-                var klass = this.getClass(record);
-                console.log(klass);
-                var cell = new klass(record);
+                var cell = this.instantiate(recordString);
                 parent.append(cell);
                 this.resolveCells(board[recordString], cell);
             }
