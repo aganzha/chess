@@ -49,7 +49,7 @@ export class BaseCell implements interfaces.Cell{
     constructor(public record:interfaces.CellRecord){
     }
     fillElAttrs(el:HTMLElement){
-	var classes = this.record.classes;
+        var classes = this.record.classes;
         for(var i=0,l=classes.length;i<l;i++){
             el.className+=" "+classes[i];
         }
@@ -96,27 +96,44 @@ class ViewPort extends BaseCell{
 export class App{
     topMost:ViewPort;
     screens:interfaces.ScreenMap;
-    constructor(public board:{}, public pieces:{}){
-	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+    constructor(public board:{}, public modules:{}[]){
+        // а можно еще все экраны прямо здесь делать (спрятанными) о как!
         window['application'] =this
         this.topMost = new ViewPort({cons:'',id:'',classes:[]});
         this.screens = <interfaces.ScreenMap>{}
-        for(var screen in pieces){
-	    var record = this.getCellRecord(screen)
-            this.screens[screen] = new pieces[screen](record)
+        for(var i=0,l=modules.length;i<l;i++){
+            for(var screen in modules[i]){
+                var record = this.getCellRecord(screen)
+                this.screens[screen] = new modules[i][screen](record)
+            }
         }
+    }
+    getClass(record:interfaces.CellRecord){
+        var klass = null
+        for(var i=0,l=this.modules.length;i<l;i++){
+            if(this.modules[i][record.cons]){
+                klass = this.modules[i][record.cons]
+                break
+            }
+        }
+        if(klass == null){
+            console.log('cant find class for: '+record.cons)
+        }
+        return klass
     }
     resolve(selector:interfaces.ScreenSelector){
         var screen = selector(this.screens)
+        var cons = screen.record.cons
         this.topMost.append(screen)
-        this.resolveCells(this.board[screen.record.cons], this.pieces, screen)
-    }    
-    resolveCells(board:{}, pieces:{}, parent:interfaces.Cell){
+        this.resolveCells(this.board[cons], screen)
+    }
+    resolveCells(board:{}, parent:interfaces.Cell){
         for(var recordString in board){
-	    var record = this.getCellRecord(recordString)
-            var cell = <interfaces.Cell>new pieces[record.cons](record)
+            var record = this.getCellRecord(recordString)
+	    var klass = this.getClass(record)
+            var cell = <interfaces.Cell>new klass(record)//new pieces[record.cons](record)
             parent.append(cell)
-            this.resolveCells(board[recordString], pieces, cell)
+            this.resolveCells(board[recordString], cell)
         }
     }
     getCellRecord(cellString:string):interfaces.CellRecord{

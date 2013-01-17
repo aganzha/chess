@@ -87,9 +87,9 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         return ViewPort;
     })(BaseCell);    
     var App = (function () {
-        function App(board, pieces) {
+        function App(board, modules) {
             this.board = board;
-            this.pieces = pieces;
+            this.modules = modules;
             window['application'] = this;
             this.topMost = new ViewPort({
                 cons: '',
@@ -98,22 +98,40 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             });
             this.screens = {
             };
-            for(var screen in pieces) {
-                var record = this.getCellRecord(screen);
-                this.screens[screen] = new pieces[screen](record);
+            for(var i = 0, l = modules.length; i < l; i++) {
+                for(var screen in modules[i]) {
+                    var record = this.getCellRecord(screen);
+                    this.screens[screen] = new modules[i][screen](record);
+                }
             }
         }
+        App.prototype.getClass = function (record) {
+            var klass = null;
+            for(var i = 0, l = this.modules.length; i < l; i++) {
+                if(this.modules[i][record.cons]) {
+                    klass = this.modules[i][record.cons];
+                    break;
+                }
+            }
+            if(klass == null) {
+                console.log('cant find class for: ' + record.cons);
+            }
+            return klass;
+        };
         App.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
+            var cons = screen.record.cons;
             this.topMost.append(screen);
-            this.resolveCells(this.board[screen.record.cons], this.pieces, screen);
+            this.resolveCells(this.board[cons], screen);
         };
-        App.prototype.resolveCells = function (board, pieces, parent) {
+        App.prototype.resolveCells = function (board, parent) {
             for(var recordString in board) {
                 var record = this.getCellRecord(recordString);
-                var cell = new pieces[record.cons](record);
+                var klass = this.getClass(record);
+                console.log(klass);
+                var cell = new klass(record);
                 parent.append(cell);
-                this.resolveCells(board[recordString], pieces, cell);
+                this.resolveCells(board[recordString], cell);
             }
         };
         App.prototype.getCellRecord = function (cellString) {
