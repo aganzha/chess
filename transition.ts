@@ -2,15 +2,15 @@ import interfaces = module("chess/interfaces")
 declare var $;
 
 class Transition{
-    constructor(public going:interfaces.Screen, public coming:interfaces.Screen){
+    constructor(public going:interfaces.Screen, 
+		public coming:interfaces.Screen,
+		public success:Function,
+		public error:Function){
     }
-    // delay(f:Function, tm){
-
+    // success(){
     // }
-    success(){
-    }
-    error(){
-    }
+    // error(){
+    // }
     redraw(){
 	try{
 	    this.going.destroy()
@@ -57,7 +57,6 @@ class Transition{
     fade(){
 	var me = this;
 	me.coming.render();
-	var framePos = this.getFrameSizeAndOffset();
 	$(me.going.el).css({
 	    position:'absolute',
 	    opacity:'1.0'
@@ -87,7 +86,7 @@ class Transition{
 	var itemBox = this.going.getBox();
 	var containerCss = {}
 	containerCss[widthOrHeight] = itemBox[widthOrHeight]*2+'px';
-	this.el.css(containerCss);
+	$(this.going).el.css(containerCss);
 	me.coming.render();
 	$(me.going.el).css({
 	    position:'absolute',

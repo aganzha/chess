@@ -1,14 +1,12 @@
 define(["require", "exports"], function(require, exports) {
     
     var Transition = (function () {
-        function Transition(going, coming) {
+        function Transition(going, coming, success, error) {
             this.going = going;
             this.coming = coming;
+            this.success = success;
+            this.error = error;
         }
-        Transition.prototype.success = function () {
-        };
-        Transition.prototype.error = function () {
-        };
         Transition.prototype.redraw = function () {
             try  {
                 this.going.destroy();
@@ -54,7 +52,6 @@ define(["require", "exports"], function(require, exports) {
         Transition.prototype.fade = function () {
             var me = this;
             me.coming.render();
-            var framePos = this.getFrameSizeAndOffset();
             $(me.going.el).css({
                 position: 'absolute',
                 opacity: '1.0'
@@ -82,7 +79,7 @@ define(["require", "exports"], function(require, exports) {
             var containerCss = {
             };
             containerCss[widthOrHeight] = itemBox[widthOrHeight] * 2 + 'px';
-            this.el.css(containerCss);
+            $(this.going).el.css(containerCss);
             me.coming.render();
             $(me.going.el).css({
                 position: 'absolute',

@@ -35,16 +35,16 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
     })();
     exports.Utils = Utils;    
     var BaseCell = (function () {
-        function BaseCell(classes, id) {
-            this.classes = classes;
-            this.id = id;
+        function BaseCell(record) {
+            this.record = record;
         }
         BaseCell.prototype.fillElAttrs = function (el) {
-            for(var i = 0, l = this.classes.length; i < l; i++) {
-                el.className += " " + this.classes[i];
+            var classes = this.record.classes;
+            for(var i = 0, l = classes.length; i < l; i++) {
+                el.className += " " + classes[i];
             }
-            if(this.id) {
-                el.id = this.id;
+            if(this.record.id) {
+                el.id = this.record.id;
             }
         };
         BaseCell.prototype.createEl = function () {
@@ -66,6 +66,12 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             this.prepareEl();
             return this.el;
         };
+        BaseCell.prototype.destroy = function () {
+            this.el.parentNode.removeChild(this.el);
+        };
+        BaseCell.prototype.domFromString = function (s) {
+            return Utils.DomFromString(s);
+        };
         return BaseCell;
     })();
     exports.BaseCell = BaseCell;    
@@ -82,29 +88,51 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
     })(BaseCell);    
     var App = (function () {
         function App(board, pieces) {
-            var topMost = new ViewPort([], '');
-            this.resolveCells(board, pieces, topMost);
-        }
-        App.prototype.resolveCells = function (board, pieces, parent) {
-            for(var key in board) {
-                var klasses = key.split('.');
-                var cons = klasses[0].split('#')[0];
-                if(!pieces[cons]) {
-                    continue;
-                }
-                var id = '';
-                var classes = [];
-                for(var c = 0, l = klasses.length; c < l; c++) {
-                    var splitted = klasses[c].split('#');
-                    classes.push(splitted[0]);
-                    if(splitted.length > 0) {
-                        id = splitted[1];
-                    }
-                }
-                var cell = new pieces[cons](classes, id);
-                parent.append(cell);
-                this.resolveCells(board[key], pieces, cell);
+            this.board = board;
+            this.pieces = pieces;
+            window['application'] = this;
+            this.topMost = new ViewPort({
+                cons: '',
+                id: '',
+                classes: []
+            });
+            this.screens = {
+            };
+            for(var screen in pieces) {
+                var record = this.getCellRecord(screen);
+                this.screens[screen] = new pieces[screen](record);
             }
+        }
+        App.prototype.resolve = function (selector) {
+            var screen = selector(this.screens);
+            this.topMost.append(screen);
+            this.resolveCells(this.board[screen.record.cons], this.pieces, screen);
+        };
+        App.prototype.resolveCells = function (board, pieces, parent) {
+            for(var recordString in board) {
+                var record = this.getCellRecord(recordString);
+                var cell = new pieces[record.cons](record);
+                parent.append(cell);
+                this.resolveCells(board[recordString], pieces, cell);
+            }
+        };
+        App.prototype.getCellRecord = function (cellString) {
+            var klasses = cellString.split('.');
+            var cons = klasses[0].split('#')[0];
+            var id = '';
+            var classes = [];
+            for(var c = 0, l = klasses.length; c < l; c++) {
+                var splitted = klasses[c].split('#');
+                classes.push(splitted[0]);
+                if(splitted.length > 0) {
+                    id = splitted[1];
+                }
+            }
+            return {
+                cons: cons,
+                classes: classes,
+                id: id
+            };
         };
         return App;
     })();

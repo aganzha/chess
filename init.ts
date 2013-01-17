@@ -1,96 +1,136 @@
 import interfaces = module("chess/interfaces")
 
 
+
 export class Utils{
     static flyWeightId="_chessFlyWeightId";
     static makeFlyWeight(){
-    	var di = document.createElement('div')
-    	di.style['display'] = 'none'
-	di.id = flyWeightId
-    	document.getElementsByTagName('body')[0].appendChild(di)
+        var di = document.createElement('div')
+        di.style['display'] = 'none'
+        di.id = flyWeightId
+        document.getElementsByTagName('body')[0].appendChild(di)
     }
     static DomFromString(s:string):HTMLElement{
-	var flw = document.getElementById(flyWeightId);
-	if(!flw){
-	    makeFlyWeight()
-	    return DomFromString(s)
-	}
-	flw.innerHTML = s
-	return <HTMLElement>flw.children[0];
-    }    
+        var flw = document.getElementById(flyWeightId);
+        if(!flw){
+            makeFlyWeight()
+            return DomFromString(s)
+        }
+        flw.innerHTML = s
+        return <HTMLElement>flw.children[0];
+    }
     static template(templateId:string, replacements:{}){
-	var txt = document.getElementById(templateId).innerHTML;
-	for(var key in replacements){
-	    txt = txt.replace(key, replacements[key])
-	}
-	return txt
+        var txt = document.getElementById(templateId).innerHTML;
+        for(var key in replacements){
+            txt = txt.replace(key, replacements[key])
+        }
+        return txt
     }
 }
+
+// createEl():HTMLElement{
+//   can use templates
+// var txt = chess.Utils.template('main',{})
+// return chess.Utils.DomFromString(txt)
+
+//   or string directly
+// return chess.Utils.DomFromString('<div><div id="logo"></div><div>')
+
+// var di = super.createEl();
+// di.innerHTML = '<div id="logo"></div>';
+// return di;
+// }
+
 
 export class BaseCell implements interfaces.Cell{
     el:HTMLElement;
     parent:interfaces.Cell;
-    classes:string[];
-    id:string;
 
-    makeClassName():string{
-	var funcNameRegex = /function (.{1,})\(/;
-	var func = (<any>this).constructor.toString();
-	var results = (funcNameRegex).exec(func);
-	return (results && results.length > 1) ? results[1] : "";
+    constructor(public record:interfaces.CellRecord){
     }
     fillElAttrs(el:HTMLElement){
-	el.className = this.makeClassName()
-	if(this.classes){
-	    for(var i=0,l=this.classes.length;i<l;i++){
-		el.className+=" "+this.classes[i];
-	    }
-	}
+	var classes = this.record.classes;
+        for(var i=0,l=classes.length;i<l;i++){
+            el.className+=" "+classes[i];
+        }
+        if(this.record.id){
+            el.id=this.record.id;
+        }
     }
-    makeEl():HTMLElement{
-	var div = document.createElement('div')
-	this.fillElAttrs(div)
-	return div
+    createEl():HTMLElement{
+        var div = document.createElement('div')
+        return div
+    }
+    prepareEl(){
+        if(!this.el){
+            this.el = this.createEl()
+            this.fillElAttrs(this.el)
+        }
     }
     append(view:interfaces.Cell){
-	if(!this.el){
-	    this.el = this.makeEl()
-	}
-	this.el.appendChild(view.render())
-	view.parent = this
+        this.prepareEl()
+        this.el.appendChild(view.render())
+        view.parent = this
     }
     render(){
-	if(!this.el){
-	    this.el = this.makeEl()
-	}
-	return this.el
+        this.prepareEl()
+        return this.el
+    }
+    destroy(){
+        this.el.parentNode.removeChild(this.el)
+    }
+    domFromString(s:string){
+        return Utils.DomFromString(s);
     }
 }
 
+
 class ViewPort extends BaseCell{
-    makeEl(){
-	return <HTMLElement>document.getElementsByTagName('body')[0]
+    createEl(){
+        return <HTMLElement>document.getElementsByTagName('body')[0]
     }
 }
 
 
 
 export class App{
-    constructor(board:{}, pieces:{}){
-	var topMost = new ViewPort();
-	this.resolveCells(board, pieces, topMost)
+    topMost:ViewPort;
+    screens:interfaces.ScreenMap;
+    constructor(public board:{}, public pieces:{}){
+	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+        window['application'] =this
+        this.topMost = new ViewPort({cons:'',id:'',classes:[]});
+        this.screens = <interfaces.ScreenMap>{}
+        for(var screen in pieces){
+	    var record = this.getCellRecord(screen)
+            this.screens[screen] = new pieces[screen](record)
+        }
     }
+    resolve(selector:interfaces.ScreenSelector){
+        var screen = selector(this.screens)
+        this.topMost.append(screen)
+        this.resolveCells(this.board[screen.record.cons], this.pieces, screen)
+    }    
     resolveCells(board:{}, pieces:{}, parent:interfaces.Cell){
-	for(var key in board){
-	    var className = key.split('-')[0];
-	    if(!pieces[className]){
-		console.log('no such class in pieces: '+className);
-		continue;
-	    }
-	    var cell = <interfaces.Cell>new pieces[className];
-	    parent.append(cell);
-	    this.resolveCells(board[key], pieces, cell);
-	    break
-	}
+        for(var recordString in board){
+	    var record = this.getCellRecord(recordString)
+            var cell = <interfaces.Cell>new pieces[record.cons](record)
+            parent.append(cell)
+            this.resolveCells(board[recordString], pieces, cell)
+        }
+    }
+    getCellRecord(cellString:string):interfaces.CellRecord{
+        var klasses = cellString.split('.')
+        var cons = klasses[0].split('#')[0]
+        var id='';
+        var classes=  [];
+        for(var c=0,l=klasses.length;c<l;c++){
+            var splitted = klasses[c].split('#')
+            classes.push(splitted[0])
+            if(splitted.length>0){
+                id=splitted[1]
+            }
+        }
+        return {cons:cons,classes:classes,id:id}
     }
 }
