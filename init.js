@@ -3,8 +3,10 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
-define(["require", "exports", "chess/interfaces"], function(require, exports, __interfaces__) {
+define(["require", "exports", "chess/interfaces", "chess/transition"], function(require, exports, __interfaces__, __transition__) {
     var interfaces = __interfaces__;
+
+    var transition = __transition__;
 
     var Utils = (function () {
         function Utils() { }
@@ -14,6 +16,9 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             di.style['display'] = 'none';
             di.id = Utils.flyWeightId;
             document.getElementsByTagName('body')[0].appendChild(di);
+        }
+        Utils.destroyFlyWeight = function destroyFlyWeight() {
+            $('#' + Utils.flyWeightId).remove();
         }
         Utils.DomFromString = function DomFromString(s) {
             var flw = document.getElementById(Utils.flyWeightId);
@@ -38,10 +43,16 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         function BaseCell(record) {
             this.record = record;
         }
+        BaseCell.prototype.getBox = function () {
+            return $(this.el).offset();
+        };
         BaseCell.prototype.fillElAttrs = function (el) {
             var classes = this.record.classes;
             for(var i = 0, l = classes.length; i < l; i++) {
-                el.className += " " + classes[i];
+                if(i != 0) {
+                    el.className += " ";
+                }
+                el.className += classes[i];
             }
             if(this.record.id) {
                 el.id = this.record.id;
@@ -75,6 +86,26 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         return BaseCell;
     })();
     exports.BaseCell = BaseCell;    
+    var BaseScreen = (function (_super) {
+        __extends(BaseScreen, _super);
+        function BaseScreen() {
+            _super.apply(this, arguments);
+
+        }
+        BaseScreen.prototype.beforeSelfReplace = function (other) {
+        };
+        BaseScreen.prototype.beforeSelfApear = function (other) {
+        };
+        BaseScreen.prototype.afterSelfReplace = function (other) {
+        };
+        BaseScreen.prototype.afterSelfApear = function (other) {
+        };
+        BaseScreen.prototype.replaceBy = function (other) {
+            console.log('eplace');
+        };
+        return BaseScreen;
+    })(BaseCell);
+    exports.BaseScreen = BaseScreen;    
     var ViewPort = (function (_super) {
         __extends(ViewPort, _super);
         function ViewPort() {
@@ -111,7 +142,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 }
             }
             if(klass == null) {
-                console.log('cant find class for: ' + record.cons);
+                throw '<Chess> cant find class for: ' + record.cons;
             }
             return klass;
         };
@@ -125,6 +156,17 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             var cons = screen.record.cons;
             this.topMost.append(screen);
             this.resolveCells(this.board[cons], screen);
+            this.currentScreen = screen;
+        };
+        App.prototype.transit = function (selector) {
+            Utils.destroyFlyWeight();
+            var oldScreen = this.currentScreen;
+            this.resolve(selector);
+            var me = this;
+            var tr = new transition.Transition(oldScreen, this.currentScreen, function () {
+            }, function () {
+            });
+            return tr;
         };
         App.prototype.resolveCells = function (board, parent) {
             for(var recordString in board) {

@@ -10,6 +10,7 @@ export interface Cell{
     render():HTMLElement;
     destroy();
     record:CellRecord;
+    getBox():Box;
 }
 export interface Box {
     left:number;
@@ -23,6 +24,7 @@ export interface Screen extends Cell{
     afterSelfReplace(other:Screen);
     afterSelfApear(other:Screen);
     getBox():Box;
+    replaceBy(other:Screen);
 }
 export interface ScreenMap{
     name:string;
@@ -30,4 +32,24 @@ export interface ScreenMap{
 }
 export interface ScreenSelector{
     (screens:ScreenMap):Screen;
+}
+export interface Transition{
+    redraw();
+    pop();
+    fade();
+    cover(widthOrHeight:string,
+	  leftOrTop:string,
+	  sign:(n:number)=>number);
+    reveal(widthOrHeight:string,
+	   leftOrTop:string,
+	   sign:(n:number)=>number);
+    slideLeft();
+    slideRight();
+    slideUp();
+    slideDown();
+}
+
+export interface Application{
+    resolve(selector:ScreenSelector);
+    transit(selector:ScreenSelector):Transition;
 }

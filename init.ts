@@ -1,30 +1,34 @@
 import interfaces = module("chess/interfaces")
-
+import transition = module("chess/transition")
+declare var $;
 
 
 export class Utils{
     static flyWeightId="_chessFlyWeightId";
     static makeFlyWeight(){
-        var di = document.createElement('div')
-        di.style['display'] = 'none'
-        di.id = flyWeightId
-        document.getElementsByTagName('body')[0].appendChild(di)
+	var di = document.createElement('div')
+	di.style['display'] = 'none'
+	di.id = flyWeightId
+	document.getElementsByTagName('body')[0].appendChild(di)
+    }
+    static destroyFlyWeight(){
+	$('#'+flyWeightId).remove()
     }
     static DomFromString(s:string):HTMLElement{
-        var flw = document.getElementById(flyWeightId);
-        if(!flw){
-            makeFlyWeight()
-            return DomFromString(s)
-        }
-        flw.innerHTML = s
-        return <HTMLElement>flw.children[0];
+	var flw = document.getElementById(flyWeightId);
+	if(!flw){
+	    makeFlyWeight()
+	    return DomFromString(s)
+	}
+	flw.innerHTML = s
+	return <HTMLElement>flw.children[0];
     }
     static template(templateId:string, replacements:{}){
-        var txt = document.getElementById(templateId).innerHTML;
-        for(var key in replacements){
-            txt = txt.replace(key, replacements[key])
-        }
-        return txt
+	var txt = document.getElementById(templateId).innerHTML;
+	for(var key in replacements){
+	    txt = txt.replace(key, replacements[key])
+	}
+	return txt
     }
 }
 
@@ -48,46 +52,65 @@ export class BaseCell implements interfaces.Cell{
 
     constructor(public record:interfaces.CellRecord){
     }
+    getBox(){
+	return <interfaces.Box>$(this.el).offset()
+    }
     fillElAttrs(el:HTMLElement){
-        var classes = this.record.classes;
-        for(var i=0,l=classes.length;i<l;i++){
-            el.className+=" "+classes[i];
-        }
-        if(this.record.id){
-            el.id=this.record.id;
-        }
+	var classes = this.record.classes;
+	for(var i=0,l=classes.length;i<l;i++){
+	    if(i!=0)
+		el.className+=" "
+	    el.className+=classes[i];
+	}
+	if(this.record.id){
+	    el.id=this.record.id;
+	}
     }
     createEl():HTMLElement{
-        var div = document.createElement('div')
-        return div
+	var div = document.createElement('div')
+	return div
     }
     prepareEl(){
-        if(!this.el){
-            this.el = this.createEl()
-            this.fillElAttrs(this.el)
-        }
+	if(!this.el){
+	    this.el = this.createEl()
+	    this.fillElAttrs(this.el)
+	}
     }
     append(view:interfaces.Cell){
-        this.prepareEl()
-        this.el.appendChild(view.render())
-        view.parent = this
+	this.prepareEl()
+	this.el.appendChild(view.render())
+	view.parent = this
     }
     render(){
-        this.prepareEl()
-        return this.el
+	this.prepareEl()
+	return this.el
     }
     destroy(){
-        this.el.parentNode.removeChild(this.el)
+	this.el.parentNode.removeChild(this.el)
     }
     domFromString(s:string){
-        return Utils.DomFromString(s);
+	return Utils.DomFromString(s);
+    }
+}
+
+export class BaseScreen extends BaseCell implements interfaces.Screen{
+    beforeSelfReplace(other:interfaces.Screen){
+    }
+    beforeSelfApear(other:interfaces.Screen){
+    }
+    afterSelfReplace(other:interfaces.Screen){
+    }
+    afterSelfApear(other:interfaces.Screen){
+    }
+    replaceBy(other:interfaces.Screen){
+	console.log('eplace')
     }
 }
 
 
 class ViewPort extends BaseCell{
     createEl(){
-        return <HTMLElement>document.getElementsByTagName('body')[0]
+	return <HTMLElement>document.getElementsByTagName('body')[0]
     }
 }
 
@@ -96,58 +119,79 @@ class ViewPort extends BaseCell{
 export class App{
     topMost:ViewPort;
     screens:interfaces.ScreenMap;
+    currentScreen:interfaces.Screen;
     constructor(public board:{}, public modules:{}[]){
-        // а можно еще все экраны прямо здесь делать (спрятанными) о как!
-        window['application'] =this
-        this.topMost = new ViewPort({cons:'',id:'',classes:[]});
-        this.screens = <interfaces.ScreenMap>{}
+	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+	window['application'] =this
+	this.topMost = new ViewPort({cons:'',id:'',classes:[]});
+	this.screens = <interfaces.ScreenMap>{}
 	for(var cons in board){
 	    this.screens[cons] = this.instantiate(cons)
 	}
     }
     getCellClass(record:interfaces.CellRecord){
-        var klass = null
-        for(var i=0,l=this.modules.length;i<l;i++){
-            if(this.modules[i][record.cons]){
-                klass = this.modules[i][record.cons]
-                break
-            }
-        }
-        if(klass == null){
-            console.log('cant find class for: '+record.cons)
-        }
-        return klass
+	var klass = null
+	for(var i=0,l=this.modules.length;i<l;i++){
+	    if(this.modules[i][record.cons]){
+		klass = this.modules[i][record.cons]
+		break
+	    }
+	}
+	if(klass == null){
+	    throw '<Chess> cant find class for: '+record.cons
+	}
+	return klass
     }
     instantiate(record:string){
 	var record = this.getCellRecord(record)
-	var klass = this.getCellClass(record)
+	var klass = this.getCellClass(record)	
 	return new klass(record)
     }
     resolve(selector:interfaces.ScreenSelector){
-        var screen = selector(this.screens)	
-        var cons = screen.record.cons
-        this.topMost.append(screen)
-        this.resolveCells(this.board[cons], screen)
+	var screen = selector(this.screens)
+	var cons = screen.record.cons
+	this.topMost.append(screen)
+	this.resolveCells(this.board[cons], screen)
+	this.currentScreen =screen
+    }
+    transit(selector:interfaces.ScreenSelector){
+	Utils.destroyFlyWeight()
+	var oldScreen = this.currentScreen
+	//var newScreen = selector(this.screens)
+	this.resolve(selector)
+	var me = this;
+	var tr = new transition.Transition(oldScreen,
+					   this.currentScreen,
+					   function(){
+					       // ??
+					   },
+					   function(){
+					       // rollback current screen?
+					   })
+	return tr;
+	// var ass = transition.bass()
+	// ass+=10
+	// 'ass'+=10
     }
     resolveCells(board:{}, parent:interfaces.Cell){
-        for(var recordString in board){
+	for(var recordString in board){
 	    var cell = this.instantiate(recordString)
-            parent.append(cell)
-            this.resolveCells(board[recordString], cell)
-        }
+	    parent.append(cell)
+	    this.resolveCells(board[recordString], cell)
+	}
     }
     getCellRecord(cellString:string):interfaces.CellRecord{
-        var klasses = cellString.split('.')
-        var cons = klasses[0].split('#')[0]
-        var id='';
-        var classes=  [];
-        for(var c=0,l=klasses.length;c<l;c++){
-            var splitted = klasses[c].split('#')
-            classes.push(splitted[0])
-            if(splitted.length>0){
-                id=splitted[1]
-            }
-        }
-        return {cons:cons,classes:classes,id:id}
+	var klasses = cellString.split('.')
+	var cons = klasses[0].split('#')[0]
+	var id='';
+	var classes=  [];
+	for(var c=0,l=klasses.length;c<l;c++){
+	    var splitted = klasses[c].split('#')
+	    classes.push(splitted[0])
+	    if(splitted.length>0){
+		id=splitted[1]
+	    }
+	}
+	return {cons:cons,classes:classes,id:id}
     }
 }
