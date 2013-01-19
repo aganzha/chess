@@ -37,12 +37,10 @@ export interface Transition{
     redraw();
     pop();
     fade();
-    cover(widthOrHeight:string,
-	  leftOrTop:string,
-	  sign:(n:number)=>number);
-    reveal(widthOrHeight:string,
-	   leftOrTop:string,
-	   sign:(n:number)=>number);
+    cover(leftOrTop:string,
+	   positive:bool);
+    reveal(leftOrTop:string,
+	   positive:bool);
     slideLeft();
     slideRight();
     slideUp();

@@ -4,6 +4,12 @@ html, body {
     width: 100%;
     height: 100%;
     overflow:hidden;
+    .List{
+	border: 1px solid red;
+    }
+    .Auth{
+	border: 1px solid blue;
+    }
     .slideLeft{
 	@include transition(margin-left 0.3s ease-in);
     }
@@ -29,6 +35,5 @@ html, body {
 
     .reveal, .cover{
 	@include transition(left 0.3s ease-in, top 0.3s ease-in);
-	@include transition(top 0.3s ease-in, top 0.3s ease-in);
     }
 }

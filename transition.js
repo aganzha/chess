@@ -1,5 +1,6 @@
-define(["require", "exports"], function(require, exports) {
-    
+define(["require", "exports", "chess/interfaces"], function(require, exports, __interfaces__) {
+    var interfaces = __interfaces__;
+
     var Transition = (function () {
         function Transition(going, coming, success, error) {
             this.going = going;
@@ -71,7 +72,11 @@ define(["require", "exports"], function(require, exports) {
                 me.success();
             }, 100);
         };
-        Transition.prototype.cover = function (widthOrHeight, leftOrTop, sign) {
+        Transition.prototype.cover = function (leftOrTop, positive) {
+            var widthOrHeight = 'height';
+            if(leftOrTop == 'left') {
+                widthOrHeight = 'width';
+            }
             var me = this;
             var itemBox = this.going.getBox();
             var background = $(this.going.el).css('background-color') || $(this.going.el).css('background-image');
@@ -87,31 +92,31 @@ define(["require", "exports"], function(require, exports) {
                 position: 'absolute',
                 'z-index': 999
             };
-            targetCss[leftOrTop] = sign(itemBox[widthOrHeight]) + 'px';
+            targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] : 0 - itemBox[widthOrHeight] + 'px';
             $(me.coming.el).css(targetCss);
             var me = this;
             setTimeout(function () {
                 $(me.coming.el).addClass('cover');
-                setTimeout(function () {
-                    var elCss = {
-                    };
-                    elCss[leftOrTop] = '0px';
-                    $(me.coming.el).css(elCss);
-                    me.success();
-                }, 50);
             }, 50);
+            setTimeout(function () {
+                var elCss = {
+                };
+                elCss[leftOrTop] = '0px';
+                $(me.coming.el).css(elCss);
+                me.success();
+            }, 100);
         };
-        Transition.prototype.reveal = function (widthOrHeight, leftOrTop, sign) {
+        Transition.prototype.reveal = function (leftOrTop, positive) {
             var me = this;
+            var widthOrHeight = 'height';
+            if(leftOrTop == 'left') {
+                widthOrHeight = 'width';
+            }
             var itemBox = this.going.getBox();
             var background = $(this.going.el).css('background-color') || $(this.going.el).css('background-image');
             if(!background || background == 'rgba(0, 0, 0, 0)') {
                 $(this.going.el).css('background-color', 'white');
             }
-            var containerCss = {
-            };
-            containerCss[widthOrHeight] = itemBox[widthOrHeight] * 2 + 'px';
-            $(this.coming.el).css(containerCss);
             me.coming.render();
             $(me.going.el).css({
                 position: 'absolute',
@@ -124,21 +129,23 @@ define(["require", "exports"], function(require, exports) {
             var me = this;
             setTimeout(function () {
                 me.going.el.className += ' reveal';
-                setTimeout(function () {
-                    var elCss = {
-                    };
-                    elCss[leftOrTop] = sign(itemBox[widthOrHeight]) + 'px';
-                    console.log(elCss);
-                    $(me.going.el).css(elCss);
-                    me.success();
-                }, 50);
             }, 50);
+            setTimeout(function () {
+                var elCss = {
+                };
+                elCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
+                $(me.going.el).css(elCss);
+                me.success();
+            }, 100);
         };
         Transition.prototype.slideLeft = function () {
             var me = this;
             me.coming.render();
             var itemBox = this.going.getBox();
             var old = me.coming.parent.getBox().width;
+            if(old && !(old + '').match('px')) {
+                old += 'px';
+            }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
@@ -146,12 +153,16 @@ define(["require", "exports"], function(require, exports) {
                 float: 'left'
             });
             $(me.going.el).css({
-                'margin-left': 0 - itemBox.width + 'px',
                 width: itemBox.width + 'px',
                 height: itemBox.height + 'px',
                 float: 'left'
             });
             $(me.going.el).addClass('slideLeft');
+            setTimeout(function () {
+                $(me.going.el).css({
+                    'margin-left': 0 - itemBox.width + 'px'
+                });
+            }, 100);
             setTimeout(function () {
                 $(me.coming.parent.el).css('width', old + 'px');
                 me.success();
@@ -161,6 +172,9 @@ define(["require", "exports"], function(require, exports) {
             var me = this;
             var itemBox = this.going.getBox();
             var old = me.coming.parent.getBox().width;
+            if(old && !(old + '').match('px')) {
+                old += 'px';
+            }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             me.coming.render();
             $(me.coming.el).css({
@@ -182,7 +196,7 @@ define(["require", "exports"], function(require, exports) {
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('width', old + 'px');
+                $(me.coming.parent.el).css('width', old);
                 me.success();
             }, 400);
         };
@@ -190,21 +204,30 @@ define(["require", "exports"], function(require, exports) {
             var me = this;
             me.coming.render();
             var itemBox = this.going.getBox();
-            $(me.going.el).css({
-                'height': itemBox.height * 2 + 'px'
-            });
-            $(me.going.el).css({
-                'margin-top': 0 - itemBox.height + 'px'
-            });
+            var old = $(me.going.parent.el).css('height');
+            if(old && !(old + '').match('px')) {
+                old += 'px';
+            }
+            var oldMargin = $(me.coming.el).css('margin-top');
             $(me.going.el).addClass('slideUp');
-            me.success();
+            setTimeout(function () {
+                $(me.going.el).css({
+                    'margin-top': 0 - itemBox.height + 'px'
+                });
+            }, 100);
+            setTimeout(function () {
+                $(me.coming.parent.el).css('height', old);
+                me.success();
+            }, 400);
         };
         Transition.prototype.slideDown = function () {
             var me = this;
             var itemBox = this.going.getBox();
-            $(me.going.el).css({
-                'height': itemBox.height * 2 + 'px'
-            });
+            var old = $(me.going.parent.el).css('height');
+            if(old && !(old + '').match('px')) {
+                old += 'px';
+            }
+            var oldMargin = $(me.coming.el).css('margin-top');
             me.coming.render();
             $(me.coming.el).css({
                 'margin-top': 0 - itemBox.height + 'px'
@@ -213,10 +236,13 @@ define(["require", "exports"], function(require, exports) {
             $(me.coming.el).addClass('slideDown');
             setTimeout(function () {
                 $(me.coming.el).css({
-                    'margin-top': '0px'
+                    'margin-top': oldMargin
                 });
-                me.success();
             }, 100);
+            setTimeout(function () {
+                $(me.coming.parent.el).css('height', old);
+                me.success();
+            }, 400);
         };
         return Transition;
     })();
