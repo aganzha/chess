@@ -153,19 +153,26 @@ define(["require", "exports"], function(require, exports) {
             });
             $(me.going.el).addClass('slideLeft');
             setTimeout(function () {
-                $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
+                $(me.coming.parent.el).css('width', old + 'px');
                 me.success();
-            }, 200);
+            }, 400);
         };
         Transition.prototype.slideRight = function () {
             var me = this;
             var itemBox = this.going.getBox();
-            $(me.going.el).css({
-                'width': itemBox.width * 2 + 'px'
-            });
+            var old = me.coming.parent.getBox().width;
+            $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             me.coming.render();
             $(me.coming.el).css({
-                'margin-left': 0 - itemBox.width + 'px'
+                'margin-left': 0 - itemBox.width + 'px',
+                width: itemBox.width + 'px',
+                height: itemBox.height + 'px',
+                float: 'left'
+            });
+            $(me.going.el).css({
+                width: itemBox.width + 'px',
+                height: itemBox.height + 'px',
+                float: 'left'
             });
             $(me.going.el).before($(me.coming.el));
             $(me.coming.el).addClass('slideRight');
@@ -173,8 +180,11 @@ define(["require", "exports"], function(require, exports) {
                 $(me.coming.el).css({
                     'margin-left': '0px'
                 });
-                me.success();
             }, 100);
+            setTimeout(function () {
+                $(me.coming.parent.el).css('width', old + 'px');
+                me.success();
+            }, 400);
         };
         Transition.prototype.slideUp = function () {
             var me = this;

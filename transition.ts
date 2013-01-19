@@ -2,7 +2,7 @@ import interfaces = module("chess/interfaces")
 declare var $;
 
 export class Transition{
-    constructor(public going:interfaces.Screen, 
+    constructor(public going:interfaces.Screen,
 		public coming:interfaces.Screen,
 		public success:Function,
 		public error:Function){
@@ -14,8 +14,8 @@ export class Transition{
     redraw(){
 	$(this.going.el).hide()
 	this.coming.render()
-	this.success()    
-    }    
+	this.success()
+    }
     pop(){
 	var me = this
 	this.coming.render()
@@ -33,7 +33,7 @@ export class Transition{
 	    me.going.el.className+=' pop'
 	    me.coming.el.className+= ' pop'
 	}, 50)
-	setTimeout(function(){	 
+	setTimeout(function(){
 	    $(me.going.el).css({
 		width:'0px',
 		height:'0px',
@@ -81,9 +81,9 @@ export class Transition{
 	  sign:(n:number)=>number){
 	var me = this;
 	var itemBox = this.going.getBox();
-	var background = $(this.going.el).css('background-color') || 
+	var background = $(this.going.el).css('background-color') ||
 	    $(this.going.el).css('background-image');
-	if(!background || background=='rgba(0, 0, 0, 0)'){	    
+	if(!background || background=='rgba(0, 0, 0, 0)'){
 	    $(this.coming.el).css('background-color','white');
 	}
 	me.coming.render();
@@ -114,12 +114,12 @@ export class Transition{
     // just 1 function for them from switch!
     reveal(widthOrHeight:string,
 	   leftOrTop:string,
-	   sign:(n:number)=>number){	
+	   sign:(n:number)=>number){
 	var me = this;
 	var itemBox = this.going.getBox();
-	var background = $(this.going.el).css('background-color') || 
+	var background = $(this.going.el).css('background-color') ||
 	    $(this.going.el).css('background-image');
-	if(!background || background=='rgba(0, 0, 0, 0)'){	    
+	if(!background || background=='rgba(0, 0, 0, 0)'){
 	    $(this.going.el).css('background-color','white');
 	}
 	var containerCss = {}
@@ -151,7 +151,7 @@ export class Transition{
 	var me = this;
 	me.coming.render();
 	var itemBox = this.going.getBox()
-	// $(this.going.el).css({'width':itemBox.width*2+'px'})
+
 	var old = me.coming.parent.getBox().width;
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 	$(me.coming.el).css({
@@ -167,18 +167,30 @@ export class Transition{
 	});
 	$(me.going.el).addClass('slideLeft')
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('width',itemBox.width*2+'px')
+	    $(me.coming.parent.el).css('width',old+'px')
 	    me.success();
-	}, 200)
-	
+	}, 400)
+
     }
     slideRight(){
 	var me = this;
-	var itemBox = this.going.getBox();	
-	$(me.going.el).css({'width':itemBox.width*2+'px'});
+	var itemBox = this.going.getBox();
+	// $(me.going.el).css({'width':itemBox.width*2+'px'});
+
+	var old = me.coming.parent.getBox().width;
+	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
+
 	me.coming.render();
 	$(me.coming.el).css({
-	    'margin-left':0-itemBox.width+'px'
+	    'margin-left':0-itemBox.width+'px',
+	    width:itemBox.width+'px',
+	    height:itemBox.height+'px',
+	    float:'left'
+	})
+	$(me.going.el).css({
+	    width:itemBox.width+'px',
+	    height:itemBox.height+'px',
+	    float:'left'
 	});
 	$(me.going.el).before($(me.coming.el));
 	$(me.coming.el).addClass('slideRight');
@@ -186,8 +198,12 @@ export class Transition{
 	    $(me.coming.el).css({
 		'margin-left':'0px'
 	    });
+	}, 100)
+
+	setTimeout(function(){
+	    $(me.coming.parent.el).css('width',old+'px')
 	    me.success();
-	},100);
+	},400);
     }
     slideUp(){
 	var me = this;
