@@ -55,7 +55,12 @@ export class BaseCell implements interfaces.Cell{
     getBox(){
 	return <interfaces.Box>$(this.el).offset()
     }
-    fillElAttrs(el:HTMLElement){
+    fillElAttrs(){
+	var el = this.el
+	// hack used to reseting element to its original
+	$(el).removeAttr('class')
+	$(el).removeAttr('style')
+
 	var classes = this.record.classes;
 	for(var i=0,l=classes.length;i<l;i++){
 	    if(i!=0)
@@ -73,20 +78,23 @@ export class BaseCell implements interfaces.Cell{
     prepareEl(){
 	if(!this.el){
 	    this.el = this.createEl()
-	    this.fillElAttrs(this.el)
+	    this.fillElAttrs()
 	}
     }
     append(view:interfaces.Cell){
 	this.prepareEl()
-	this.el.appendChild(view.render())
+	var ne = view.render()
+	this.el.appendChild(ne)
 	view.parent = this
     }
     render(){
+	$(this.el).remove()
+	this.el = null
 	this.prepareEl()
 	return this.el
     }
     destroy(){
-	this.el.parentNode.removeChild(this.el)
+	$(this.el).remove()
     }
     domFromString(s:string){
 	return Utils.DomFromString(s);
@@ -117,13 +125,13 @@ class ViewPort extends BaseCell{
 
 
 export class App{
-    topMost:ViewPort;
+    viewport:ViewPort;
     screens:interfaces.ScreenMap;
     currentScreen:interfaces.Screen;
     constructor(public board:{}, public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
 	window['application'] =this
-	this.topMost = new ViewPort({cons:'',id:'',classes:[]});
+	this.viewport = new ViewPort({cons:'',id:'',classes:[]});
 	this.screens = <interfaces.ScreenMap>{}
 	for(var cons in board){
 	    this.screens[cons] = this.instantiate(cons)
@@ -138,40 +146,41 @@ export class App{
 	    }
 	}
 	if(klass == null){
-	    throw '<Chess> cant find class for: '+record.cons
+	    //throw '<Chess> cant find class for: '+record.cons
+	    return BaseCell
 	}
 	return klass
     }
     instantiate(record:string){
 	var record = this.getCellRecord(record)
-	var klass = this.getCellClass(record)	
+	var klass = this.getCellClass(record)
 	return new klass(record)
     }
     resolve(selector:interfaces.ScreenSelector){
 	var screen = selector(this.screens)
 	var cons = screen.record.cons
-	this.topMost.append(screen)
+	this.viewport.append(screen)
 	this.resolveCells(this.board[cons], screen)
 	this.currentScreen =screen
     }
+    // сейчас непосредственно перед транзитом происходит резолв
+    // т.е. добавление (append) скрина в body
+    // а возиожно транзишн сам должен решать когда ему
+    // добавлять новый элемент!
     transit(selector:interfaces.ScreenSelector){
 	Utils.destroyFlyWeight()
-	var oldScreen = this.currentScreen
-	//var newScreen = selector(this.screens)
-	this.resolve(selector)
-	var me = this;
-	var tr = new transition.Transition(oldScreen,
-					   this.currentScreen,
+	var oldScreen = this.currentScreen	
+	var me = this;	
+	var tr = new transition.Transition(me,selector,
 					   function(){
-					       // ??
+					       oldScreen.destroy()
+					       me.currentScreen.fillElAttrs()
+					       me.viewport.fillElAttrs()
 					   },
 					   function(){
 					       // rollback current screen?
 					   })
 	return tr;
-	// var ass = transition.bass()
-	// ass+=10
-	// 'ass'+=10
     }
     resolveCells(board:{}, parent:interfaces.Cell){
 	for(var recordString in board){

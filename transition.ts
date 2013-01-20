@@ -1,34 +1,44 @@
 import interfaces = module("chess/interfaces")
 declare var $;
 
+
 export class Transition implements interfaces.Transition{
-    constructor(public going:interfaces.Screen,
-		public coming:interfaces.Screen,
+    going:interfaces.Screen;
+    coming:interfaces.Screen;
+    constructor(public app:interfaces.Application,
+		public selector:interfaces.ScreenSelector,
 		public success:Function,
 		public error:Function){
+	this.going = app.currentScreen
+	this.coming = selector(app.screens)
+    }        
+    renderNewScreen(){
+	this.app.resolve(this.selector)
     }
-    // success(){
-    // }
-    // error(){
-    // }
     redraw(){
+	//this.fixPosition(this.going)
 	$(this.going.el).hide()
-	this.coming.render()
+	this.renderNewScreen()
 	this.success()
     }
     pop(){
 	var me = this
-	this.coming.render()
-	var itemBox = this.going.getBox();
+	this.fixPosition(this.going)
+
+	this.renderNewScreen()
+	
+	var itemBox = this.fixPosition(me.coming)
 	$(me.coming.el).css({
+	    position:'absolute',
+	    opacity:'0',
 	    width:'0px',
 	    height:'0px',
 	    'margin-top':itemBox.height/2+'px',
 	    'margin-left':itemBox.width/2+'px',
-	    position:'absolute',
 	});
-	$(me.going.el).css('position','absolute')
-	var me = this;
+
+	$(this.going.el).css('position','absolute')
+
 	setTimeout(function(){
 	    me.going.el.className+=' pop'
 	    me.coming.el.className+= ' pop'
@@ -36,7 +46,7 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.going.el).css({
 		width:'0px',
-		height:'0px',
+		height:'0px',		
 		'margin-top':itemBox.height/2+'px',
 		'margin-left':itemBox.width/2+'px',
 	    });
@@ -44,20 +54,26 @@ export class Transition implements interfaces.Transition{
 		$(me.coming.el).css({
 		    width:itemBox.width+'px',
 		    height:itemBox.height+'px',
+		    opacity:'1.0',
 		    'margin-top':'0px',
 		    'margin-left':'0px'
 		});
-		me.success();
-	    },200);
+		setTimeout(function(){
+		    me.releasePosition(me.coming)
+		    me.success()
+		},250)
+	    },250);
 	},100);
-    }
+    }    
     fade(){
 	var me = this;
-	me.coming.render();
+	me.fixPosition(me.going)
 	$(me.going.el).css({
 	    position:'absolute',
 	    opacity:'1.0'
 	});
+	me.renderNewScreen()
+	me.fixPosition(me.coming)
 	$(me.coming.el).css({
 	    position:'absolute',
 	    opacity:'0.0'
@@ -72,7 +88,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.coming.el).css({
 		opacity:'1.0'
 	    });
-	    me.success();
+	    setTimeout(function(){me.releasePosition(me.coming);me.success()},300)	    
 	},100);
     }
 
@@ -83,33 +99,45 @@ export class Transition implements interfaces.Transition{
 	    widthOrHeight = 'width'
 	}
 	var me = this;
-	var itemBox = this.going.getBox();
-	var background = $(this.going.el).css('background-color') ||
-	    $(this.going.el).css('background-image');
-	if(!background || background=='rgba(0, 0, 0, 0)'){
-	    $(this.coming.el).css('background-color','white');
-	}
-	me.coming.render();
-	$(me.going.el).css({
-	    position:'absolute',
-	    'z-index':9,
-	});
+	var itemBox = this.fixPosition(this.going);
+
 	var targetCss = {
 	    position:'absolute',
 	    'z-index':999
 	};
-	targetCss[leftOrTop] = positive?itemBox[widthOrHeight]:0-itemBox[widthOrHeight]+'px';
 
+	var background = $(this.coming.el).css('background-color') ||
+	    $(this.coming.el).css('background-image');
+	if(!background || background=='rgba(0, 0, 0, 0)'){
+	    targetCss['background-color'] = 'white'
+	}	
+
+	me.renderNewScreen()
+	this.fixPosition(me.coming)
+
+	$(me.going.el).css({
+	    position:'absolute',
+	    'z-index':9,
+	});
+
+	me.fixPosition(me.coming)
+	targetCss[leftOrTop] = positive?itemBox[widthOrHeight]:0-itemBox[widthOrHeight]+'px';	
 	$(me.coming.el).css(targetCss);
+	
+	
 	var me = this;
 	setTimeout(function(){
 	    $(me.coming.el).addClass('cover');
 	}, 50);
+	return
 	setTimeout(function(){
 	    var elCss = {};
 	    elCss[leftOrTop] = '0px';
 	    $(me.coming.el).css(elCss);
-	    me.success();
+	    setTimeout(function(){
+		me.releasePosition(me.coming)
+		me.success();
+	    },400)
 	},100);
     }
 
@@ -122,7 +150,8 @@ export class Transition implements interfaces.Transition{
 	if(leftOrTop=='left'){
 	    widthOrHeight = 'width'
 	}
-	var itemBox = this.going.getBox();
+	var itemBox = this.fixPosition(this.going)
+
 	var background = $(this.going.el).css('background-color') ||
 	    $(this.going.el).css('background-image');
 	if(!background || background=='rgba(0, 0, 0, 0)'){
@@ -272,5 +301,22 @@ export class Transition implements interfaces.Transition{
 	    $(me.coming.parent.el).css('height',old)
 	    me.success();
 	},400);
+    }
+
+    fixPosition(cell:interfaces.Cell){
+	var box = cell.getBox()
+	$(cell.el).css({
+	    width:box.width,
+	    height:box.height
+	})
+	return box
+    }
+    releasePosition(cell:interfaces.Cell){
+	var box = cell.getBox()
+	$(cell.el).css({
+	    width:'',
+	    height:''
+	})
+	return box
     }
 }

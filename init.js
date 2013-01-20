@@ -46,7 +46,10 @@ define(["require", "exports", "chess/interfaces", "chess/transition"], function(
         BaseCell.prototype.getBox = function () {
             return $(this.el).offset();
         };
-        BaseCell.prototype.fillElAttrs = function (el) {
+        BaseCell.prototype.fillElAttrs = function () {
+            var el = this.el;
+            $(el).removeAttr('class');
+            $(el).removeAttr('style');
             var classes = this.record.classes;
             for(var i = 0, l = classes.length; i < l; i++) {
                 if(i != 0) {
@@ -65,20 +68,23 @@ define(["require", "exports", "chess/interfaces", "chess/transition"], function(
         BaseCell.prototype.prepareEl = function () {
             if(!this.el) {
                 this.el = this.createEl();
-                this.fillElAttrs(this.el);
+                this.fillElAttrs();
             }
         };
         BaseCell.prototype.append = function (view) {
             this.prepareEl();
-            this.el.appendChild(view.render());
+            var ne = view.render();
+            this.el.appendChild(ne);
             view.parent = this;
         };
         BaseCell.prototype.render = function () {
+            $(this.el).remove();
+            this.el = null;
             this.prepareEl();
             return this.el;
         };
         BaseCell.prototype.destroy = function () {
-            this.el.parentNode.removeChild(this.el);
+            $(this.el).remove();
         };
         BaseCell.prototype.domFromString = function (s) {
             return Utils.DomFromString(s);
@@ -122,7 +128,7 @@ define(["require", "exports", "chess/interfaces", "chess/transition"], function(
             this.board = board;
             this.modules = modules;
             window['application'] = this;
-            this.topMost = new ViewPort({
+            this.viewport = new ViewPort({
                 cons: '',
                 id: '',
                 classes: []
@@ -142,7 +148,7 @@ define(["require", "exports", "chess/interfaces", "chess/transition"], function(
                 }
             }
             if(klass == null) {
-                throw '<Chess> cant find class for: ' + record.cons;
+                return BaseCell;
             }
             return klass;
         };
@@ -154,16 +160,18 @@ define(["require", "exports", "chess/interfaces", "chess/transition"], function(
         App.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             var cons = screen.record.cons;
-            this.topMost.append(screen);
+            this.viewport.append(screen);
             this.resolveCells(this.board[cons], screen);
             this.currentScreen = screen;
         };
         App.prototype.transit = function (selector) {
             Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
-            this.resolve(selector);
             var me = this;
-            var tr = new transition.Transition(oldScreen, this.currentScreen, function () {
+            var tr = new transition.Transition(me, selector, function () {
+                oldScreen.destroy();
+                me.currentScreen.fillElAttrs();
+                me.viewport.fillElAttrs();
             }, function () {
             });
             return tr;

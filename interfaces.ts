@@ -7,6 +7,7 @@ export interface Cell{
     parent:Cell;
     append(cell:Cell);
     el:HTMLElement;
+    fillElAttrs();
     render():HTMLElement;
     destroy();
     record:CellRecord;
@@ -48,6 +49,8 @@ export interface Transition{
 }
 
 export interface Application{
+    currentScreen:Screen;
+    screens:ScreenMap;
     resolve(selector:ScreenSelector);
     transit(selector:ScreenSelector):Transition;
 }
