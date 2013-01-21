@@ -35,17 +35,22 @@ export interface ScreenSelector{
     (screens:ScreenMap):Screen;
 }
 export interface Transition{
+    
     redraw();
     pop();
     fade();
-    cover(leftOrTop:string,
-	   positive:bool);
-    reveal(leftOrTop:string,
-	   positive:bool);
     slideLeft();
     slideRight();
     slideUp();
     slideDown();
+    coverLeft();
+    coverRight();
+    coverUp();
+    coverDown();
+    revealLeft();
+    revealRight();
+    revealUp();
+    revealDown();
 }
 
 export interface Application{

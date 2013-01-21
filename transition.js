@@ -94,28 +94,23 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             }
             var me = this;
             var itemBox = this.fixPosition(this.going);
-            var targetCss = {
-                position: 'absolute',
-                'z-index': 999
-            };
-            var background = $(this.coming.el).css('background-color') || $(this.coming.el).css('background-image');
-            if(!background || background == 'rgba(0, 0, 0, 0)') {
-                targetCss['background-color'] = 'white';
-            }
-            me.renderNewScreen();
-            this.fixPosition(me.coming);
             $(me.going.el).css({
                 position: 'absolute',
                 'z-index': 9
             });
-            me.fixPosition(me.coming);
+            me.renderNewScreen();
+            var targetCss = {
+                position: 'absolute',
+                'z-index': 999
+            };
+            this.fixBackground(this.coming, targetCss);
+            this.fixPosition(me.coming);
             targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] : 0 - itemBox[widthOrHeight] + 'px';
             $(me.coming.el).css(targetCss);
             var me = this;
             setTimeout(function () {
                 $(me.coming.el).addClass('cover');
             }, 50);
-            return;
             setTimeout(function () {
                 var elCss = {
                 };
@@ -127,6 +122,18 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 }, 400);
             }, 100);
         };
+        Transition.prototype.coverLeft = function () {
+            this.cover('left', true);
+        };
+        Transition.prototype.coverRight = function () {
+            this.cover('left', false);
+        };
+        Transition.prototype.coverUp = function () {
+            this.cover('top', true);
+        };
+        Transition.prototype.coverDown = function () {
+            this.cover('top', false);
+        };
         Transition.prototype.reveal = function (leftOrTop, positive) {
             var me = this;
             var widthOrHeight = 'height';
@@ -134,34 +141,49 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 widthOrHeight = 'width';
             }
             var itemBox = this.fixPosition(this.going);
-            var background = $(this.going.el).css('background-color') || $(this.going.el).css('background-image');
-            if(!background || background == 'rgba(0, 0, 0, 0)') {
-                $(this.going.el).css('background-color', 'white');
-            }
-            me.coming.render();
             $(me.going.el).css({
                 position: 'absolute',
                 'z-index': 999
             });
+            me.renderNewScreen();
+            var targetCss = {
+                position: 'absolute',
+                'z-index': 999
+            };
+            this.fixBackground(this.going, targetCss);
+            $(this.going.el).css(targetCss);
             $(me.coming.el).css({
                 position: 'absolute',
                 'z-index': 9
             });
-            var me = this;
+            this.fixPosition(me.coming);
             setTimeout(function () {
                 me.going.el.className += ' reveal';
             }, 50);
             setTimeout(function () {
-                var elCss = {
-                };
-                elCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
-                $(me.going.el).css(elCss);
-                me.success();
+                targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
+                $(me.going.el).css(targetCss);
+                setTimeout(function () {
+                    me.releasePosition(me.coming);
+                    me.success();
+                }, 400);
             }, 100);
+        };
+        Transition.prototype.revealLeft = function () {
+            this.reveal('left', true);
+        };
+        Transition.prototype.revealRight = function () {
+            this.reveal('left', false);
+        };
+        Transition.prototype.revealUp = function () {
+            this.reveal('top', false);
+        };
+        Transition.prototype.revealDown = function () {
+            this.reveal('top', true);
         };
         Transition.prototype.slideLeft = function () {
             var me = this;
-            me.coming.render();
+            me.renderNewScreen();
             var itemBox = this.going.getBox();
             var old = me.coming.parent.getBox().width;
             if(old && !(old + '').match('px')) {
@@ -197,7 +219,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 old += 'px';
             }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
-            me.coming.render();
+            me.renderNewScreen();
             $(me.coming.el).css({
                 'margin-left': 0 - itemBox.width + 'px',
                 width: itemBox.width + 'px',
@@ -223,8 +245,8 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         };
         Transition.prototype.slideUp = function () {
             var me = this;
-            me.coming.render();
-            var itemBox = this.going.getBox();
+            var itemBox = me.fixPosition(me.going);
+            me.renderNewScreen();
             var old = $(me.going.parent.el).css('height');
             if(old && !(old + '').match('px')) {
                 old += 'px';
@@ -242,13 +264,13 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         };
         Transition.prototype.slideDown = function () {
             var me = this;
-            var itemBox = this.going.getBox();
+            var itemBox = this.fixPosition(this.going);
             var old = $(me.going.parent.el).css('height');
             if(old && !(old + '').match('px')) {
                 old += 'px';
             }
             var oldMargin = $(me.coming.el).css('margin-top');
-            me.coming.render();
+            me.renderNewScreen();
             $(me.coming.el).css({
                 'margin-top': 0 - itemBox.height + 'px'
             });
@@ -264,8 +286,14 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 me.success();
             }, 400);
         };
+        Transition.prototype.fixBackground = function (cell, css) {
+            var background = $(cell.el).css('background-color') || $(cell.el).css('background-image');
+            if(!background || background == 'rgba(0, 0, 0, 0)') {
+                css['background-color'] = 'white';
+            }
+        };
         Transition.prototype.fixPosition = function (cell) {
-            var box = cell.getBox();
+            var box = cell.parent.getBox();
             $(cell.el).css({
                 width: box.width,
                 height: box.height

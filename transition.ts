@@ -11,7 +11,7 @@ export class Transition implements interfaces.Transition{
 		public error:Function){
 	this.going = app.currentScreen
 	this.coming = selector(app.screens)
-    }        
+    }
     renderNewScreen(){
 	this.app.resolve(this.selector)
     }
@@ -26,7 +26,7 @@ export class Transition implements interfaces.Transition{
 	this.fixPosition(this.going)
 
 	this.renderNewScreen()
-	
+
 	var itemBox = this.fixPosition(me.coming)
 	$(me.coming.el).css({
 	    position:'absolute',
@@ -46,7 +46,7 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.going.el).css({
 		width:'0px',
-		height:'0px',		
+		height:'0px',
 		'margin-top':itemBox.height/2+'px',
 		'margin-left':itemBox.width/2+'px',
 	    });
@@ -64,7 +64,7 @@ export class Transition implements interfaces.Transition{
 		},250)
 	    },250);
 	},100);
-    }    
+    }
     fade(){
 	var me = this;
 	me.fixPosition(me.going)
@@ -88,7 +88,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.coming.el).css({
 		opacity:'1.0'
 	    });
-	    setTimeout(function(){me.releasePosition(me.coming);me.success()},300)	    
+	    setTimeout(function(){me.releasePosition(me.coming);me.success()},300)
 	},100);
     }
 
@@ -101,35 +101,31 @@ export class Transition implements interfaces.Transition{
 	var me = this;
 	var itemBox = this.fixPosition(this.going);
 
-	var targetCss = {
-	    position:'absolute',
-	    'z-index':999
-	};
-
-	var background = $(this.coming.el).css('background-color') ||
-	    $(this.coming.el).css('background-image');
-	if(!background || background=='rgba(0, 0, 0, 0)'){
-	    targetCss['background-color'] = 'white'
-	}	
-
-	me.renderNewScreen()
-	this.fixPosition(me.coming)
-
 	$(me.going.el).css({
 	    position:'absolute',
 	    'z-index':9,
 	});
 
-	me.fixPosition(me.coming)
-	targetCss[leftOrTop] = positive?itemBox[widthOrHeight]:0-itemBox[widthOrHeight]+'px';	
+	me.renderNewScreen()
+
+	var targetCss = {
+	    position:'absolute',
+	    'z-index':999
+	};
+
+	this.fixBackground(this.coming,targetCss)
+	
+	this.fixPosition(me.coming)
+
+	targetCss[leftOrTop] = positive?itemBox[widthOrHeight]:0-itemBox[widthOrHeight]+'px';
 	$(me.coming.el).css(targetCss);
-	
-	
+
+
 	var me = this;
 	setTimeout(function(){
 	    $(me.coming.el).addClass('cover');
 	}, 50);
-	return
+
 	setTimeout(function(){
 	    var elCss = {};
 	    elCss[leftOrTop] = '0px';
@@ -141,6 +137,18 @@ export class Transition implements interfaces.Transition{
 	},100);
     }
 
+    coverLeft(){
+	this.cover('left',true)
+    }
+    coverRight(){
+	this.cover('left',false)
+    }
+    coverUp(){
+	this.cover('top',true)
+    }
+    coverDown(){
+	this.cover('top',false)
+    }
 
     reveal(leftOrTop:string,
 	   positive:bool)
@@ -151,37 +159,60 @@ export class Transition implements interfaces.Transition{
 	    widthOrHeight = 'width'
 	}
 	var itemBox = this.fixPosition(this.going)
-
-	var background = $(this.going.el).css('background-color') ||
-	    $(this.going.el).css('background-image');
-	if(!background || background=='rgba(0, 0, 0, 0)'){
-	    $(this.going.el).css('background-color','white');
-	}
-
-	me.coming.render();
 	$(me.going.el).css({
 	    position:'absolute',
 	    'z-index':999,
 	});
+
+	me.renderNewScreen()
+
+	var targetCss = {
+	    position:'absolute',
+	    'z-index':999
+	};
+
+	this.fixBackground(this.going, targetCss)
+	$(this.going.el).css(targetCss)
+	
 	$(me.coming.el).css({
 	    position:'absolute',
 	    'z-index':9
 	});
-	var me = this;
+
+	this.fixPosition(me.coming)
+
 	setTimeout(function(){
-	    me.going.el.className+= ' reveal';	    
+	    me.going.el.className+= ' reveal';
 	}, 50);
 	setTimeout(function(){
-	    var elCss = {};
-	    elCss[leftOrTop] = positive ? itemBox[widthOrHeight]+'px':0-itemBox[widthOrHeight]+'px'
-	    $(me.going.el).css(elCss);
-	    me.success();
+
+	    targetCss[leftOrTop] = positive ? itemBox[widthOrHeight]+'px':0-itemBox[widthOrHeight]+'px'
+	    $(me.going.el).css(targetCss);
+	    setTimeout(function(){
+		me.releasePosition(me.coming)
+		me.success();
+	    },400)
 	},100);
+    }
+
+    revealLeft(){
+	this.reveal('left',true)
+    }
+    revealRight(){
+	this.reveal('left',false)
+    }
+    revealUp(){
+	this.reveal('top',false)
+    }
+    revealDown(){
+	this.reveal('top',true)
     }
 
     slideLeft(){
 	var me = this;
-	me.coming.render();
+
+	me.renderNewScreen()
+
 	var itemBox = this.going.getBox()
 
 	var old = me.coming.parent.getBox().width;
@@ -199,7 +230,7 @@ export class Transition implements interfaces.Transition{
 	    height:itemBox.height+'px',
 	    float:'left'
 	});
-	//??? timeout will be really ok here
+
 	$(me.going.el).addClass('slideLeft')
 	setTimeout(function(){
 	    $(me.going.el).css({
@@ -212,10 +243,10 @@ export class Transition implements interfaces.Transition{
 	}, 400)
 
     }
+
     slideRight(){
 	var me = this;
 	var itemBox = this.going.getBox();
-	// $(me.going.el).css({'width':itemBox.width*2+'px'});
 
 	var old = me.coming.parent.getBox().width;
 	if(old && !(old+'').match('px')){
@@ -223,7 +254,8 @@ export class Transition implements interfaces.Transition{
 	}
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 
-	me.coming.render();
+	me.renderNewScreen()
+
 	$(me.coming.el).css({
 	    'margin-left':0-itemBox.width+'px',
 	    width:itemBox.width+'px',
@@ -248,10 +280,12 @@ export class Transition implements interfaces.Transition{
 	    me.success();
 	},400);
     }
+
     slideUp(){
 	var me = this;
-	me.coming.render();
-	var itemBox = this.going.getBox();
+	var itemBox = me.fixPosition(me.going)
+	me.renderNewScreen()
+	
 	var old = $(me.going.parent.el).css('height')
 	if(old && !(old+'').match('px')){
 	    old+='px'
@@ -264,7 +298,7 @@ export class Transition implements interfaces.Transition{
 		'margin-top':0-itemBox.height+'px'
 	    });
 	}, 100)
-	
+
 	setTimeout(function(){
 	    $(me.coming.parent.el).css('height',old)
 	    me.success();
@@ -274,21 +308,21 @@ export class Transition implements interfaces.Transition{
     slideDown(){
 
 	var me = this;
-	var itemBox = this.going.getBox();
+	var itemBox = this.fixPosition(this.going)
 
 	var old = $(me.going.parent.el).css('height')
 	if(old && !(old+'').match('px')){
 	    old+='px'
 	}
 	var oldMargin = $(me.coming.el).css('margin-top')
-	me.coming.render()
-
+	
+	me.renderNewScreen()
 
 	$(me.coming.el).css({
 	    'margin-top':0-itemBox.height+'px'
 	});
 	$(me.going.el).before($(me.coming.el));
-	
+
 	$(me.coming.el).addClass('slideDown');
 
 	setTimeout(function(){
@@ -303,8 +337,16 @@ export class Transition implements interfaces.Transition{
 	},400);
     }
 
+    fixBackground(cell:interfaces.Cell, css:{}){
+	var background = $(cell.el).css('background-color') ||
+	    $(cell.el).css('background-image');
+	if(!background || background=='rgba(0, 0, 0, 0)'){
+	    css['background-color'] = 'white'
+	}
+    }
+
     fixPosition(cell:interfaces.Cell){
-	var box = cell.getBox()
+	var box = cell.parent.getBox()
 	$(cell.el).css({
 	    width:box.width,
 	    height:box.height
