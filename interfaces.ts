@@ -12,6 +12,9 @@ export interface Cell{
     destroy();
     record:CellRecord;
     getBox():Box;
+    fillExtraAttrs();
+    beforeRender();
+    afterRender();
 }
 export interface Box {
     left:number;
@@ -52,6 +55,8 @@ export interface Transition{
     revealUp();
     revealDown();
 }
+
+
 
 export interface Application{
     currentScreen:Screen;
