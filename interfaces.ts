@@ -1,3 +1,8 @@
+export interface CallBacks{
+    success:Function;
+    fail:Function;
+}
+
 export interface CellRecord{
     cons:string;
     classes:string[];

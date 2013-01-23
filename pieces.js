@@ -65,6 +65,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         };
         BaseCell.prototype.destroy = function () {
             $(this.el).remove();
+            this.children = [];
         };
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);

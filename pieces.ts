@@ -65,6 +65,7 @@ export class BaseCell implements interfaces.Cell{
     }
     destroy(){
 	$(this.el).remove()
+	this.children = []
     }
     domFromString(s:string){
 	return utils.Utils.DomFromString(s);

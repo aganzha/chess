@@ -16,7 +16,10 @@ export class App{
 	window['application'] =this
 	this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]});
 	this.screens = <interfaces.ScreenMap>{}
-	for(var cons in board){
+	// а зачем их сразу все делать а?
+	// а в них можно че-нить хранить. в destroy убивавется element 
+	// и childrens, но инстанс скрина остается!
+	for(var cons in board){	    
 	    this.screens[cons] = this.instantiate(cons)
 	}
     }
