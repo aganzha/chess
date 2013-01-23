@@ -5,8 +5,9 @@ declare var $;
 export class BaseCell implements interfaces.Cell{
     el:HTMLElement;
     parent:interfaces.Cell;
-
+    children:interfaces.Cell[];
     constructor(public record:interfaces.CellRecord){
+	this.children = <interfaces.Cell[]>[]
     }
     getBox(){
 	return <interfaces.Box>$(this.el).offset()
@@ -47,7 +48,11 @@ export class BaseCell implements interfaces.Cell{
     append(cell:interfaces.Cell){
 	this.prepareEl()	
 	cell.beforeRender()
+
+	// TODO! а вот у вьюпорта что в childs после того как screen удалили?
 	cell.parent = this
+	this.children.push(cell)
+	
 	var ne = cell.render()
 	this.el.appendChild(ne)
 	cell.afterRender()

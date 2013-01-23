@@ -5,6 +5,7 @@ export interface CellRecord{
 }
 export interface Cell{
     parent:Cell;
+    children:Cell[];
     append(cell:Cell);
     el:HTMLElement;
     fillElAttrs();

@@ -11,6 +11,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     var BaseCell = (function () {
         function BaseCell(record) {
             this.record = record;
+            this.children = [];
         }
         BaseCell.prototype.getBox = function () {
             return $(this.el).offset();
@@ -51,6 +52,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.prepareEl();
             cell.beforeRender();
             cell.parent = this;
+            this.children.push(cell);
             var ne = cell.render();
             this.el.appendChild(ne);
             cell.afterRender();
