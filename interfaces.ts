@@ -8,12 +8,19 @@ export interface CellRecord{
     classes:string[];
     id:string;
 }
+
+export interface DelayedCellFiller{
+    (cell:Cell);
+}
+
 export interface Cell{
+    application:Application;
     parent:Cell;
     children:Cell[];
     delayedChildren:Cell[];
     append(cell:Cell);
     appendDelayed(cell:Cell);
+    forceDelayed(filler:DelayedCellFiller);
     delayed:bool;
     el:HTMLElement;
     fillElAttrs();
@@ -24,7 +31,7 @@ export interface Cell{
     fillExtraAttrs();
     beforeRender();
     afterRender();
-    clone():Cell;
+    // clone():Cell;
 }
 export interface Box {
     left:number;
@@ -73,4 +80,6 @@ export interface Application{
     screens:ScreenMap;
     resolve(selector:ScreenSelector);
     transit(selector:ScreenSelector):Transition;
+    instantiate(record:string):Cell;
+    getCellClass(record:CellRecord);
 }

@@ -14,7 +14,7 @@ export class ChessApp{
     constructor(public board:{}, public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
 	window['application'] =this
-	this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]});
+	this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
 	this.screens = <interfaces.ScreenMap>{}
 	// а зачем их сразу все делать а?
 	// а в них можно че-нить хранить. в destroy убивавется element 
@@ -40,7 +40,7 @@ export class ChessApp{
     instantiate(record:string){
 	var record = this.getCellRecord(record)
 	var klass = this.getCellClass(record)
-	return new klass(record)
+	return new klass(record, this)
     }
     resolve(selector:interfaces.ScreenSelector){
 	var screen = selector(this.screens)
@@ -79,17 +79,22 @@ export class ChessApp{
 	    this.resolveCells(board[recordString], cell)
 	}
     }
+    checkUnderscore(klass:string){
+	if(klass[0]=='_'){
+	    klass = klass.substr(1)
+	}
+	return klass
+    }
     getCellRecord(cellString:string):interfaces.CellRecord{
 	var klasses = cellString.split('.')
 	var cons = klasses[0].split('#')[0]
-	if(cons[0]=='_'){
-	    cons = cons.substr(1)
-	}
+	cons = this.checkUnderscore(cons)
 	var id='';
 	var classes=  [];
 	for(var c=0,l=klasses.length;c<l;c++){
 	    var splitted = klasses[c].split('#')
-	    classes.push(splitted[0])
+	    var cl = this.checkUnderscore(splitted[0])	    
+	    classes.push(cl)
 	    if(splitted.length>0){
 		id=splitted[1]
 	    }

@@ -9,14 +9,23 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     var utils = __utils__;
 
     var BaseCell = (function () {
-        function BaseCell(record) {
+        function BaseCell(record, application) {
             this.record = record;
+            this.application = application;
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
         }
-        BaseCell.prototype.clone = function () {
-            return JSON.parse(JSON.stringify(this));
+        BaseCell.prototype.forceDelayed = function (filler) {
+            for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
+                var delayedCell = this.delayedChildren[i];
+                var klass = this.application.getCellClass(delayedCell.record);
+                var clone = new klass(delayedCell.record, this.application);
+                clone.delayedChildren = delayedCell.delayedChildren;
+                this.append(clone);
+                filler(clone);
+                clone.forceDelayed(filler);
+            }
         };
         BaseCell.prototype.getBox = function () {
             return $(this.el).offset();
@@ -108,10 +117,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     exports.BaseScreen = BaseScreen;    
     var ViewPort = (function (_super) {
         __extends(ViewPort, _super);
-        function ViewPort(record) {
-                _super.call(this, record);
-            this.record = record;
-            this.delayed = false;
+        function ViewPort() {
+            _super.apply(this, arguments);
+
         }
         ViewPort.prototype.createEl = function () {
             return document.getElementsByTagName('body')[0];

@@ -8,14 +8,25 @@ export class BaseCell implements interfaces.Cell{
     children:interfaces.Cell[];
     delayedChildren:interfaces.Cell[];
     delayed:bool;
-
-    constructor(public record:interfaces.CellRecord){
+    constructor(public record:interfaces.CellRecord, 
+		public application:interfaces.Application){
 	this.children = <interfaces.Cell[]>[]
 	this.delayedChildren = <interfaces.Cell[]>[]
 	this.delayed = false
     }
-    clone():BaseCell{
-	return <BaseCell>JSON.parse(JSON.stringify(this))
+
+    forceDelayed(filler:interfaces.DelayedCellFiller){
+	for(var i=0,l=this.delayedChildren.length;i<l;i++){	    
+	    var delayedCell = this.delayedChildren[i];
+
+	    var klass = this.application.getCellClass(delayedCell.record)
+	    var clone = new klass(delayedCell.record, this.application)
+	    clone.delayedChildren = delayedCell.delayedChildren
+	    this.append(clone)
+	    // ?? may be filler must be before append (and render???)
+	    filler(clone)
+	    clone.forceDelayed(filler)
+	}
     }
     getBox(){
 	return <interfaces.Box>$(this.el).offset()
@@ -25,7 +36,6 @@ export class BaseCell implements interfaces.Cell{
 	// hack used to reseting element to its original
 	$(el).removeAttr('class')
 	$(el).removeAttr('style')
-
 	var classes = this.record.classes;
 	for(var i=0,l=classes.length;i<l;i++){
 	    if(i!=0)
@@ -106,10 +116,6 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     }
 }
 export class ViewPort extends BaseCell{
-    constructor(public record:interfaces.CellRecord){
-	super(record)
-	this.delayed = false
-    }
     createEl(){
 	return <HTMLElement>document.getElementsByTagName('body')[0]
     }

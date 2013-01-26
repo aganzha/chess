@@ -15,7 +15,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 cons: '',
                 id: '',
                 classes: []
-            });
+            }, this);
             this.screens = {
             };
             for(var cons in board) {
@@ -38,7 +38,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         ChessApp.prototype.instantiate = function (record) {
             var record = this.getCellRecord(record);
             var klass = this.getCellClass(record);
-            return new klass(record);
+            return new klass(record, this);
         };
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
@@ -73,17 +73,22 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 this.resolveCells(board[recordString], cell);
             }
         };
+        ChessApp.prototype.checkUnderscore = function (klass) {
+            if(klass[0] == '_') {
+                klass = klass.substr(1);
+            }
+            return klass;
+        };
         ChessApp.prototype.getCellRecord = function (cellString) {
             var klasses = cellString.split('.');
             var cons = klasses[0].split('#')[0];
-            if(cons[0] == '_') {
-                cons = cons.substr(1);
-            }
+            cons = this.checkUnderscore(cons);
             var id = '';
             var classes = [];
             for(var c = 0, l = klasses.length; c < l; c++) {
                 var splitted = klasses[c].split('#');
-                classes.push(splitted[0]);
+                var cl = this.checkUnderscore(splitted[0]);
+                classes.push(cl);
                 if(splitted.length > 0) {
                     id = splitted[1];
                 }
