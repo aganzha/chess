@@ -7,7 +7,7 @@ declare var $;
 
 
 
-export class App{
+export class ChessApp{
     viewport:pieces.ViewPort;
     screens:interfaces.ScreenMap;
     currentScreen:interfaces.Screen;
@@ -64,16 +64,27 @@ export class App{
 					   })
 	return tr;
     }
+    isCellDelayed(recordString:string):bool{
+	return recordString[0] == '_'
+    }
     resolveCells(board:{}, parent:interfaces.Cell){
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString)
-	    parent.append(cell)
+	    if(this.isCellDelayed(recordString)){
+		parent.appendDelayed(cell)
+	    }	    
+	    else{
+		parent.append(cell)	
+	    }
 	    this.resolveCells(board[recordString], cell)
 	}
     }
     getCellRecord(cellString:string):interfaces.CellRecord{
 	var klasses = cellString.split('.')
 	var cons = klasses[0].split('#')[0]
+	if(cons[0]=='_'){
+	    cons = cons.substr(1)
+	}
 	var id='';
 	var classes=  [];
 	for(var c=0,l=klasses.length;c<l;c++){

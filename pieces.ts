@@ -6,8 +6,16 @@ export class BaseCell implements interfaces.Cell{
     el:HTMLElement;
     parent:interfaces.Cell;
     children:interfaces.Cell[];
+    delayedChildren:interfaces.Cell[];
+    delayed:bool;
+
     constructor(public record:interfaces.CellRecord){
 	this.children = <interfaces.Cell[]>[]
+	this.delayedChildren = <interfaces.Cell[]>[]
+	this.delayed = false
+    }
+    clone():BaseCell{
+	return <BaseCell>JSON.parse(JSON.stringify(this))
     }
     getBox(){
 	return <interfaces.Box>$(this.el).offset()
@@ -46,16 +54,28 @@ export class BaseCell implements interfaces.Cell{
     afterRender(){
     }
     append(cell:interfaces.Cell){
-	this.prepareEl()	
-	cell.beforeRender()
+	if(!this.delayed){
+	    // обычный вариант
+	    this.prepareEl()	
+	    cell.beforeRender()
 
-	// TODO! а вот у вьюпорта что в childs после того как screen удалили?
-	cell.parent = this
-	this.children.push(cell)
-	
-	var ne = cell.render()
-	this.el.appendChild(ne)
-	cell.afterRender()
+	    // TODO! а вот у вьюпорта что в childs после того как screen удалили?
+	    cell.parent = this
+	    this.children.push(cell)
+	    
+	    var ne = cell.render()
+	    this.el.appendChild(ne)
+	    cell.afterRender()
+	}
+	else{
+	    // а это delayedCell!
+	    this.appendDelayed(cell)
+	}
+
+    }
+    appendDelayed(cell:interfaces.Cell){
+	this.delayedChildren.push(cell)
+	cell.delayed = true
     }
     render(){
 	$(this.el).remove()
@@ -86,6 +106,10 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     }
 }
 export class ViewPort extends BaseCell{
+    constructor(public record:interfaces.CellRecord){
+	super(record)
+	this.delayed = false
+    }
     createEl(){
 	return <HTMLElement>document.getElementsByTagName('body')[0]
     }

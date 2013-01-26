@@ -11,7 +11,10 @@ export interface CellRecord{
 export interface Cell{
     parent:Cell;
     children:Cell[];
+    delayedChildren:Cell[];
     append(cell:Cell);
+    appendDelayed(cell:Cell);
+    delayed:bool;
     el:HTMLElement;
     fillElAttrs();
     render():HTMLElement;
@@ -21,6 +24,7 @@ export interface Cell{
     fillExtraAttrs();
     beforeRender();
     afterRender();
+    clone():Cell;
 }
 export interface Box {
     left:number;

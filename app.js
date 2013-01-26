@@ -6,8 +6,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
 
     var utils = __utils__;
 
-    var App = (function () {
-        function App(board, modules) {
+    var ChessApp = (function () {
+        function ChessApp(board, modules) {
             this.board = board;
             this.modules = modules;
             window['application'] = this;
@@ -22,7 +22,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 this.screens[cons] = this.instantiate(cons);
             }
         }
-        App.prototype.getCellClass = function (record) {
+        ChessApp.prototype.getCellClass = function (record) {
             var klass = null;
             for(var i = 0, l = this.modules.length; i < l; i++) {
                 if(this.modules[i][record.cons]) {
@@ -35,19 +35,19 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             }
             return klass;
         };
-        App.prototype.instantiate = function (record) {
+        ChessApp.prototype.instantiate = function (record) {
             var record = this.getCellRecord(record);
             var klass = this.getCellClass(record);
             return new klass(record);
         };
-        App.prototype.resolve = function (selector) {
+        ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             var cons = screen.record.cons;
             this.viewport.append(screen);
             this.resolveCells(this.board[cons], screen);
             this.currentScreen = screen;
         };
-        App.prototype.transit = function (selector) {
+        ChessApp.prototype.transit = function (selector) {
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
             var me = this;
@@ -59,16 +59,26 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             });
             return tr;
         };
-        App.prototype.resolveCells = function (board, parent) {
+        ChessApp.prototype.isCellDelayed = function (recordString) {
+            return recordString[0] == '_';
+        };
+        ChessApp.prototype.resolveCells = function (board, parent) {
             for(var recordString in board) {
                 var cell = this.instantiate(recordString);
-                parent.append(cell);
+                if(this.isCellDelayed(recordString)) {
+                    parent.appendDelayed(cell);
+                } else {
+                    parent.append(cell);
+                }
                 this.resolveCells(board[recordString], cell);
             }
         };
-        App.prototype.getCellRecord = function (cellString) {
+        ChessApp.prototype.getCellRecord = function (cellString) {
             var klasses = cellString.split('.');
             var cons = klasses[0].split('#')[0];
+            if(cons[0] == '_') {
+                cons = cons.substr(1);
+            }
             var id = '';
             var classes = [];
             for(var c = 0, l = klasses.length; c < l; c++) {
@@ -84,8 +94,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 id: id
             };
         };
-        return App;
+        return ChessApp;
     })();
-    exports.App = App;    
+    exports.ChessApp = ChessApp;    
 })
 

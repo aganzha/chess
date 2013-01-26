@@ -12,7 +12,12 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         function BaseCell(record) {
             this.record = record;
             this.children = [];
+            this.delayedChildren = [];
+            this.delayed = false;
         }
+        BaseCell.prototype.clone = function () {
+            return JSON.parse(JSON.stringify(this));
+        };
         BaseCell.prototype.getBox = function () {
             return $(this.el).offset();
         };
@@ -49,13 +54,21 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.afterRender = function () {
         };
         BaseCell.prototype.append = function (cell) {
-            this.prepareEl();
-            cell.beforeRender();
-            cell.parent = this;
-            this.children.push(cell);
-            var ne = cell.render();
-            this.el.appendChild(ne);
-            cell.afterRender();
+            if(!this.delayed) {
+                this.prepareEl();
+                cell.beforeRender();
+                cell.parent = this;
+                this.children.push(cell);
+                var ne = cell.render();
+                this.el.appendChild(ne);
+                cell.afterRender();
+            } else {
+                this.appendDelayed(cell);
+            }
+        };
+        BaseCell.prototype.appendDelayed = function (cell) {
+            this.delayedChildren.push(cell);
+            cell.delayed = true;
         };
         BaseCell.prototype.render = function () {
             $(this.el).remove();
@@ -95,9 +108,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     exports.BaseScreen = BaseScreen;    
     var ViewPort = (function (_super) {
         __extends(ViewPort, _super);
-        function ViewPort() {
-            _super.apply(this, arguments);
-
+        function ViewPort(record) {
+                _super.call(this, record);
+            this.record = record;
+            this.delayed = false;
         }
         ViewPort.prototype.createEl = function () {
             return document.getElementsByTagName('body')[0];
