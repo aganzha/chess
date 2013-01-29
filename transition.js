@@ -71,22 +71,24 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             $(me.coming.el).css({
                 position: 'absolute',
                 opacity: '0.0'
-            });
-            $(me.going.el).addClass('fade');
+            }).hide();
             $(me.coming.el).addClass('fade');
-            var me = this;
+            $(me.going.el).addClass('fade');
             setTimeout(function () {
                 $(me.going.el).css({
                     opacity: '0.0'
                 });
+            }, 100);
+            setTimeout(function () {
                 $(me.coming.el).css({
-                    opacity: '1.0'
+                    opacity: '1.0',
+                    display: 'block'
                 });
                 setTimeout(function () {
                     me.releasePosition(me.coming);
                     me.success();
-                }, 300);
-            }, 100);
+                }, this.slideDelay);
+            }, this.slideDelay);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
             var widthOrHeight = 'height';

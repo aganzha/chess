@@ -77,19 +77,21 @@ export class Transition implements interfaces.Transition{
 	$(me.coming.el).css({
 	    position:'absolute',
 	    opacity:'0.0'
-	});
-	$(me.going.el).addClass('fade');
+	}).hide();
+	
 	$(me.coming.el).addClass('fade');
-	var me = this;
+	$(me.going.el).addClass('fade');
 	setTimeout(function(){
 	    $(me.going.el).css({
 		opacity:'0.0'
-	    });
+	    })},100)
+	setTimeout(function(){	    
 	    $(me.coming.el).css({
-		opacity:'1.0'
-	    });
-	    setTimeout(function(){me.releasePosition(me.coming);me.success()},300)
-	},100);
+	    	opacity:'1.0',
+		display:'block'
+	    })
+	    setTimeout(function(){me.releasePosition(me.coming);me.success()},this.slideDelay)
+	},this.slideDelay)    
     }
 
     cover(leftOrTop:string,
