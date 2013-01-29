@@ -252,6 +252,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             if(old && !(old + '').match('px')) {
                 old += 'px';
             }
+            $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
             $(me.going.el).addClass('slideUp');
             setTimeout(function () {
                 $(me.going.el).css({
@@ -267,19 +268,22 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             var me = this;
             me.renderNewScreen();
             var itemBox = this.fixPosition(this.going);
+            this.fixPosition(this.coming);
             var old = $(me.going.parent.el).css('height');
             if(old && !(old + '').match('px')) {
                 old += 'px';
             }
-            var oldMargin = $(me.coming.el).css('margin-top');
-            $(me.coming.el).css({
-                'margin-top': 0 - itemBox.height + 'px'
-            });
+            $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
             $(me.going.el).before($(me.coming.el));
-            $(me.coming.el).addClass('slideDown');
+            $(me.coming.el).css({
+                'margin-top': '-' + old
+            });
+            setTimeout(function () {
+                $(me.coming.el).addClass('slideDown');
+            }, 50);
             setTimeout(function () {
                 $(me.coming.el).css({
-                    'margin-top': oldMargin
+                    'margin-top': 0
                 });
             }, 100);
             setTimeout(function () {

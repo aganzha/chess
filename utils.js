@@ -8,6 +8,7 @@ define(["require", "exports"], function(require, exports) {
             di.style['display'] = 'none';
             di.id = Utils.flyWeightId;
             document.getElementsByTagName('body')[0].appendChild(di);
+            return di;
         }
         Utils.destroyFlyWeight = function destroyFlyWeight() {
             $('#' + Utils.flyWeightId).remove();

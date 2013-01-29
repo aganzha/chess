@@ -4,11 +4,12 @@ declare var $;
 
 export class Utils{
     static flyWeightId="_chessFlyWeightId";
-    static makeFlyWeight(){
+    static makeFlyWeight():HTMLElement{
 	var di = document.createElement('div')
 	di.style['display'] = 'none'
 	di.id = flyWeightId
 	document.getElementsByTagName('body')[0].appendChild(di)
+	return di
     }
     static destroyFlyWeight(){
 	$('#'+flyWeightId).remove()
