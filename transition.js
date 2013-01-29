@@ -7,6 +7,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             this.selector = selector;
             this.success = success;
             this.error = error;
+            this.slideDelay = 400;
             this.going = app.currentScreen;
             this.coming = selector(app.screens);
         }
@@ -209,17 +210,17 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             setTimeout(function () {
                 $(me.coming.parent.el).css('width', old);
                 me.success();
-            }, 500);
+            }, this.slideDelay);
         };
         Transition.prototype.slideRight = function () {
             var me = this;
+            me.renderNewScreen();
             var itemBox = this.going.getBox();
             var old = me.coming.parent.getBox().width;
             if(old && !(old + '').match('px')) {
                 old += 'px';
             }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
-            me.renderNewScreen();
             $(me.coming.el).css({
                 'margin-left': 0 - itemBox.width + 'px',
                 width: itemBox.width + 'px',
@@ -241,12 +242,12 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             setTimeout(function () {
                 $(me.coming.parent.el).css('width', old);
                 me.success();
-            }, 400);
+            }, this.slideDelay);
         };
         Transition.prototype.slideUp = function () {
             var me = this;
-            var itemBox = me.fixPosition(me.going);
             me.renderNewScreen();
+            var itemBox = me.fixPosition(me.going);
             var old = $(me.going.parent.el).css('height');
             if(old && !(old + '').match('px')) {
                 old += 'px';
@@ -260,17 +261,17 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             setTimeout(function () {
                 $(me.coming.parent.el).css('height', old);
                 me.success();
-            }, 400);
+            }, this.slideDelay);
         };
         Transition.prototype.slideDown = function () {
             var me = this;
+            me.renderNewScreen();
             var itemBox = this.fixPosition(this.going);
             var old = $(me.going.parent.el).css('height');
             if(old && !(old + '').match('px')) {
                 old += 'px';
             }
             var oldMargin = $(me.coming.el).css('margin-top');
-            me.renderNewScreen();
             $(me.coming.el).css({
                 'margin-top': 0 - itemBox.height + 'px'
             });
@@ -284,7 +285,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             setTimeout(function () {
                 $(me.coming.parent.el).css('height', old);
                 me.success();
-            }, 400);
+            }, this.slideDelay);
         };
         Transition.prototype.fixBackground = function (cell, css) {
             var background = $(cell.el).css('background-color') || $(cell.el).css('background-image');

@@ -46,6 +46,8 @@ export class ChessApp{
 	var screen = selector(this.screens)	
 	var cons = screen.record.cons
 	this.viewport.append(screen)
+	console.log('resolved!')
+	console.log(screen, screen.parent)
 	this.resolveCells(this.board[cons], screen)
 	this.currentScreen =screen
     }
@@ -57,6 +59,8 @@ export class ChessApp{
 					   function(){
 					       oldScreen.destroy()
 					       me.currentScreen.fillElAttrs()
+					       // viewport were changed during transition 
+					       // (width and height)
 					       me.viewport.fillElAttrs()
 					   },
 					   function(){

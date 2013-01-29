@@ -44,6 +44,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             var screen = selector(this.screens);
             var cons = screen.record.cons;
             this.viewport.append(screen);
+            console.log('resolved!');
+            console.log(screen, screen.parent);
             this.resolveCells(this.board[cons], screen);
             this.currentScreen = screen;
         };

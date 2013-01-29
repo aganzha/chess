@@ -208,6 +208,7 @@ export class Transition implements interfaces.Transition{
 	this.reveal('top',true)
     }
 
+    slideDelay = 400;
     slideLeft(){
 	var me = this;
 
@@ -240,11 +241,14 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.coming.parent.el).css('width',old)	    
 	    me.success()
-	}, 500)
+	}, this.slideDelay)
     }
 
     slideRight(){
-	var me = this;
+	var me = this
+
+	me.renderNewScreen()
+	
 	var itemBox = this.going.getBox();
 
 	var old = me.coming.parent.getBox().width;
@@ -252,8 +256,6 @@ export class Transition implements interfaces.Transition{
 	    old+='px'
 	}
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
-
-	me.renderNewScreen()
 
 	$(me.coming.el).css({
 	    'margin-left':0-itemBox.width+'px',
@@ -277,13 +279,15 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.coming.parent.el).css('width',old)
 	    me.success();
-	},400);
+	},this.slideDelay);
     }
 
     slideUp(){
 	var me = this;
-	var itemBox = me.fixPosition(me.going)
+
 	me.renderNewScreen()
+
+	var itemBox = me.fixPosition(me.going)
 	
 	var old = $(me.going.parent.el).css('height')
 	if(old && !(old+'').match('px')){
@@ -301,12 +305,15 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.coming.parent.el).css('height',old)
 	    me.success();
-	},400);
+	},this.slideDelay);
     }
 
     slideDown(){
 
 	var me = this;
+	
+	me.renderNewScreen()
+
 	var itemBox = this.fixPosition(this.going)
 
 	var old = $(me.going.parent.el).css('height')
@@ -315,7 +322,6 @@ export class Transition implements interfaces.Transition{
 	}
 	var oldMargin = $(me.coming.el).css('margin-top')
 	
-	me.renderNewScreen()
 
 	$(me.coming.el).css({
 	    'margin-top':0-itemBox.height+'px'
@@ -333,7 +339,7 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.coming.parent.el).css('height',old)
 	    me.success();
-	},400);
+	},this.slideDelay);
     }
 
     fixBackground(cell:interfaces.Cell, css:{}){

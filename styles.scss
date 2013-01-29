@@ -10,16 +10,10 @@ html, body {
 	@include box-sizing('border-box');
     }
 
-    .slideLeft{
+    .slideLeft,.slideRight{
 	@include transition(margin-left 0.3s ease-in);
     }
-    .slideRight{
-	@include transition(margin-left 0.3s ease-in);
-    }
-    .slideDown{
-	@include transition(margin-top 0.3s ease-in);
-    }
-    .slideUp{
+    .slideDown,.slideUp{
 	@include transition(margin-top 0.3s ease-in);
     }
     .fade{
