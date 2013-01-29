@@ -207,9 +207,9 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('width', old + 'px');
+                $(me.coming.parent.el).css('width', old);
                 me.success();
-            }, 400);
+            }, 500);
         };
         Transition.prototype.slideRight = function () {
             var me = this;

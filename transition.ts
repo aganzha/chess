@@ -238,10 +238,9 @@ export class Transition implements interfaces.Transition{
 	    })
 	},100)
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('width',old+'px')
-	    me.success();
-	}, 400)
-
+	    $(me.coming.parent.el).css('width',old)	    
+	    me.success()
+	}, 500)
     }
 
     slideRight(){

@@ -43,7 +43,7 @@ export class ChessApp{
 	return new klass(record, this)
     }
     resolve(selector:interfaces.ScreenSelector){
-	var screen = selector(this.screens)
+	var screen = selector(this.screens)	
 	var cons = screen.record.cons
 	this.viewport.append(screen)
 	this.resolveCells(this.board[cons], screen)
@@ -85,7 +85,7 @@ export class ChessApp{
 	}
 	return klass
     }
-    getCellRecord(cellString:string):interfaces.CellRecord{
+    getCellRecord(cellString:string):interfaces.CellRecord{	
 	var klasses = cellString.split('.')
 	var cons = klasses[0].split('#')[0]
 	cons = this.checkUnderscore(cons)
