@@ -5,16 +5,20 @@ declare var $;
 export class Transition implements interfaces.Transition{
     going:interfaces.Screen;
     coming:interfaces.Screen;
+    parentBox:interfaces.Box;
     constructor(public app:interfaces.Application,
 		public selector:interfaces.ScreenSelector,
 		public success:Function,
 		public error:Function){
 	this.going = app.currentScreen
 	this.coming = selector(app.screens)
-    }
+	this.parentBox = this.going.parent.getBox()
+	
+    }    
     renderNewScreen(){
 	this.app.resolve(this.selector)
     }
+    
     redraw(){
 	//this.fixPosition(this.going)
 	$(this.going.el).hide()
@@ -59,7 +63,7 @@ export class Transition implements interfaces.Transition{
 		    'margin-left':'0px'
 		});
 		setTimeout(function(){
-		    me.releasePosition(me.coming)
+		    me.releasePosition()
 		    me.success()
 		},250)
 	    },250);
@@ -90,8 +94,11 @@ export class Transition implements interfaces.Transition{
 	    	opacity:'1.0',
 		display:'block'
 	    })
-	    setTimeout(function(){me.releasePosition(me.coming);me.success()},this.slideDelay)
-	},this.slideDelay)    
+	    setTimeout(function(){
+		me.releasePosition()
+		me.success()
+	    },me.slideDelay)
+	},me.slideDelay)    
     }
 
     cover(leftOrTop:string,
@@ -133,7 +140,7 @@ export class Transition implements interfaces.Transition{
 	    elCss[leftOrTop] = '0px';
 	    $(me.coming.el).css(elCss);
 	    setTimeout(function(){
-		me.releasePosition(me.coming)
+		me.releasePosition()
 		me.success();
 	    },400)
 	},100);
@@ -160,6 +167,7 @@ export class Transition implements interfaces.Transition{
 	if(leftOrTop=='left'){
 	    widthOrHeight = 'width'
 	}
+	
 	var itemBox = this.fixPosition(this.going)
 	$(me.going.el).css({
 	    position:'absolute',
@@ -191,7 +199,7 @@ export class Transition implements interfaces.Transition{
 	    targetCss[leftOrTop] = positive ? itemBox[widthOrHeight]+'px':0-itemBox[widthOrHeight]+'px'
 	    $(me.going.el).css(targetCss);
 	    setTimeout(function(){
-		me.releasePosition(me.coming)
+		me.releasePosition()
 		me.success();
 	    },400)
 	},100);
@@ -364,12 +372,10 @@ export class Transition implements interfaces.Transition{
 	})
 	return box
     }
-    releasePosition(cell:interfaces.Cell){
-	var box = cell.getBox()
-	$(cell.el).css({
+    releasePosition(){
+	$(this.coming.el).css({
 	    width:'',
 	    height:''
 	})
-	return box
     }
 }

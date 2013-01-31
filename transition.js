@@ -10,6 +10,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             this.slideDelay = 400;
             this.going = app.currentScreen;
             this.coming = selector(app.screens);
+            this.parentBox = this.going.parent.getBox();
         }
         Transition.prototype.renderNewScreen = function () {
             this.app.resolve(this.selector);
@@ -53,7 +54,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                         'margin-left': '0px'
                     });
                     setTimeout(function () {
-                        me.releasePosition(me.coming);
+                        me.releasePosition();
                         me.success();
                     }, 250);
                 }, 250);
@@ -85,10 +86,10 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                     display: 'block'
                 });
                 setTimeout(function () {
-                    me.releasePosition(me.coming);
+                    me.releasePosition();
                     me.success();
-                }, this.slideDelay);
-            }, this.slideDelay);
+                }, me.slideDelay);
+            }, me.slideDelay);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
             var widthOrHeight = 'height';
@@ -120,7 +121,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 elCss[leftOrTop] = '0px';
                 $(me.coming.el).css(elCss);
                 setTimeout(function () {
-                    me.releasePosition(me.coming);
+                    me.releasePosition();
                     me.success();
                 }, 400);
             }, 100);
@@ -167,7 +168,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
                 $(me.going.el).css(targetCss);
                 setTimeout(function () {
-                    me.releasePosition(me.coming);
+                    me.releasePosition();
                     me.success();
                 }, 400);
             }, 100);
@@ -307,13 +308,11 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             });
             return box;
         };
-        Transition.prototype.releasePosition = function (cell) {
-            var box = cell.getBox();
-            $(cell.el).css({
+        Transition.prototype.releasePosition = function () {
+            $(this.coming.el).css({
                 width: '',
                 height: ''
             });
-            return box;
         };
         return Transition;
     })();
