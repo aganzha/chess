@@ -169,6 +169,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 $(me.going.el).css(targetCss);
                 setTimeout(function () {
                     me.releasePosition();
+                    me.resetParent();
                     me.success();
                 }, 400);
             }, 100);
@@ -312,6 +313,12 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             $(this.coming.el).css({
                 width: '',
                 height: ''
+            });
+        };
+        Transition.prototype.resetParent = function () {
+            $(this.coming.el).css({
+                width: this.parentBox.width + 'px',
+                height: this.parentBox.height + 'px'
             });
         };
         return Transition;

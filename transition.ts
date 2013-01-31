@@ -159,8 +159,7 @@ export class Transition implements interfaces.Transition{
 	this.cover('top',false)
     }
 
-    reveal(leftOrTop:string,
-	   positive:bool)
+    reveal(leftOrTop:string,positive:bool)
     {
 	var me = this;
 	var widthOrHeight = 'height'
@@ -200,7 +199,8 @@ export class Transition implements interfaces.Transition{
 	    $(me.going.el).css(targetCss);
 	    setTimeout(function(){
 		me.releasePosition()
-		me.success();
+		me.resetParent()
+		me.success()
 	    },400)
 	},100);
     }
@@ -377,5 +377,8 @@ export class Transition implements interfaces.Transition{
 	    width:'',
 	    height:''
 	})
+    }
+    resetParent(){
+	$(this.coming.el).css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
     }
 }
