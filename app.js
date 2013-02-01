@@ -7,15 +7,12 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
     var utils = __utils__;
 
     var ChessApp = (function () {
-        function ChessApp(board, modules) {
+        function ChessApp(viewport, board, modules) {
+            this.viewport = viewport;
             this.board = board;
             this.modules = modules;
+            viewport.application = this;
             window['application'] = this;
-            this.viewport = new pieces.ViewPort({
-                cons: '',
-                id: '',
-                classes: []
-            }, this);
             this.screens = {
             };
             for(var cons in board) {
@@ -41,7 +38,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             return new klass(record, this);
         };
         ChessApp.prototype.resolve = function (selector) {
-            console.log('daaaaaaaaaaaaa!~');
             var screen = selector(this.screens);
             var cons = screen.record.cons;
             this.viewport.append(screen);
@@ -63,7 +59,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                                     newScreen.afterSelfApear(oldScreen);
                                     oldScreen.destroy();
                                     me.currentScreen.fillElAttrs();
-                                    me.viewport.fillElAttrs();
                                 },
                                 fail: function () {
                                 }

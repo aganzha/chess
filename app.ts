@@ -8,13 +8,13 @@ declare var $;
 
 
 export class ChessApp{
-    viewport:pieces.ViewPort;
     screens:interfaces.ScreenMap;
     currentScreen:interfaces.Screen;
-    constructor(public board:{}, public modules:{}[]){
+    constructor(public viewport:pieces.ViewPort, public board:{}, public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+	viewport.application = this
 	window['application'] =this
-	this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
+	// this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
 	this.screens = <interfaces.ScreenMap>{}
 	// а зачем их сразу все делать а?
 	// а в них можно че-нить хранить. в destroy убивавется element
@@ -68,7 +68,7 @@ export class ChessApp{
 						me.currentScreen.fillElAttrs()
 						// viewport were changed during transition
 						// (width and height)
-						me.viewport.fillElAttrs()
+						//me.viewport.fillElAttrs()
 					    },
 					    fail:function(){
 						// rollback current screen?

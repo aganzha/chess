@@ -16,12 +16,12 @@ export class Transition implements interfaces.Transition{
 	this.success = callbacks.success
 	this.fail = callbacks.fail
 	this.parentBox = this.going.parent.getBox()
-	
-    }    
+
+    }
     renderNewScreen(){
 	this.app.resolve(this.selector)
     }
-    
+
     redraw(){
 	//this.fixPosition(this.going)
 	$(this.going.el).hide()
@@ -85,14 +85,14 @@ export class Transition implements interfaces.Transition{
 	    position:'absolute',
 	    opacity:'0.0'
 	}).hide();
-	
+
 	$(me.coming.el).addClass('fade');
 	$(me.going.el).addClass('fade');
 	setTimeout(function(){
 	    $(me.going.el).css({
 		opacity:'0.0'
 	    })},100)
-	setTimeout(function(){	    
+	setTimeout(function(){
 	    $(me.coming.el).css({
 	    	opacity:'1.0',
 		display:'block'
@@ -101,7 +101,7 @@ export class Transition implements interfaces.Transition{
 		me.releasePosition()
 		me.success()
 	    },me.slideDelay)
-	},me.slideDelay)    
+	},me.slideDelay)
     }
 
     cover(leftOrTop:string,
@@ -126,7 +126,7 @@ export class Transition implements interfaces.Transition{
 	};
 
 	this.fixBackground(this.coming,targetCss)
-	
+
 	this.fixPosition(me.coming)
 
 	targetCss[leftOrTop] = positive?itemBox[widthOrHeight]:0-itemBox[widthOrHeight]+'px';
@@ -169,7 +169,7 @@ export class Transition implements interfaces.Transition{
 	if(leftOrTop=='left'){
 	    widthOrHeight = 'width'
 	}
-	
+
 	var itemBox = this.fixPosition(this.going)
 	$(me.going.el).css({
 	    position:'absolute',
@@ -185,7 +185,7 @@ export class Transition implements interfaces.Transition{
 
 	this.fixBackground(this.going, targetCss)
 	$(this.going.el).css(targetCss)
-	
+
 	$(me.coming.el).css({
 	    position:'absolute',
 	    'z-index':9
@@ -229,10 +229,6 @@ export class Transition implements interfaces.Transition{
 
 	var itemBox = this.going.getBox()
 
-	var old = me.coming.parent.getBox().width;
-	if(old && !(old+'').match('px')){
-	    old+='px'
-	}
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
@@ -252,7 +248,7 @@ export class Transition implements interfaces.Transition{
 	    })
 	},100)
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('width',old)	    
+	    me.resetParent()
 	    me.success()
 	}, this.slideDelay)
     }
@@ -261,13 +257,9 @@ export class Transition implements interfaces.Transition{
 	var me = this
 
 	me.renderNewScreen()
-	
+
 	var itemBox = this.going.getBox();
 
-	var old = me.coming.parent.getBox().width;
-	if(old && !(old+'').match('px')){
-	    old+='px'
-	}
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 
 	$(me.coming.el).css({
@@ -290,7 +282,7 @@ export class Transition implements interfaces.Transition{
 	}, 100)
 
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('width',old)
+	    me.resetParent()
 	    me.success();
 	},this.slideDelay);
     }
@@ -301,11 +293,6 @@ export class Transition implements interfaces.Transition{
 	me.renderNewScreen()
 
 	var itemBox = me.fixPosition(me.going)
-	
-	var old = $(me.going.parent.el).css('height')
-	if(old && !(old+'').match('px')){
-	    old+='px'
-	}
 
 	$(me.coming.parent.el).css('height',itemBox.height*2+'px')
 
@@ -318,7 +305,7 @@ export class Transition implements interfaces.Transition{
 	}, 100)
 
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('height',old)
+	    me.resetParent()
 	    me.success();
 	},this.slideDelay);
     }
@@ -326,22 +313,17 @@ export class Transition implements interfaces.Transition{
     slideDown(){
 
 	var me = this;
-	
+
 	me.renderNewScreen()
-	
+
 	var itemBox = this.fixPosition(this.going)
 	this.fixPosition(this.coming)
 
-	var old = $(me.going.parent.el).css('height')
-	if(old && !(old+'').match('px')){
-	    old+='px'
-	}
-	
 	$(me.coming.parent.el).css('height',itemBox.height*2+'px')
 
 	$(me.going.el).before($(me.coming.el));
 
-	$(me.coming.el).css({'margin-top':'-'+old})
+	$(me.coming.el).css({'margin-top':'-'+me.parentBox.height+'px'})
 
 	setTimeout(function(){
 	    $(me.coming.el).addClass('slideDown');
@@ -350,13 +332,13 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.coming.el).css({
 		'margin-top':0
-	    });
+	    })
 	}, 100)
 
 	setTimeout(function(){
-	    $(me.coming.parent.el).css('height',old)
-	    me.success();
-	},this.slideDelay);
+	    me.resetParent()
+	    me.success()
+	},this.slideDelay)
     }
 
     fixBackground(cell:interfaces.Cell, css:{}){
@@ -382,6 +364,7 @@ export class Transition implements interfaces.Transition{
 	})
     }
     resetParent(){
-	$(this.coming.el).css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
+	console.log(this.parentBox.width+'px', this.coming.parent.el)
+	$(this.coming.parent.el).css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
     }
 }

@@ -190,10 +190,6 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             var me = this;
             me.renderNewScreen();
             var itemBox = this.going.getBox();
-            var old = me.coming.parent.getBox().width;
-            if(old && !(old + '').match('px')) {
-                old += 'px';
-            }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
@@ -212,7 +208,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('width', old);
+                me.resetParent();
                 me.success();
             }, this.slideDelay);
         };
@@ -220,10 +216,6 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             var me = this;
             me.renderNewScreen();
             var itemBox = this.going.getBox();
-            var old = me.coming.parent.getBox().width;
-            if(old && !(old + '').match('px')) {
-                old += 'px';
-            }
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
                 'margin-left': 0 - itemBox.width + 'px',
@@ -244,7 +236,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('width', old);
+                me.resetParent();
                 me.success();
             }, this.slideDelay);
         };
@@ -252,10 +244,6 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             var me = this;
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            var old = $(me.going.parent.el).css('height');
-            if(old && !(old + '').match('px')) {
-                old += 'px';
-            }
             $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
             $(me.going.el).addClass('slideUp');
             setTimeout(function () {
@@ -264,7 +252,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('height', old);
+                me.resetParent();
                 me.success();
             }, this.slideDelay);
         };
@@ -273,14 +261,10 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             me.renderNewScreen();
             var itemBox = this.fixPosition(this.going);
             this.fixPosition(this.coming);
-            var old = $(me.going.parent.el).css('height');
-            if(old && !(old + '').match('px')) {
-                old += 'px';
-            }
             $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
             $(me.going.el).before($(me.coming.el));
             $(me.coming.el).css({
-                'margin-top': '-' + old
+                'margin-top': '-' + me.parentBox.height + 'px'
             });
             setTimeout(function () {
                 $(me.coming.el).addClass('slideDown');
@@ -291,7 +275,7 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
                 });
             }, 100);
             setTimeout(function () {
-                $(me.coming.parent.el).css('height', old);
+                me.resetParent();
                 me.success();
             }, this.slideDelay);
         };
@@ -316,7 +300,8 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             });
         };
         Transition.prototype.resetParent = function () {
-            $(this.coming.el).css({
+            console.log(this.parentBox.width + 'px', this.coming.parent.el);
+            $(this.coming.parent.el).css({
                 width: this.parentBox.width + 'px',
                 height: this.parentBox.height + 'px'
             });

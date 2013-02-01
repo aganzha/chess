@@ -117,7 +117,11 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     }
 }
 export class ViewPort extends BaseCell{
+    constructor(el:HTMLElement){
+	this.el = el
+	super({cons:'',id:'',classes:[]}, null)
+    }
     createEl(){
-	return <HTMLElement>document.getElementsByTagName('body')[0]
+    	return this.el
     }
 }

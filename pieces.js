@@ -118,12 +118,16 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     exports.BaseScreen = BaseScreen;    
     var ViewPort = (function (_super) {
         __extends(ViewPort, _super);
-        function ViewPort() {
-            _super.apply(this, arguments);
-
+        function ViewPort(el) {
+            this.el = el;
+                _super.call(this, {
+        cons: '',
+        id: '',
+        classes: []
+    }, null);
         }
         ViewPort.prototype.createEl = function () {
-            return document.getElementsByTagName('body')[0];
+            return this.el;
         };
         return ViewPort;
     })(BaseCell);
