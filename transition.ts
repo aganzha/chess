@@ -363,8 +363,8 @@ export class Transition implements interfaces.Transition{
 	    height:''
 	})
     }
-    resetParent(){
-	console.log(this.parentBox.width+'px', this.coming.parent.el)
-	$(this.coming.parent.el).css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
+    resetParent(){	
+	$(this.coming.parent.el)
+	    .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
     }
 }

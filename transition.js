@@ -300,7 +300,6 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
             });
         };
         Transition.prototype.resetParent = function () {
-            console.log(this.parentBox.width + 'px', this.coming.parent.el);
             $(this.coming.parent.el).css({
                 width: this.parentBox.width + 'px',
                 height: this.parentBox.height + 'px'
