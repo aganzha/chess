@@ -6,12 +6,15 @@ export class Transition implements interfaces.Transition{
     going:interfaces.Screen;
     coming:interfaces.Screen;
     parentBox:interfaces.Box;
+    success:Function;
+    fail:Function;
     constructor(public app:interfaces.Application,
 		public selector:interfaces.ScreenSelector,
-		public success:Function,
-		public error:Function){
+		callbacks:interfaces.CallBacks){
 	this.going = app.currentScreen
 	this.coming = selector(app.screens)
+	this.success = callbacks.success
+	this.fail = callbacks.fail
 	this.parentBox = this.going.parent.getBox()
 	
     }    

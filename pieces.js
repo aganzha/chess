@@ -101,16 +101,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             _super.apply(this, arguments);
 
         }
-        BaseScreen.prototype.beforeSelfReplace = function (other) {
+        BaseScreen.prototype.beforeSelfReplace = function (other, callBacks) {
+            callBacks.success();
         };
-        BaseScreen.prototype.beforeSelfApear = function (other) {
+        BaseScreen.prototype.beforeSelfApear = function (other, callBacks) {
+            callBacks.success();
         };
         BaseScreen.prototype.afterSelfReplace = function (other) {
         };
         BaseScreen.prototype.afterSelfApear = function (other) {
         };
         BaseScreen.prototype.replaceBy = function (other) {
-            console.log('eplace');
         };
         return BaseScreen;
     })(BaseCell);

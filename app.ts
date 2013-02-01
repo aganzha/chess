@@ -17,9 +17,9 @@ export class ChessApp{
 	this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
 	this.screens = <interfaces.ScreenMap>{}
 	// а зачем их сразу все делать а?
-	// а в них можно че-нить хранить. в destroy убивавется element 
+	// а в них можно че-нить хранить. в destroy убивавется element
 	// и childrens, но инстанс скрина остается!
-	for(var cons in board){	    
+	for(var cons in board){
 	    this.screens[cons] = this.instantiate(cons)
 	}
     }
@@ -43,30 +43,46 @@ export class ChessApp{
 	return new klass(record, this)
     }
     resolve(selector:interfaces.ScreenSelector){
-	var screen = selector(this.screens)	
+	var screen = selector(this.screens)
 	var cons = screen.record.cons
 	this.viewport.append(screen)
-	console.log('resolved!')
-	console.log(screen, screen.parent)
 	this.resolveCells(this.board[cons], screen)
 	this.currentScreen =screen
     }
-    transit(selector:interfaces.ScreenSelector){
+    transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
 	utils.Utils.destroyFlyWeight()
-	var oldScreen = this.currentScreen	
-	var me = this;	
-	var tr = new transition.Transition(me,selector,
-					   function(){
-					       oldScreen.destroy()
-					       me.currentScreen.fillElAttrs()
-					       // viewport were changed during transition 
-					       // (width and height)
-					       me.viewport.fillElAttrs()
-					   },
-					   function(){
-					       // rollback current screen?
-					   })
-	return tr;
+	var oldScreen = this.currentScreen
+	var newScreen = selector(this.screens)
+	var me = this
+	oldScreen.beforeSelfReplace(newScreen, {
+	    success:function(){
+		newScreen.beforeSelfApear(oldScreen,{
+		    success:function(){
+			var tr = new transition
+			    .Transition(me,selector,
+					{
+					    success:function(){
+						oldScreen.afterSelfReplace(newScreen)
+						newScreen.afterSelfApear(oldScreen)
+						oldScreen.destroy()
+						me.currentScreen.fillElAttrs()
+						// viewport were changed during transition
+						// (width and height)
+						me.viewport.fillElAttrs()
+					    },
+					    fail:function(){
+						// rollback current screen?
+					    }
+					})
+			receiver(tr)
+		    },
+		    fail:function(){
+		    }
+		})
+	    },
+	    fail:function(){
+	    }
+	})
     }
     isCellDelayed(recordString:string):bool{
 	return recordString[0] == '_'
@@ -76,9 +92,9 @@ export class ChessApp{
 	    var cell = this.instantiate(recordString)
 	    if(this.isCellDelayed(recordString)){
 		parent.appendDelayed(cell)
-	    }	    
+	    }
 	    else{
-		parent.append(cell)	
+		parent.append(cell)
 	    }
 	    this.resolveCells(board[recordString], cell)
 	}
@@ -89,7 +105,7 @@ export class ChessApp{
 	}
 	return klass
     }
-    getCellRecord(cellString:string):interfaces.CellRecord{	
+    getCellRecord(cellString:string):interfaces.CellRecord{
 	var klasses = cellString.split('.')
 	var cons = klasses[0].split('#')[0]
 	cons = this.checkUnderscore(cons)
@@ -97,7 +113,7 @@ export class ChessApp{
 	var classes=  [];
 	for(var c=0,l=klasses.length;c<l;c++){
 	    var splitted = klasses[c].split('#')
-	    var cl = this.checkUnderscore(splitted[0])	    
+	    var cl = this.checkUnderscore(splitted[0])
 	    classes.push(cl)
 	    if(splitted.length>0){
 		id=splitted[1]

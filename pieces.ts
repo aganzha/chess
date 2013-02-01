@@ -103,16 +103,17 @@ export class BaseCell implements interfaces.Cell{
 }
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
-    beforeSelfReplace(other:interfaces.Screen){
+    beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
+	callBacks.success()
     }
-    beforeSelfApear(other:interfaces.Screen){
+    beforeSelfApear(other:interfaces.Screen, callBacks:interfaces.CallBacks){
+	callBacks.success()
     }
     afterSelfReplace(other:interfaces.Screen){
     }
     afterSelfApear(other:interfaces.Screen){
     }
-    replaceBy(other:interfaces.Screen){
-	console.log('eplace')
+    replaceBy(other:interfaces.Screen){	
     }
 }
 export class ViewPort extends BaseCell{

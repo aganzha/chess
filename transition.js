@@ -2,14 +2,14 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
     var interfaces = __interfaces__;
 
     var Transition = (function () {
-        function Transition(app, selector, success, error) {
+        function Transition(app, selector, callbacks) {
             this.app = app;
             this.selector = selector;
-            this.success = success;
-            this.error = error;
             this.slideDelay = 400;
             this.going = app.currentScreen;
             this.coming = selector(app.screens);
+            this.success = callbacks.success;
+            this.fail = callbacks.fail;
             this.parentBox = this.going.parent.getBox();
         }
         Transition.prototype.renderNewScreen = function () {

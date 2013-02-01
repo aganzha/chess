@@ -41,25 +41,42 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             return new klass(record, this);
         };
         ChessApp.prototype.resolve = function (selector) {
+            console.log('daaaaaaaaaaaaa!~');
             var screen = selector(this.screens);
             var cons = screen.record.cons;
             this.viewport.append(screen);
-            console.log('resolved!');
-            console.log(screen, screen.parent);
             this.resolveCells(this.board[cons], screen);
             this.currentScreen = screen;
         };
-        ChessApp.prototype.transit = function (selector) {
+        ChessApp.prototype.transit = function (selector, receiver) {
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
+            var newScreen = selector(this.screens);
             var me = this;
-            var tr = new transition.Transition(me, selector, function () {
-                oldScreen.destroy();
-                me.currentScreen.fillElAttrs();
-                me.viewport.fillElAttrs();
-            }, function () {
+            oldScreen.beforeSelfReplace(newScreen, {
+                success: function () {
+                    newScreen.beforeSelfApear(oldScreen, {
+                        success: function () {
+                            var tr = new transition.Transition(me, selector, {
+                                success: function () {
+                                    oldScreen.afterSelfReplace(newScreen);
+                                    newScreen.afterSelfApear(oldScreen);
+                                    oldScreen.destroy();
+                                    me.currentScreen.fillElAttrs();
+                                    me.viewport.fillElAttrs();
+                                },
+                                fail: function () {
+                                }
+                            });
+                            receiver(tr);
+                        },
+                        fail: function () {
+                        }
+                    });
+                },
+                fail: function () {
+                }
             });
-            return tr;
         };
         ChessApp.prototype.isCellDelayed = function (recordString) {
             return recordString[0] == '_';

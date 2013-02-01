@@ -1,6 +1,6 @@
 export interface CallBacks{
     success:Function;
-    fail:Function;
+    fail?:Function;
 }
 
 export interface CellRecord{
@@ -40,8 +40,8 @@ export interface Box {
     height:number;
 }
 export interface Screen extends Cell{
-    beforeSelfReplace(other:Screen);
-    beforeSelfApear(other:Screen);
+    beforeSelfReplace(other:Screen, callBacks:CallBacks);
+    beforeSelfApear(other:Screen,callBacks:CallBacks);
     afterSelfReplace(other:Screen);
     afterSelfApear(other:Screen);
     getBox():Box;
@@ -79,7 +79,7 @@ export interface Application{
     currentScreen:Screen;
     screens:ScreenMap;
     resolve(selector:ScreenSelector);
-    transit(selector:ScreenSelector):Transition;
+    transit(selector:ScreenSelector,receiver:(Transition)=>any);
     instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
 }
