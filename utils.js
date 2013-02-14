@@ -9,10 +9,10 @@ define(["require", "exports"], function(require, exports) {
             di.id = Utils.flyWeightId;
             document.getElementsByTagName('body')[0].appendChild(di);
             return di;
-        }
+        };
         Utils.destroyFlyWeight = function destroyFlyWeight() {
             $('#' + Utils.flyWeightId).remove();
-        }
+        };
         Utils.DomFromString = function DomFromString(s) {
             var flw = document.getElementById(Utils.flyWeightId);
             if(!flw) {
@@ -21,14 +21,14 @@ define(["require", "exports"], function(require, exports) {
             }
             flw.innerHTML = s;
             return flw.children[0];
-        }
+        };
         Utils.template = function template(templateId, replacements) {
             var txt = document.getElementById(templateId).innerHTML;
             for(var key in replacements) {
                 txt = txt.replace(key, replacements[key]);
             }
             return txt;
-        }
+        };
         Utils.walkDown = function walkDown(parent, collected, cons, className, id) {
             for(var i = 0, l = parent.children.length; i < l; i++) {
                 var cell = parent.children[i];
@@ -53,14 +53,13 @@ define(["require", "exports"], function(require, exports) {
                 }
                 this.walkDown(cell, collected, cons, className, id);
             }
-        }
+        };
         Utils.getPieces = function getPieces(cons, className, id) {
             var answer = [];
             this.walkDown(window['application'].currentScreen, answer, cons, className, id);
             return answer;
-        }
+        };
         return Utils;
     })();
     exports.Utils = Utils;    
 })
-

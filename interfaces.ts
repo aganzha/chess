@@ -78,6 +78,7 @@ export interface Transition{
 export interface Application{
     currentScreen:Screen;
     screens:ScreenMap;
+    viewport:Cell;
     resolve(selector:ScreenSelector);
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
     instantiate(record:string):Cell;

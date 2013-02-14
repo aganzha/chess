@@ -2,7 +2,7 @@ var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
-}
+};
 define(["require", "exports", "chess/interfaces", "chess/utils"], function(require, exports, __interfaces__, __utils__) {
     var interfaces = __interfaces__;
 
@@ -133,4 +133,3 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
     })(BaseCell);
     exports.ViewPort = ViewPort;    
 })
-

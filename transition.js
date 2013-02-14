@@ -309,4 +309,3 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
     })();
     exports.Transition = Transition;    
 })
-

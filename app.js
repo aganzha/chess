@@ -117,4 +117,3 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
     })();
     exports.ChessApp = ChessApp;    
 })
-
