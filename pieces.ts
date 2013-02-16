@@ -49,9 +49,12 @@ export class BaseCell implements interfaces.Cell{
     }
     fillExtraAttrs(){
     }
+    tag='div';
+    html='';
     createEl():HTMLElement{
-	var div = document.createElement('div')
-	return div
+	var el = document.createElement(this.tag)
+	el.innerHTML = this.html
+	return el
     }
     prepareEl(){
 	if(!this.el){

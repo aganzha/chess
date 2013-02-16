@@ -12,6 +12,8 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         function BaseCell(record, application) {
             this.record = record;
             this.application = application;
+            this.tag = 'div';
+            this.html = '';
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
@@ -49,8 +51,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.fillExtraAttrs = function () {
         };
         BaseCell.prototype.createEl = function () {
-            var div = document.createElement('div');
-            return div;
+            var el = document.createElement(this.tag);
+            el.innerHTML = this.html;
+            return el;
         };
         BaseCell.prototype.prepareEl = function () {
             if(!this.el) {

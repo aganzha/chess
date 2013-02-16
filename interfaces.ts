@@ -23,6 +23,8 @@ export interface Cell{
     forceDelayed(filler:DelayedCellFiller);
     delayed:bool;
     el:HTMLElement;
+    tag:string;
+    html:string;
     fillElAttrs();
     render():HTMLElement;
     destroy();
@@ -31,7 +33,6 @@ export interface Cell{
     fillExtraAttrs();
     beforeRender();
     afterRender();
-    // clone():Cell;
 }
 export interface Box {
     left:number;
