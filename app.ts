@@ -88,6 +88,11 @@ export class ChessApp{
 	return recordString[0] == '_'
     }
     resolveCells(board:{}, parent:interfaces.Cell){
+	if(typeof board == 'string'){
+	    parent.html=<string>board
+	    parent.updateEl()
+	    return
+	}
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString)
 	    if(this.isCellDelayed(recordString)){

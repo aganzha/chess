@@ -61,6 +61,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 this.fillElAttrs();
             }
         };
+        BaseCell.prototype.updateEl = function () {
+            $(this.el).html(this.html);
+        };
         BaseCell.prototype.beforeRender = function () {
         };
         BaseCell.prototype.afterRender = function () {

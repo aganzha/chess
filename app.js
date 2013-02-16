@@ -77,6 +77,11 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             return recordString[0] == '_';
         };
         ChessApp.prototype.resolveCells = function (board, parent) {
+            if(typeof board == 'string') {
+                parent.html = board;
+                parent.updateEl();
+                return;
+            }
             for(var recordString in board) {
                 var cell = this.instantiate(recordString);
                 if(this.isCellDelayed(recordString)) {

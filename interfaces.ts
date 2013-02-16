@@ -33,6 +33,7 @@ export interface Cell{
     fillExtraAttrs();
     beforeRender();
     afterRender();
+    updateEl();
 }
 export interface Box {
     left:number;
