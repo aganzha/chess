@@ -65,10 +65,15 @@ export class BaseCell implements interfaces.Cell{
     updateEl(){
 	$(this.el).html(this.html)
     }
+    beforeResolve(){
+    }
+    afterResolve(){
+    }
     beforeRender(){
     }
     afterRender(){
     }
+    
     append(cell:interfaces.Cell){
 	if(!this.delayed){
 	    // обычный вариант

@@ -34,6 +34,8 @@ export interface Cell{
     beforeRender();
     afterRender();
     updateEl();
+    afterResolve();
+    beforeResolve();    
 }
 export interface Box {
     left:number;

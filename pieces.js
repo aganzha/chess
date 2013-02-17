@@ -64,6 +64,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.updateEl = function () {
             $(this.el).html(this.html);
         };
+        BaseCell.prototype.beforeResolve = function () {
+        };
+        BaseCell.prototype.afterResolve = function () {
+        };
         BaseCell.prototype.beforeRender = function () {
         };
         BaseCell.prototype.afterRender = function () {
@@ -76,7 +80,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 this.children.push(cell);
                 var ne = cell.render();
                 this.el.appendChild(ne);
-                console.log('zz', this.el, ne);
                 cell.afterRender();
             } else {
                 this.appendDelayed(cell);

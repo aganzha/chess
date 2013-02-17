@@ -77,9 +77,11 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             return recordString[0] == '_';
         };
         ChessApp.prototype.resolveCells = function (board, parent) {
+            parent.beforeResolve();
             if(typeof board == 'string') {
                 parent.html = board;
                 parent.updateEl();
+                parent.afterResolve();
                 return;
             }
             for(var recordString in board) {
@@ -91,6 +93,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 }
                 this.resolveCells(board[recordString], cell);
             }
+            console.log('after', parent);
+            parent.afterResolve();
         };
         ChessApp.prototype.checkUnderscore = function (klass) {
             if(klass[0] == '_') {

@@ -88,9 +88,11 @@ export class ChessApp{
 	return recordString[0] == '_'
     }
     resolveCells(board:{}, parent:interfaces.Cell){
+	parent.beforeResolve()
 	if(typeof board == 'string'){
 	    parent.html=<string>board	    
-	    parent.updateEl()
+	    parent.updateEl()	    
+	    parent.afterResolve()
 	    return
 	}
 	for(var recordString in board){
@@ -103,6 +105,7 @@ export class ChessApp{
 	    }
 	    this.resolveCells(board[recordString], cell)
 	}
+	parent.afterResolve()
     }
     checkUnderscore(klass:string){
 	if(klass[0]=='_'){
