@@ -80,7 +80,7 @@ export class BaseCell implements interfaces.Cell{
 	    this.children.push(cell)
 	    
 	    var ne = cell.render()
-	    this.el.appendChild(ne)
+	    this.el.appendChild(ne)	    
 	    cell.afterRender()
 	}
 	else{

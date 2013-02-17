@@ -76,6 +76,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 this.children.push(cell);
                 var ne = cell.render();
                 this.el.appendChild(ne);
+                console.log('zz', this.el, ne);
                 cell.afterRender();
             } else {
                 this.appendDelayed(cell);
