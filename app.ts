@@ -90,8 +90,7 @@ export class ChessApp{
     resolveCells(board:{}, parent:interfaces.Cell){
 	parent.beforeResolve()
 	if(typeof board == 'string'){
-	    parent.html=<string>board	    
-	    parent.updateEl()	    
+	    parent.updateEl(<string>board)
 	    parent.afterResolve()
 	    return
 	}

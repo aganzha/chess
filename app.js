@@ -79,8 +79,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         ChessApp.prototype.resolveCells = function (board, parent) {
             parent.beforeResolve();
             if(typeof board == 'string') {
-                parent.html = board;
-                parent.updateEl();
+                parent.updateEl(board);
                 parent.afterResolve();
                 return;
             }
@@ -93,7 +92,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 }
                 this.resolveCells(board[recordString], cell);
             }
-            console.log('after', parent);
             parent.afterResolve();
         };
         ChessApp.prototype.checkUnderscore = function (klass) {

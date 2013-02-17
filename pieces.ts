@@ -62,8 +62,9 @@ export class BaseCell implements interfaces.Cell{
 	    this.fillElAttrs()
 	}
     }
-    updateEl(){
-	$(this.el).html(this.html)
+    updateEl(html:string){
+	this.html = html
+	$(this.el).html(html)
     }
     beforeResolve(){
     }

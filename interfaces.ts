@@ -33,7 +33,7 @@ export interface Cell{
     fillExtraAttrs();
     beforeRender();
     afterRender();
-    updateEl();
+    updateEl(html:string);
     afterResolve();
     beforeResolve();    
 }
