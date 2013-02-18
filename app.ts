@@ -12,6 +12,7 @@ export class ChessApp{
     currentScreen:interfaces.Screen;
     constructor(public viewport:pieces.ViewPort, public board:{}, public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+	modules.push(pieces)
 	viewport.application = this
 	window['application'] =this
 	// this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
@@ -88,10 +89,15 @@ export class ChessApp{
 	return recordString[0] == '_'
     }
     resolveCells(board:{}, parent:interfaces.Cell){
-	parent.beforeResolve()
-	if(typeof board == 'string'){
+	parent.beforeResolve()	
+	var _type= Object.prototype.toString.call( board)
+	if( _type == "[object String]"){
 	    parent.updateEl(<string>board)
 	    parent.afterResolve()
+	    return
+	}
+	if(_type == "[object Array]"){
+	    parent.args = <any>board
 	    return
 	}
 	for(var recordString in board){

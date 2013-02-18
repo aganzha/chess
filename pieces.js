@@ -12,6 +12,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         function BaseCell(record, application) {
             this.record = record;
             this.application = application;
+            this.args = [];
             this.tag = 'div';
             this.html = '';
             this.children = [];
@@ -23,9 +24,11 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 var delayedCell = this.delayedChildren[i];
                 var klass = this.application.getCellClass(delayedCell.record);
                 var clone = new klass(delayedCell.record, this.application);
+                clone.html = delayedCell.html;
+                clone.args = delayedCell.args;
                 clone.delayedChildren = delayedCell.delayedChildren;
-                this.append(clone);
                 filler(clone);
+                this.append(clone);
                 clone.forceDelayed(filler);
             }
         };
@@ -143,4 +146,63 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         return ViewPort;
     })(BaseCell);
     exports.ViewPort = ViewPort;    
+    var Image = (function (_super) {
+        __extends(Image, _super);
+        function Image() {
+            _super.apply(this, arguments);
+
+        }
+        Image.prototype.createEl = function () {
+            var answer = null;
+            var img = document.createElement('img');
+            if(this.html.length > 0) {
+                img.src = this.html;
+                answer = img;
+            } else {
+                if(this.args.length > 0) {
+                    if(this.args[1] && this.args[2]) {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = this.args[1];
+                        canvas.height = this.args[2];
+                        $(img).on('load', function () {
+                            var context = canvas.getContext('2d');
+                            var getcha = false;
+                            var height = canvas.height, width = canvas.width;
+                            var ratio = img.width / img.height;
+                            var destWidth = canvas.width;
+                            var destHeight = canvas.height;
+                            if(height < img.height && width < img.width) {
+                                while(!getcha) {
+                                    height += 1;
+                                    width += 1;
+                                    if(true) {
+                                        if(height == img.height) {
+                                            getcha = true;
+                                            width = height * ratio;
+                                            destWidth = destHeight * ratio;
+                                        }
+                                        if(width == img.width) {
+                                            getcha = true;
+                                            height = width / ratio;
+                                            destHeight = destWidth / ratio;
+                                        }
+                                    }
+                                }
+                                console.log('da! ', img.src, width, height);
+                            }
+                            context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
+                        });
+                        img.src = this.args[0];
+                        answer = canvas;
+                    } else {
+                        img.src = this.args[0];
+                        answer = img;
+                    }
+                }
+            }
+            return answer;
+        };
+        return Image;
+    })(BaseCell);
+    exports.Image = Image;    
 })

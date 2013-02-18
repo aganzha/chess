@@ -36,6 +36,7 @@ export interface Cell{
     updateEl(html:string);
     afterResolve();
     beforeResolve();    
+    args:any[];
 }
 export interface Box {
     left:number;

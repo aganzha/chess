@@ -11,6 +11,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             this.viewport = viewport;
             this.board = board;
             this.modules = modules;
+            modules.push(pieces);
             viewport.application = this;
             window['application'] = this;
             this.screens = {
@@ -78,9 +79,14 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         };
         ChessApp.prototype.resolveCells = function (board, parent) {
             parent.beforeResolve();
-            if(typeof board == 'string') {
+            var _type = Object.prototype.toString.call(board);
+            if(_type == "[object String]") {
                 parent.updateEl(board);
                 parent.afterResolve();
+                return;
+            }
+            if(_type == "[object Array]") {
+                parent.args = board;
                 return;
             }
             for(var recordString in board) {

@@ -8,7 +8,8 @@ export class BaseCell implements interfaces.Cell{
     children:interfaces.Cell[];
     delayedChildren:interfaces.Cell[];
     delayed:bool;
-    constructor(public record:interfaces.CellRecord, 
+    args=[];
+    constructor(public record:interfaces.CellRecord,
 		public application:interfaces.Application){
 	this.children = <interfaces.Cell[]>[]
 	this.delayedChildren = <interfaces.Cell[]>[]
@@ -16,15 +17,17 @@ export class BaseCell implements interfaces.Cell{
     }
 
     forceDelayed(filler:interfaces.DelayedCellFiller){
-	for(var i=0,l=this.delayedChildren.length;i<l;i++){	    
+	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
 
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    var clone = new klass(delayedCell.record, this.application)
+	    clone.html = delayedCell.html
+	    clone.args = delayedCell.args
 	    clone.delayedChildren = delayedCell.delayedChildren
-	    this.append(clone)
 	    // ?? may be filler must be before append (and render???)
 	    filler(clone)
+	    this.append(clone)
 	    clone.forceDelayed(filler)
 	}
     }
@@ -74,19 +77,19 @@ export class BaseCell implements interfaces.Cell{
     }
     afterRender(){
     }
-    
+
     append(cell:interfaces.Cell){
 	if(!this.delayed){
 	    // обычный вариант
-	    this.prepareEl()	
+	    this.prepareEl()
 	    cell.beforeRender()
 
 	    // TODO! а вот у вьюпорта что в childs после того как screen удалили?
 	    cell.parent = this
 	    this.children.push(cell)
-	    
+
 	    var ne = cell.render()
-	    this.el.appendChild(ne)	    
+	    this.el.appendChild(ne)
 	    cell.afterRender()
 	}
 	else{
@@ -125,7 +128,7 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     }
     afterSelfApear(other:interfaces.Screen){
     }
-    replaceBy(other:interfaces.Screen){	
+    replaceBy(other:interfaces.Screen){
     }
 }
 export class ViewPort extends BaseCell{
@@ -135,5 +138,60 @@ export class ViewPort extends BaseCell{
     }
     createEl(){
     	return this.el
+    }
+}
+
+export class Image extends BaseCell{
+    createEl(){
+	var answer = <HTMLElement>null
+	var img = <HTMLImageElement>document.createElement('img')
+	if(this.html.length>0){
+	    img.src = this.html
+	    answer = img
+	}
+	else{
+	    if(this.args.length>0){
+		if(this.args[1] && this.args[2]){
+		    var canvas = <HTMLCanvasElement>document.createElement('canvas')
+		    canvas.width = this.args[1]
+		    canvas.height = this.args[2]
+		    $(img).on('load',function(){
+			var context = canvas.getContext('2d')
+			var getcha = false
+			var height = canvas.height,width=canvas.width
+			var ratio = img.width/img.height
+			var destWidth = canvas.width
+			var destHeight = canvas.height
+			if(height<img.height && width<img.width){
+			    while(!getcha){
+				height+=1
+				width+=1
+				if(true){
+				    if(height==img.height ){
+					getcha=true
+					width=height*ratio
+					destWidth = destHeight*ratio
+				    }
+				    if(width==img.width ){
+					getcha=true
+					height=width/ratio
+					destHeight=destWidth/ratio
+				    }
+				}
+			    }
+			    console.log('da! ',img.src,width,height)
+			}
+			context.drawImage(img,0,0,width,height,0,0,destWidth,destHeight)
+		    })
+		    img.src = this.args[0]
+		    answer = canvas
+		}
+		else{
+		    img.src = this.args[0]
+		    answer = img
+		}
+	    }
+	}
+	return answer
     }
 }
