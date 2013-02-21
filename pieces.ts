@@ -178,8 +178,7 @@ export class Image extends BaseCell{
 					destHeight=destWidth/ratio
 				    }
 				}
-			    }
-			    console.log('da! ',img.src,width,height)
+			    }			    
 			}
 			context.drawImage(img,0,0,width,height,0,0,destWidth,destHeight)
 		    })

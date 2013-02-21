@@ -89,3 +89,12 @@ export interface Application{
     instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
 }
+
+export interface Scrollable extends Cell{
+    scrollRequired():bool;
+    getInitialBox():Box;
+    getFirstItemBox():Box;
+    pageSize:number;
+    scrollAfterNo:number;
+    loadNextPage();
+}
