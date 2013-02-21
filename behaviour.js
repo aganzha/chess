@@ -5,6 +5,7 @@ define(["require", "exports"], function(require, exports) {
             scroll(me);
         });
     }
+    exports.makeScrollable = makeScrollable;
     function scroll(me) {
         if(!me.scrollRequired()) {
             return;

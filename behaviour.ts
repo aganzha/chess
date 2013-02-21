@@ -1,7 +1,7 @@
 import interfaces = module("chess/interfaces")
 declare var $;
 
-function makeScrollable(me:interfaces.Scrollable){
+export function makeScrollable(me:interfaces.Scrollable){
     $(me.el).on('scroll',function(some){scroll(me)})
 }
 
