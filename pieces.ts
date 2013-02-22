@@ -17,8 +17,6 @@ export class BaseCell implements interfaces.Cell{
     }
 
     forceDelayed(filler:interfaces.DelayedCellFiller){
-	console.log('force!',this.delayedChildren, this.record.cons)
-	window["ass1"] = this
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
 	    var klass = this.application.getCellClass(delayedCell.record)
@@ -94,8 +92,6 @@ export class BaseCell implements interfaces.Cell{
     }
     appendDelayed(cell:interfaces.Cell){
 	this.delayedChildren.push(cell)
-	window["ass0"] = this
-	console.log('appendDelayed', this.record.cons, cell.record.cons,this.delayedChildren.length)
     }
     render(){
 	// $(this.el).remove()
