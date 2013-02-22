@@ -137,11 +137,6 @@ export class Image extends BaseCell{
     createEl(){
 	var answer = <HTMLElement>null
 	var img = <HTMLImageElement>document.createElement('img')
-	// вот тут есть проблема!
-	// при обработке html
-	// все хорошо, когда картинка delayed!
-	// а когда она непосредственно рендерится, то у нас свойства  html еще нету.
-	// оно на следующем шаге только зарезолвится!
 	if(this.html.length>0){
 	    img.src = this.html
 	    answer = img
@@ -159,6 +154,7 @@ export class Image extends BaseCell{
 			var ratio = img.width/img.height
 			var destWidth = canvas.width
 			var destHeight = canvas.height
+			
 			if(height<img.height && width<img.width){
 			    while(!getcha){
 				height+=1
@@ -176,8 +172,11 @@ export class Image extends BaseCell{
 				    }
 				}
 			    }			    
+			    context.drawImage(img,0,0,width,height,0,0,destWidth,destHeight)
 			}
-			context.drawImage(img,0,0,width,height,0,0,destWidth,destHeight)
+			else{
+			    context.drawImage(img,0,0,width,height);
+			}
 		    })
 		    img.src = this.args[0]
 		    answer = canvas

@@ -48,7 +48,6 @@ export class ChessApp{
 	var screen = selector(this.screens)
 	// var cons = screen.record.cons
 	this.viewport.append(screen)
-	// this.resolveCells(this.board[cons], screen, false)
 	this.resolveCells(screen.board, screen, false)
 	this.currentScreen =screen
     }

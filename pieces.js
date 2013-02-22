@@ -181,8 +181,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                                         }
                                     }
                                 }
+                                context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
+                            } else {
+                                context.drawImage(img, 0, 0, width, height);
                             }
-                            context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
                         });
                         img.src = this.args[0];
                         answer = canvas;
