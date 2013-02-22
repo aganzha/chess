@@ -33,8 +33,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             }
             return klass;
         };
-        ChessApp.prototype.instantiate = function (record) {
-            var record = this.getCellRecord(record);
+        ChessApp.prototype.instantiate = function (recordString) {
+            var record = this.getCellRecord(recordString);
             var klass = this.getCellClass(record);
             return new klass(record, this);
         };
@@ -42,7 +42,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             var screen = selector(this.screens);
             var cons = screen.record.cons;
             this.viewport.append(screen);
-            this.resolveCells(this.board[cons], screen);
+            this.resolveCells(this.board[cons], screen, false);
             this.currentScreen = screen;
         };
         ChessApp.prototype.transit = function (selector, receiver) {
@@ -77,7 +77,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         ChessApp.prototype.isCellDelayed = function (recordString) {
             return recordString[0] == '_';
         };
-        ChessApp.prototype.resolveCells = function (board, parent) {
+        ChessApp.prototype.resolveCells = function (board, parent, delayed) {
             parent.beforeResolve();
             var _type = Object.prototype.toString.call(board);
             if(_type == "[object String]") {
@@ -91,12 +91,13 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             }
             for(var recordString in board) {
                 var cell = this.instantiate(recordString);
-                if(this.isCellDelayed(recordString)) {
+                delayed = delayed || this.isCellDelayed(recordString);
+                this.resolveCells(board[recordString], cell, delayed);
+                if(delayed) {
                     parent.appendDelayed(cell);
                 } else {
                     parent.append(cell);
                 }
-                this.resolveCells(board[recordString], cell);
             }
             parent.afterResolve();
         };

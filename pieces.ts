@@ -19,15 +19,14 @@ export class BaseCell implements interfaces.Cell{
     forceDelayed(filler:interfaces.DelayedCellFiller){
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
-
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    var clone = new klass(delayedCell.record, this.application)
 	    clone.html = delayedCell.html
 	    clone.args = delayedCell.args
 	    clone.delayedChildren = delayedCell.delayedChildren
 	    // ?? may be filler must be before append (and render???)
-	    filler(clone)
 	    this.append(clone)
+	    filler(clone)
 	    clone.forceDelayed(filler)
 	}
     }
@@ -79,32 +78,24 @@ export class BaseCell implements interfaces.Cell{
     }
 
     append(cell:interfaces.Cell){
-	if(!this.delayed){
-	    // обычный вариант
-	    this.prepareEl()
-	    cell.beforeRender()
 
-	    // TODO! а вот у вьюпорта что в childs после того как screen удалили?
-	    cell.parent = this
-	    this.children.push(cell)
+	this.prepareEl()
+	cell.beforeRender()
 
-	    var ne = cell.render()
-	    this.el.appendChild(ne)
-	    cell.afterRender()
-	}
-	else{
-	    // а это delayedCell!
-	    this.appendDelayed(cell)
-	}
+	// TODO! а вот у вьюпорта что в childs после того как screen удалили?
+	cell.parent = this
+	this.children.push(cell)
 
+	var ne = cell.render()
+	this.el.appendChild(ne)
+	cell.afterRender()
     }
     appendDelayed(cell:interfaces.Cell){
 	this.delayedChildren.push(cell)
-	cell.delayed = true
     }
     render(){
-	$(this.el).remove()
-	this.el = null
+	// $(this.el).remove()
+	// this.el = null
 	this.prepareEl()
 	return this.el
     }
@@ -145,6 +136,11 @@ export class Image extends BaseCell{
     createEl(){
 	var answer = <HTMLElement>null
 	var img = <HTMLImageElement>document.createElement('img')
+	// вот тут есть проблема!
+	// при обработке html
+	// все хорошо, когда картинка delayed!
+	// а когда она непосредственно рендерится, то у нас свойства  html еще нету.
+	// оно на следующем шаге только зарезолвится!
 	if(this.html.length>0){
 	    img.src = this.html
 	    answer = img

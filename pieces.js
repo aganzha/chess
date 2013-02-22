@@ -27,8 +27,8 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 clone.html = delayedCell.html;
                 clone.args = delayedCell.args;
                 clone.delayedChildren = delayedCell.delayedChildren;
-                filler(clone);
                 this.append(clone);
+                filler(clone);
                 clone.forceDelayed(filler);
             }
         };
@@ -77,25 +77,18 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.afterRender = function () {
         };
         BaseCell.prototype.append = function (cell) {
-            if(!this.delayed) {
-                this.prepareEl();
-                cell.beforeRender();
-                cell.parent = this;
-                this.children.push(cell);
-                var ne = cell.render();
-                this.el.appendChild(ne);
-                cell.afterRender();
-            } else {
-                this.appendDelayed(cell);
-            }
+            this.prepareEl();
+            cell.beforeRender();
+            cell.parent = this;
+            this.children.push(cell);
+            var ne = cell.render();
+            this.el.appendChild(ne);
+            cell.afterRender();
         };
         BaseCell.prototype.appendDelayed = function (cell) {
             this.delayedChildren.push(cell);
-            cell.delayed = true;
         };
         BaseCell.prototype.render = function () {
-            $(this.el).remove();
-            this.el = null;
             this.prepareEl();
             return this.el;
         };
