@@ -25,8 +25,8 @@ export class BaseCell implements interfaces.Cell{
 	    clone.args = delayedCell.args
 	    clone.delayedChildren = delayedCell.delayedChildren
 	    // ?? may be filler must be before append (and render???)
-	    filler(clone)
 	    this.append(clone)
+	    filler(clone)
 	    clone.forceDelayed(filler)
 	}
     }
