@@ -20,6 +20,8 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.delayed = false;
         }
         BaseCell.prototype.forceDelayed = function (filler) {
+            console.log('force!', this.delayedChildren, this.record.cons);
+            window["ass1"] = this;
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];
                 var klass = this.application.getCellClass(delayedCell.record);
@@ -77,25 +79,20 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.afterRender = function () {
         };
         BaseCell.prototype.append = function (cell) {
-            if(!this.delayed) {
-                this.prepareEl();
-                cell.beforeRender();
-                cell.parent = this;
-                this.children.push(cell);
-                var ne = cell.render();
-                this.el.appendChild(ne);
-                cell.afterRender();
-            } else {
-                this.appendDelayed(cell);
-            }
+            this.prepareEl();
+            cell.beforeRender();
+            cell.parent = this;
+            this.children.push(cell);
+            var ne = cell.render();
+            this.el.appendChild(ne);
+            cell.afterRender();
         };
         BaseCell.prototype.appendDelayed = function (cell) {
             this.delayedChildren.push(cell);
-            cell.delayed = true;
+            window["ass0"] = this;
+            console.log('appendDelayed', this.record.cons, cell.record.cons, this.delayedChildren.length);
         };
         BaseCell.prototype.render = function () {
-            $(this.el).remove();
-            this.el = null;
             this.prepareEl();
             return this.el;
         };

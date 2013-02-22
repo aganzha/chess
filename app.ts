@@ -38,8 +38,8 @@ export class ChessApp{
 	}
 	return klass
     }
-    instantiate(record:string){
-	var record = this.getCellRecord(record)
+    instantiate(recordString:string){
+	var record = this.getCellRecord(recordString)
 	var klass = this.getCellClass(record)
 	return new klass(record, this)
     }
@@ -47,7 +47,7 @@ export class ChessApp{
 	var screen = selector(this.screens)
 	var cons = screen.record.cons
 	this.viewport.append(screen)
-	this.resolveCells(this.board[cons], screen)
+	this.resolveCells(this.board[cons], screen, false)
 	this.currentScreen =screen
     }
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
@@ -88,7 +88,7 @@ export class ChessApp{
     isCellDelayed(recordString:string):bool{
 	return recordString[0] == '_'
     }
-    resolveCells(board:{}, parent:interfaces.Cell){
+    resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
 	parent.beforeResolve()	
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
@@ -102,13 +102,17 @@ export class ChessApp{
 	}
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString)
-	    if(this.isCellDelayed(recordString)){
+	    // ох ёпт! рекурсивненько
+	    delayed = delayed || this.isCellDelayed(recordString)
+	    this.resolveCells(board[recordString], cell, delayed)
+	    if(delayed){
 		parent.appendDelayed(cell)
 	    }
 	    else{
 		parent.append(cell)
-	    }
-	    this.resolveCells(board[recordString], cell)
+	    }	    
+	    // this.resolveCells(board[recordString], cell, 
+	    // 		      this.isCellDelayed(recordString)||delayed)
 	}
 	parent.afterResolve()
     }
