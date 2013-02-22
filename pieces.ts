@@ -109,6 +109,7 @@ export class BaseCell implements interfaces.Cell{
 }
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
+    board:{};
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }

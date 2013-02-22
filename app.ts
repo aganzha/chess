@@ -15,13 +15,14 @@ export class ChessApp{
 	modules.push(pieces)
 	viewport.application = this
 	window['application'] =this
-	// this.viewport = new pieces.ViewPort({cons:'',id:'',classes:[]}, this);
 	this.screens = <interfaces.ScreenMap>{}
 	// а зачем их сразу все делать а?
 	// а в них можно че-нить хранить. в destroy убивавется element
 	// и childrens, но инстанс скрина остается!
-	for(var cons in board){
-	    this.screens[cons] = this.instantiate(cons)
+	for(var recordString in board){
+	    var screen = this.instantiate(recordString)
+	    screen.board = board[recordString]
+	    this.screens[screen.record.cons] =screen
 	}
     }
     getCellClass(record:interfaces.CellRecord){
@@ -45,9 +46,10 @@ export class ChessApp{
     }
     resolve(selector:interfaces.ScreenSelector){
 	var screen = selector(this.screens)
-	var cons = screen.record.cons
+	// var cons = screen.record.cons
 	this.viewport.append(screen)
-	this.resolveCells(this.board[cons], screen, false)
+	// this.resolveCells(this.board[cons], screen, false)
+	this.resolveCells(screen.board, screen, false)
 	this.currentScreen =screen
     }
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
@@ -89,7 +91,7 @@ export class ChessApp{
 	return recordString[0] == '_'
     }
     resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
-	parent.beforeResolve()	
+	parent.beforeResolve()
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
 	    parent.updateEl(<string>board)
@@ -110,8 +112,8 @@ export class ChessApp{
 	    }
 	    else{
 		parent.append(cell)
-	    }	    
-	    // this.resolveCells(board[recordString], cell, 
+	    }
+	    // this.resolveCells(board[recordString], cell,
 	    // 		      this.isCellDelayed(recordString)||delayed)
 	}
 	parent.afterResolve()

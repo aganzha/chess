@@ -16,8 +16,10 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             window['application'] = this;
             this.screens = {
             };
-            for(var cons in board) {
-                this.screens[cons] = this.instantiate(cons);
+            for(var recordString in board) {
+                var screen = this.instantiate(recordString);
+                screen.board = board[recordString];
+                this.screens[screen.record.cons] = screen;
             }
         }
         ChessApp.prototype.getCellClass = function (record) {
@@ -40,9 +42,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         };
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
-            var cons = screen.record.cons;
             this.viewport.append(screen);
-            this.resolveCells(this.board[cons], screen, false);
+            this.resolveCells(screen.board, screen, false);
             this.currentScreen = screen;
         };
         ChessApp.prototype.transit = function (selector, receiver) {
