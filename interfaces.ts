@@ -60,7 +60,7 @@ export interface ScreenSelector{
     (screens:ScreenMap):Screen;
 }
 export interface Transition{
-    mock();
+    union();
     redraw();
     pop();
     fade();

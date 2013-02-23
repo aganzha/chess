@@ -50,7 +50,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
             var newScreen = selector(this.screens);
-            console.log(oldScreen, newScreen);
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
@@ -60,7 +59,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                                 success: function () {
                                     oldScreen.afterSelfReplace(newScreen);
                                     newScreen.afterSelfApear(oldScreen);
-                                    oldScreen.destroy();
                                     me.currentScreen.fillElAttrs();
                                 },
                                 fail: function () {

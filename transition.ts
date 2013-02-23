@@ -21,8 +21,7 @@ export class Transition implements interfaces.Transition{
     renderNewScreen(){
 	this.app.resolve(this.selector)
     }
-
-    mock(){
+    union(){
 	this.renderNewScreen()
 	this.success()
     }

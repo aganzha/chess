@@ -65,11 +65,8 @@ export class ChessApp{
 					    success:function(){
 						oldScreen.afterSelfReplace(newScreen)
 						newScreen.afterSelfApear(oldScreen)
-						oldScreen.destroy()
+						// oldScreen.destroy() use afterSelfReplace for that!
 						me.currentScreen.fillElAttrs()
-						// viewport were changed during transition
-						// (width and height)
-						//me.viewport.fillElAttrs()
 					    },
 					    fail:function(){
 						// rollback current screen?
