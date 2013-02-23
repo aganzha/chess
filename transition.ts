@@ -22,6 +22,10 @@ export class Transition implements interfaces.Transition{
 	this.app.resolve(this.selector)
     }
 
+    mock(){
+	this.renderNewScreen()
+	this.success()
+    }
     redraw(){
 	//this.fixPosition(this.going)
 	$(this.going.el).hide()

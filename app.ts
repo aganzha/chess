@@ -20,7 +20,7 @@ export class ChessApp{
 	// а в них можно че-нить хранить. в destroy убивавется element
 	// и childrens, но инстанс скрина остается!
 	for(var recordString in board){
-	    var screen = this.instantiate(recordString)
+	    var screen = this.instantiate(recordString, pieces.BaseScreen)
 	    screen.board = board[recordString]
 	    this.screens[screen.record.cons] =screen
 	}
@@ -32,16 +32,15 @@ export class ChessApp{
 		klass = this.modules[i][record.cons]
 		break
 	    }
-	}
-	if(klass == null){
-	    //throw '<Chess> cant find class for: '+record.cons
-	    return pieces.BaseCell
-	}
+	}	
 	return klass
     }
-    instantiate(recordString:string){
+    instantiate(recordString:string, baseClass:any){
 	var record = this.getCellRecord(recordString)
 	var klass = this.getCellClass(record)
+	if(klass==null){
+	    klass=baseClass
+	}
 	return new klass(record, this)
     }
     resolve(selector:interfaces.ScreenSelector){
@@ -51,7 +50,7 @@ export class ChessApp{
 	this.resolveCells(screen.board, screen, false)
 	this.currentScreen =screen
     }
-    transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
+    transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){	
 	utils.Utils.destroyFlyWeight()
 	var oldScreen = this.currentScreen
 	var newScreen = selector(this.screens)
@@ -102,7 +101,7 @@ export class ChessApp{
 	    return
 	}
 	for(var recordString in board){
-	    var cell = this.instantiate(recordString)
+	    var cell = this.instantiate(recordString, pieces.BaseCell)
 	    // ох ёпт! рекурсивненько
 	    delayed = delayed || this.isCellDelayed(recordString)
 	    this.resolveCells(board[recordString], cell, delayed)

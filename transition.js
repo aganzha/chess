@@ -15,6 +15,10 @@ define(["require", "exports", "chess/interfaces"], function(require, exports, __
         Transition.prototype.renderNewScreen = function () {
             this.app.resolve(this.selector);
         };
+        Transition.prototype.mock = function () {
+            this.renderNewScreen();
+            this.success();
+        };
         Transition.prototype.redraw = function () {
             $(this.going.el).hide();
             this.renderNewScreen();

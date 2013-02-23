@@ -20,6 +20,9 @@ export class BaseCell implements interfaces.Cell{
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
 	    var klass = this.application.getCellClass(delayedCell.record)
+	    if(klass==null){
+		klass=BaseCell
+	    }
 	    var clone = new klass(delayedCell.record, this.application)
 	    clone.html = delayedCell.html
 	    clone.args = delayedCell.args

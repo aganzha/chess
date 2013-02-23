@@ -60,7 +60,7 @@ export interface ScreenSelector{
     (screens:ScreenMap):Screen;
 }
 export interface Transition{
-    
+    mock();
     redraw();
     pop();
     fade();
@@ -86,7 +86,7 @@ export interface Application{
     viewport:Cell;
     resolve(selector:ScreenSelector);
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
-    instantiate(record:string):Cell;
+    // instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
 }
 

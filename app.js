@@ -17,7 +17,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             this.screens = {
             };
             for(var recordString in board) {
-                var screen = this.instantiate(recordString);
+                var screen = this.instantiate(recordString, pieces.BaseScreen);
                 screen.board = board[recordString];
                 this.screens[screen.record.cons] = screen;
             }
@@ -30,14 +30,14 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                     break;
                 }
             }
-            if(klass == null) {
-                return pieces.BaseCell;
-            }
             return klass;
         };
-        ChessApp.prototype.instantiate = function (recordString) {
+        ChessApp.prototype.instantiate = function (recordString, baseClass) {
             var record = this.getCellRecord(recordString);
             var klass = this.getCellClass(record);
+            if(klass == null) {
+                klass = baseClass;
+            }
             return new klass(record, this);
         };
         ChessApp.prototype.resolve = function (selector) {
@@ -50,6 +50,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
             var newScreen = selector(this.screens);
+            console.log(oldScreen, newScreen);
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
@@ -91,7 +92,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 return;
             }
             for(var recordString in board) {
-                var cell = this.instantiate(recordString);
+                var cell = this.instantiate(recordString, pieces.BaseCell);
                 delayed = delayed || this.isCellDelayed(recordString);
                 this.resolveCells(board[recordString], cell, delayed);
                 if(delayed) {

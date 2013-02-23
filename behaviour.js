@@ -19,7 +19,6 @@ define(["require", "exports"], function(require, exports) {
         }
     }
     function makeCleanValuable(me) {
-        console.log(me.getHolder());
         $(me.getHolder()).on('focus', function () {
             cleanDefaultValue(me);
         });

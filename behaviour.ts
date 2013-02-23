@@ -20,7 +20,6 @@ function scroll(me:interfaces.Scrollable){
 
 
 export function makeCleanValuable(me:interfaces.Valuable){
-    console.log(me.getHolder())
     $(me.getHolder()).on('focus',function(){cleanDefaultValue(me)})
 }
 
