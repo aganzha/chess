@@ -18,4 +18,16 @@ define(["require", "exports"], function(require, exports) {
             me.loadNextPage();
         }
     }
+    function makeCleanValuable(me) {
+        console.log(me.getHolder());
+        $(me.getHolder()).on('focus', function () {
+            cleanDefaultValue(me);
+        });
+    }
+    exports.makeCleanValuable = makeCleanValuable;
+    function cleanDefaultValue(me) {
+        if(me.getValue() == me.defaultValue) {
+            me.setValue('');
+        }
+    }
 })

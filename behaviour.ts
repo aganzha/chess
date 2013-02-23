@@ -18,3 +18,14 @@ function scroll(me:interfaces.Scrollable){
     }
 }    
 
+
+export function makeCleanValuable(me:interfaces.Valuable){
+    console.log(me.getHolder())
+    $(me.getHolder()).on('focus',function(){cleanDefaultValue(me)})
+}
+
+function cleanDefaultValue(me:interfaces.Valuable){
+    if(me.getValue()==me.defaultValue){
+	me.setValue('')
+    }
+}

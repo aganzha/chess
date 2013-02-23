@@ -98,3 +98,10 @@ export interface Scrollable extends Cell{
     scrollAfterNo:number;
     loadNextPage();
 }
+
+export interface Valuable{
+    getHolder():HTMLElement;
+    getValue():string;
+    setValue(s:string);
+    defaultValue:string;
+}
