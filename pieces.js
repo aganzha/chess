@@ -97,6 +97,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         };
         BaseCell.prototype.destroy = function () {
             $(this.el).remove();
+            this.el = null;
             this.children = [];
         };
         BaseCell.prototype.domFromString = function (s) {
@@ -126,8 +127,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseScreen.prototype.destroy = function () {
             _super.prototype.destroy.call(this);
             this.resolved = false;
-            this.board = {
-            };
         };
         return BaseScreen;
     })(BaseCell);
