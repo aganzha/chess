@@ -53,7 +53,7 @@ export class ChessApp{
 	}
 	// install z-index here man!
 	this.currentScreen =screen
-	console.log(this.currentScreen)
+	//console.log(this.currentScreen)
     }
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){	
 	utils.Utils.destroyFlyWeight()
