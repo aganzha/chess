@@ -51,6 +51,7 @@ export interface Screen extends Cell{
     afterSelfApear(other:Screen);
     replaceBy(other:Screen);
     board:{};    
+    resolved:bool;
 }
 export interface ScreenMap{
     name:string;

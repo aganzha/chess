@@ -45,10 +45,15 @@ export class ChessApp{
     }
     resolve(selector:interfaces.ScreenSelector){
 	var screen = selector(this.screens)
-	// var cons = screen.record.cons
-	this.viewport.append(screen)
-	this.resolveCells(screen.board, screen, false)
+	if(!screen.resolved){
+	    // screen may be allready resolved in case of Union transition	
+	    this.viewport.append(screen)
+	    this.resolveCells(screen.board, screen, false)
+	    screen.resolved=true;
+	}
+	// install z-index here man!
 	this.currentScreen =screen
+	console.log(this.currentScreen)
     }
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){	
 	utils.Utils.destroyFlyWeight()

@@ -42,9 +42,13 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         };
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
-            this.viewport.append(screen);
-            this.resolveCells(screen.board, screen, false);
+            if(!screen.resolved) {
+                this.viewport.append(screen);
+                this.resolveCells(screen.board, screen, false);
+                screen.resolved = true;
+            }
             this.currentScreen = screen;
+            console.log(this.currentScreen);
         };
         ChessApp.prototype.transit = function (selector, receiver) {
             utils.Utils.destroyFlyWeight();

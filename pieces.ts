@@ -112,6 +112,7 @@ export class BaseCell implements interfaces.Cell{
 }
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
+    resolved:bool;
     board:{};
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
@@ -124,6 +125,10 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     afterSelfApear(other:interfaces.Screen){
     }
     replaceBy(other:interfaces.Screen){
+    }
+    destroy(){
+	super.destroy()
+	this.resolved=false
     }
 }
 export class ViewPort extends BaseCell{

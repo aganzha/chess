@@ -123,6 +123,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         };
         BaseScreen.prototype.replaceBy = function (other) {
         };
+        BaseScreen.prototype.destroy = function () {
+            _super.prototype.destroy.call(this);
+            this.resolved = false;
+        };
         return BaseScreen;
     })(BaseCell);
     exports.BaseScreen = BaseScreen;    
