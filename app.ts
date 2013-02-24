@@ -48,6 +48,7 @@ export class ChessApp{
 	if(!screen.resolved){
 	    // screen may be allready resolved in case of Union transition	
 	    this.viewport.append(screen)
+	    //console.log('daaAAAAAaaaaaaa1', screen, screen.board)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
 	}

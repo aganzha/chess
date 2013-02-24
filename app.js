@@ -44,6 +44,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             var screen = selector(this.screens);
             if(!screen.resolved) {
                 this.viewport.append(screen);
+                console.log('daaAAAAAaaaaaaa1', screen, screen.board);
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
             }

@@ -104,7 +104,7 @@ export class BaseCell implements interfaces.Cell{
     }
     destroy(){
 	$(this.el).remove()
-	this.el = null
+	this.el = null	
 	this.children = []
     }
     domFromString(s:string){
@@ -130,8 +130,6 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     destroy(){
 	super.destroy()
 	this.resolved=false
-	//fuck!
-	//this.board = {}
     }
 }
 export class ViewPort extends BaseCell{
