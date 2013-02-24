@@ -106,3 +106,10 @@ export interface Valuable{
     setValue(s:string);
     defaultValue:string;
 }
+
+export interface Uploader{
+    getFileInput():HTMLInputElement;
+    getDropArea():HTMLElement;
+    loadDone();
+    
+}

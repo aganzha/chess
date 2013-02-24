@@ -104,7 +104,7 @@ export class BaseCell implements interfaces.Cell{
     }
     destroy(){
 	$(this.el).remove()
-	this.el = null	
+	this.el = null
 	this.children = []
     }
     domFromString(s:string){
@@ -163,7 +163,7 @@ export class Image extends BaseCell{
 			var ratio = img.width/img.height
 			var destWidth = canvas.width
 			var destHeight = canvas.height
-			
+
 			if(height<img.height && width<img.width){
 			    while(!getcha){
 				height+=1
@@ -180,7 +180,7 @@ export class Image extends BaseCell{
 					destHeight=destWidth/ratio
 				    }
 				}
-			    }			    
+			    }
 			    context.drawImage(img,0,0,width,height,0,0,destWidth,destHeight)
 			}
 			else{
@@ -197,5 +197,41 @@ export class Image extends BaseCell{
 	    }
 	}
 	return answer
+    }
+}
+
+
+
+export class Uploader extends BaseCell implements interfaces.Uploader{
+    fileName:string;
+    fileType:string;
+    fileSize:number;
+    file:string;
+    loadFile(e){
+	e.preventDefault()
+	e.stopPropagation()
+	var files = e.target.files
+	var file = files[0]
+	this.fileName = file.name
+	this.fileSize = file.size
+	this.fileType = file.type
+	var me = this
+	var reader = new FileReader();
+	reader.onload = function(ev){
+	    me.file = ev.target.result
+	    me.loadDone()
+	}
+	reader.readAsDataURL(file);
+    }
+    afterRender(){
+	$(this.getFileInput()).on('change',utils.bind(this.loadFile, this))
+    }
+    getFileInput(){
+	return <HTMLInputElement>this.el
+    }
+    getDropArea(){
+	return this.el
+    }
+    loadDone(){
     }
 }

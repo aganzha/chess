@@ -1,7 +1,7 @@
 import interfaces = module("chess/interfaces")
 
 declare var $;
-
+//TODO! functions! not class
 export class Utils{
     static flyWeightId="_chessFlyWeightId";
     static makeFlyWeight():HTMLElement{
@@ -30,41 +30,56 @@ export class Utils{
 	}
 	return txt
     }
+        
+}
 
-    static walkDown(parent:interfaces.Cell, collected:interfaces.Cell[],
-		    cons?:string, className?:string,id?:string){
-	for(var i=0,l=parent.children.length;i<l;i++){
-	    var cell = parent.children[i];
-	    var rec = cell.record
-	    var pushed = false
+function walkDown(parent:interfaces.Cell, collected:interfaces.Cell[],
+		  cons?:string, className?:string,id?:string){
+    for(var i=0,l=parent.children.length;i<l;i++){
+	var cell = parent.children[i];
+	var rec = cell.record
+	var pushed = false
 
-	    if(!pushed && cons && rec.cons == cons){
-		collected.push(cell)
-		pushed=true
-	    }
-	    if(!pushed && className){
-		for(var j=0,m=rec.classes.length;j<m;j++){
-		    if(rec.classes[j] == className){
-			pushed=true
-			collected.push(cell)
-			break
-		    }
+	if(!pushed && cons && rec.cons == cons){
+	    collected.push(cell)
+	    pushed=true
+	}
+	if(!pushed && className){
+	    for(var j=0,m=rec.classes.length;j<m;j++){
+		if(rec.classes[j] == className){
+		    pushed=true
+		    collected.push(cell)
+		    break
 		}
 	    }
-	    if(!pushed && id && rec.id == id){
-		collected.push(cell)
-		pushed=true
-	    }
-	    this.walkDown(cell, collected, cons, className, id)
-	}	
-    }
-    static getPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
-	// TODO
-	// для каждого cell нужно сделать items,keys и values
-	// соотв здесь будет проход от скрина вниз!
-	var answer = <interfaces.Cell[]>[]
-	this.walkDown(<interfaces.Application>window['application'].currentScreen, answer,
-		     cons,className,id)	
-	return answer
-    }
+	}
+	if(!pushed && id && rec.id == id){
+	    collected.push(cell)
+	    pushed=true
+	}
+	walkDown(cell, collected, cons, className, id)
+    }	
 }
+
+
+export function getPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
+    // TODO
+    // для каждого cell нужно сделать items,keys и values
+    // соотв здесь будет проход от скрина вниз!
+    var answer = <interfaces.Cell[]>[]
+    walkDown(<interfaces.Cell>window['application'].currentScreen, answer,
+		  cons,className,id)	
+    return answer
+}
+
+
+export function bind(func, context) {
+    var nativeBind = Function.prototype.bind
+     var slice = Array.prototype.slice
+    if (func.bind === nativeBind && nativeBind) 
+	return nativeBind.apply(func, slice.call(arguments, 1));
+    var args = slice.call(arguments, 2);
+    return function() {
+	return func.apply(context, args.concat(slice.call(arguments)));
+    };
+};

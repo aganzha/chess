@@ -207,4 +207,40 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         return Image;
     })(BaseCell);
     exports.Image = Image;    
+    var Uploader = (function (_super) {
+        __extends(Uploader, _super);
+        function Uploader() {
+            _super.apply(this, arguments);
+
+        }
+        Uploader.prototype.loadFile = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var files = e.target.files;
+            var file = files[0];
+            this.fileName = file.name;
+            this.fileSize = file.size;
+            this.fileType = file.type;
+            var me = this;
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                me.file = ev.target.result;
+                me.loadDone();
+            };
+            reader.readAsDataURL(file);
+        };
+        Uploader.prototype.afterRender = function () {
+            $(this.getFileInput()).on('change', utils.bind(this.loadFile, this));
+        };
+        Uploader.prototype.getFileInput = function () {
+            return this.el;
+        };
+        Uploader.prototype.getDropArea = function () {
+            return this.el;
+        };
+        Uploader.prototype.loadDone = function () {
+        };
+        return Uploader;
+    })(BaseCell);
+    exports.Uploader = Uploader;    
 })
