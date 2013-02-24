@@ -129,6 +129,7 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
     destroy(){
 	super.destroy()
 	this.resolved=false
+	this.board = {}
     }
 }
 export class ViewPort extends BaseCell{

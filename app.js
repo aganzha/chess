@@ -43,6 +43,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             if(!screen.resolved) {
+                console.log(screen, screen.el, screen.children);
                 this.viewport.append(screen);
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;

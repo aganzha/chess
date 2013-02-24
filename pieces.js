@@ -126,6 +126,8 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseScreen.prototype.destroy = function () {
             _super.prototype.destroy.call(this);
             this.resolved = false;
+            this.board = {
+            };
         };
         return BaseScreen;
     })(BaseCell);
