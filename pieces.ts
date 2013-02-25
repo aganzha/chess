@@ -71,24 +71,29 @@ export class BaseCell implements interfaces.Cell{
 	this.html = html
 	$(this.el).html(html)
     }
-    beforeResolve(){
-    }
+    // beforeResolve(){
+    // }
     afterResolve(){
     }
-    beforeAppend(){
-    }
+    // beforeAppend(){
+    // }
     afterAppend(){
+    }
+    afterRender(){
+    }
+    bubbleDown(callable:(cell:interfaces.Cell)=>any){
+	callable(this)
+	for(var i=0,l=this.children.length;i<l;i++){
+	    this.children[i].bubbleDown(callable)
+	}
     }
 
     append(cell:interfaces.Cell){
 
 	this.prepareEl()
-	cell.beforeAppend()
-
-	// TODO! а вот у вьюпорта что в childs после того как screen удалили?
+	// cell.beforeAppend()
 	cell.parent = this
 	this.children.push(cell)
-
 	var ne = cell.render()
 	this.el.appendChild(ne)
 	cell.afterAppend()
@@ -111,9 +116,8 @@ export class BaseCell implements interfaces.Cell{
 	return utils.Utils.DomFromString(s);
     }
 
-    walkDown(collected:BaseCell[],
-		      cons?:string, className?:string,id?:string){
-	console.log('hehe', this.el)
+    searchDown(collected:BaseCell[],
+	       cons?:string, className?:string,id?:string){
 	for(var i=0,l=this.children.length;i<l;i++){
 	    var cell = <BaseCell>this.children[i];
 	    var rec = cell.record
@@ -136,15 +140,15 @@ export class BaseCell implements interfaces.Cell{
 		collected.push(cell)
 		pushed=true
 	    }
-	    cell.walkDown(collected, cons, className, id)
+	    cell.searchDown(collected, cons, className, id)
 	}	
     }
-    getPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
+    searchPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
 	// TODO
 	// для каждого cell нужно сделать items,keys и values
 	// соотв здесь будет проход от скрина вниз!
 	var answer = <BaseCell[]>[]
-	this.walkDown(answer,cons,className,id)
+	this.searchDown(answer,cons,className,id)
 	return answer
     }        
 }
@@ -258,30 +262,27 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
 	}
 	reader.readAsDataURL(file);
     }
-    // afterResolve(){
-    // 	console.log('afterResolve')
-    // 	console.log(this, this.parent)
-    // }
-    afterAppend(){
-	// console.log('afterAppend')
-	// console.log(this, this.parent, this.parent.parent)
+    afterRender(){
 	var me = this
+	var stop = function(e:Event){
+	    e.stopPropagation()
+	    e.preventDefault()
+	}
 	$(this.getFileInput()).on('change',
 				  function(e){
-				      e.preventDefault()
-				      e.stopPropagation()
+				      stop(e)
 				      var files = e.target.files
 				      me.loadFile(files[0])
-				  })//utils.bind(this.loadFile, this)
+				  })
 	$(this.getDropArea()).on('drop',
 				 function(e){
-				     alert('1')
-				     e.stopPropagation()
-				     e.preventDefault()
+				     stop(e)
 				     var dt = e.dataTransfer
 				     var files = dt.files
-				     this.loadFile(files[0])
+				     me.loadFile(files[0])
 				 })
+	    .on('dragover', stop)
+	    .on('dragenter', stop)
     }
     getFileInput(){
 	return <HTMLInputElement>this.el

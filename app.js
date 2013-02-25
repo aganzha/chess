@@ -46,6 +46,9 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 this.viewport.append(screen);
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
+                screen.bubbleDown(function (cell) {
+                    cell.afterRender();
+                });
             }
             this.currentScreen = screen;
         };
@@ -81,7 +84,6 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             return recordString[0] == '_';
         };
         ChessApp.prototype.resolveCells = function (board, parent, delayed) {
-            parent.beforeResolve();
             var _type = Object.prototype.toString.call(board);
             if(_type == "[object String]") {
                 parent.updateEl(board);

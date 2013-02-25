@@ -71,17 +71,20 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.html = html;
             $(this.el).html(html);
         };
-        BaseCell.prototype.beforeResolve = function () {
-        };
         BaseCell.prototype.afterResolve = function () {
-        };
-        BaseCell.prototype.beforeAppend = function () {
         };
         BaseCell.prototype.afterAppend = function () {
         };
+        BaseCell.prototype.afterRender = function () {
+        };
+        BaseCell.prototype.bubbleDown = function (callable) {
+            callable(this);
+            for(var i = 0, l = this.children.length; i < l; i++) {
+                this.children[i].bubbleDown(callable);
+            }
+        };
         BaseCell.prototype.append = function (cell) {
             this.prepareEl();
-            cell.beforeAppend();
             cell.parent = this;
             this.children.push(cell);
             var ne = cell.render();
@@ -103,8 +106,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);
         };
-        BaseCell.prototype.walkDown = function (collected, cons, className, id) {
-            console.log('hehe', this.el);
+        BaseCell.prototype.searchDown = function (collected, cons, className, id) {
             for(var i = 0, l = this.children.length; i < l; i++) {
                 var cell = this.children[i];
                 var rec = cell.record;
@@ -126,12 +128,12 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     collected.push(cell);
                     pushed = true;
                 }
-                cell.walkDown(collected, cons, className, id);
+                cell.searchDown(collected, cons, className, id);
             }
         };
-        BaseCell.prototype.getPieces = function (cons, className, id) {
+        BaseCell.prototype.searchPieces = function (cons, className, id) {
             var answer = [];
-            this.walkDown(answer, cons, className, id);
+            this.searchDown(answer, cons, className, id);
             return answer;
         };
         return BaseCell;
@@ -256,22 +258,23 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             };
             reader.readAsDataURL(file);
         };
-        Uploader.prototype.afterAppend = function () {
+        Uploader.prototype.afterRender = function () {
             var me = this;
-            $(this.getFileInput()).on('change', function (e) {
-                e.preventDefault();
+            var stop = function (e) {
                 e.stopPropagation();
+                e.preventDefault();
+            };
+            $(this.getFileInput()).on('change', function (e) {
+                stop(e);
                 var files = e.target.files;
                 me.loadFile(files[0]);
             });
             $(this.getDropArea()).on('drop', function (e) {
-                alert('1');
-                e.stopPropagation();
-                e.preventDefault();
+                stop(e);
                 var dt = e.dataTransfer;
                 var files = dt.files;
-                this.loadFile(files[0]);
-            });
+                me.loadFile(files[0]);
+            }).on('dragover', stop).on('dragenter', stop);
         };
         Uploader.prototype.getFileInput = function () {
             return this.el;

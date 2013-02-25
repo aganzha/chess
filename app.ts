@@ -51,6 +51,9 @@ export class ChessApp{
 	    this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
+	    screen.bubbleDown(function(cell){
+		cell.afterRender()
+	    });
 	}
 	// install z-index here man!
 	this.currentScreen =screen
@@ -92,7 +95,7 @@ export class ChessApp{
 	return recordString[0] == '_'
     }
     resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
-	parent.beforeResolve()
+	// parent.beforeResolve()
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
 	    parent.updateEl(<string>board)
