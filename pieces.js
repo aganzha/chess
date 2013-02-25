@@ -186,6 +186,49 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             _super.apply(this, arguments);
 
         }
+        Image.prototype.draw = function (src) {
+            this.args[0] = src;
+            if(this.el.tagName.toLowerCase() == 'canvas') {
+                var i = document.createElement('img');
+                this.drawImage(this.el, i);
+            } else {
+                (this.el).src = src;
+            }
+        };
+        Image.prototype.drawImage = function (canvas, img) {
+            canvas.width = this.args[1];
+            canvas.height = this.args[2];
+            $(img).on('load', function () {
+                var context = canvas.getContext('2d');
+                var getcha = false;
+                var height = canvas.height, width = canvas.width;
+                var ratio = img.width / img.height;
+                var destWidth = canvas.width;
+                var destHeight = canvas.height;
+                if(height < img.height && width < img.width) {
+                    while(!getcha) {
+                        height += 1;
+                        width += 1;
+                        if(true) {
+                            if(height == img.height) {
+                                getcha = true;
+                                width = height * ratio;
+                                destWidth = destHeight * ratio;
+                            }
+                            if(width == img.width) {
+                                getcha = true;
+                                height = width / ratio;
+                                destHeight = destWidth / ratio;
+                            }
+                        }
+                    }
+                    context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
+                } else {
+                    context.drawImage(img, 0, 0, width, height);
+                }
+            });
+            img.src = this.args[0];
+        };
         Image.prototype.createEl = function () {
             var answer = null;
             var img = document.createElement('img');
@@ -196,38 +239,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 if(this.args.length > 0) {
                     if(this.args[1] && this.args[2]) {
                         var canvas = document.createElement('canvas');
-                        canvas.width = this.args[1];
-                        canvas.height = this.args[2];
-                        $(img).on('load', function () {
-                            var context = canvas.getContext('2d');
-                            var getcha = false;
-                            var height = canvas.height, width = canvas.width;
-                            var ratio = img.width / img.height;
-                            var destWidth = canvas.width;
-                            var destHeight = canvas.height;
-                            if(height < img.height && width < img.width) {
-                                while(!getcha) {
-                                    height += 1;
-                                    width += 1;
-                                    if(true) {
-                                        if(height == img.height) {
-                                            getcha = true;
-                                            width = height * ratio;
-                                            destWidth = destHeight * ratio;
-                                        }
-                                        if(width == img.width) {
-                                            getcha = true;
-                                            height = width / ratio;
-                                            destHeight = destWidth / ratio;
-                                        }
-                                    }
-                                }
-                                context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
-                            } else {
-                                context.drawImage(img, 0, 0, width, height);
-                            }
-                        });
-                        img.src = this.args[0];
+                        this.drawImage(canvas, img);
                         answer = canvas;
                     } else {
                         img.src = this.args[0];

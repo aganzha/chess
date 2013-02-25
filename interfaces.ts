@@ -116,3 +116,7 @@ export interface Uploader{
     loadDone();
     
 }
+
+export interface Image{
+    draw(imgSrc:string);
+}
