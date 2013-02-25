@@ -1,3 +1,3 @@
 #!/bin/bash
 git add .;
-git commit --message="'"+$1+"'";
+git commit --message="$1";
