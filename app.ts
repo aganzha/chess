@@ -114,8 +114,6 @@ export class ChessApp{
 	    else{
 		parent.append(cell)
 	    }
-	    // this.resolveCells(board[recordString], cell,
-	    // 		      this.isCellDelayed(recordString)||delayed)
 	}
 	parent.afterResolve()
     }

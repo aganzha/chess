@@ -75,18 +75,18 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         };
         BaseCell.prototype.afterResolve = function () {
         };
-        BaseCell.prototype.beforeRender = function () {
+        BaseCell.prototype.beforeAppend = function () {
         };
-        BaseCell.prototype.afterRender = function () {
+        BaseCell.prototype.afterAppend = function () {
         };
         BaseCell.prototype.append = function (cell) {
             this.prepareEl();
-            cell.beforeRender();
+            cell.beforeAppend();
             cell.parent = this;
             this.children.push(cell);
             var ne = cell.render();
             this.el.appendChild(ne);
-            cell.afterRender();
+            cell.afterAppend();
         };
         BaseCell.prototype.appendDelayed = function (cell) {
             this.delayedChildren.push(cell);
@@ -102,6 +102,37 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         };
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);
+        };
+        BaseCell.prototype.walkDown = function (collected, cons, className, id) {
+            console.log('hehe', this.el);
+            for(var i = 0, l = this.children.length; i < l; i++) {
+                var cell = this.children[i];
+                var rec = cell.record;
+                var pushed = false;
+                if(!pushed && cons && rec.cons == cons) {
+                    collected.push(cell);
+                    pushed = true;
+                }
+                if(!pushed && className) {
+                    for(var j = 0, m = rec.classes.length; j < m; j++) {
+                        if(rec.classes[j] == className) {
+                            pushed = true;
+                            collected.push(cell);
+                            break;
+                        }
+                    }
+                }
+                if(!pushed && id && rec.id == id) {
+                    collected.push(cell);
+                    pushed = true;
+                }
+                cell.walkDown(collected, cons, className, id);
+            }
+        };
+        BaseCell.prototype.getPieces = function (cons, className, id) {
+            var answer = [];
+            this.walkDown(answer, cons, className, id);
+            return answer;
         };
         return BaseCell;
     })();
@@ -213,11 +244,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             _super.apply(this, arguments);
 
         }
-        Uploader.prototype.loadFile = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var files = e.target.files;
-            var file = files[0];
+        Uploader.prototype.loadFile = function (file) {
             this.fileName = file.name;
             this.fileSize = file.size;
             this.fileType = file.type;
@@ -229,8 +256,22 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             };
             reader.readAsDataURL(file);
         };
-        Uploader.prototype.afterRender = function () {
-            $(this.getFileInput()).on('change', utils.bind(this.loadFile, this));
+        Uploader.prototype.afterAppend = function () {
+            var me = this;
+            $(this.getFileInput()).on('change', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var files = e.target.files;
+                me.loadFile(files[0]);
+            });
+            $(this.getDropArea()).on('drop', function (e) {
+                alert('1');
+                e.stopPropagation();
+                e.preventDefault();
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                this.loadFile(files[0]);
+            });
         };
         Uploader.prototype.getFileInput = function () {
             return this.el;

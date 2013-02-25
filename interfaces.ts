@@ -31,12 +31,13 @@ export interface Cell{
     record:CellRecord;
     getBox():Box;
     fillExtraAttrs();
-    beforeRender();
-    afterRender();
+    beforeAppend();
+    afterAppend();
     updateEl(html:string);
     afterResolve();
     beforeResolve();    
     args:any[];
+    getPieces(cons?:string, className?:string,id?:string):Cell[];
 }
 export interface Box {
     left:number;
