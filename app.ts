@@ -22,7 +22,8 @@ export class ChessApp{
 	for(var recordString in board){
 	    var screen = this.instantiate(recordString, pieces.BaseScreen)
 	    screen.board = board[recordString]
-	    this.screens[screen.record.cons] =screen
+	    this.screens[recordString] =screen
+	    // this.screens[screen.record.cons] =screen
 	}
     }
     getCellClass(record:interfaces.CellRecord){

@@ -19,7 +19,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             for(var recordString in board) {
                 var screen = this.instantiate(recordString, pieces.BaseScreen);
                 screen.board = board[recordString];
-                this.screens[screen.record.cons] = screen;
+                this.screens[recordString] = screen;
             }
         }
         ChessApp.prototype.getCellClass = function (record) {
