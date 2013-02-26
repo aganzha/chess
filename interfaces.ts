@@ -40,6 +40,7 @@ export interface Cell{
     searchPieces(cons?:string, className?:string,id?:string):Cell[];
     bubbleDown(callable:(cell:Cell)=>any);
     afterRender();
+    appendDomMethod(el:HTMLElement);
 }
 export interface Box {
     left:number;

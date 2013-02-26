@@ -88,8 +88,11 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             cell.parent = this;
             this.children.push(cell);
             var ne = cell.render();
-            this.el.appendChild(ne);
+            this.appendDomMethod(ne);
             cell.afterAppend();
+        };
+        BaseCell.prototype.appendDomMethod = function (el) {
+            this.el.appendChild(el);
         };
         BaseCell.prototype.appendDelayed = function (cell) {
             this.delayedChildren.push(cell);

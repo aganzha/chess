@@ -95,9 +95,14 @@ export class BaseCell implements interfaces.Cell{
 	cell.parent = this
 	this.children.push(cell)
 	var ne = cell.render()
-	this.el.appendChild(ne)
+	this.appendDomMethod(ne)
 	cell.afterAppend()
     }
+
+    appendDomMethod(el:HTMLElement){
+	this.el.appendChild(el)
+    }
+    
     appendDelayed(cell:interfaces.Cell){
 	this.delayedChildren.push(cell)
     }
