@@ -93,6 +93,7 @@ export interface Application{
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
     // instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
+    globals:{};
 }
 
 export interface Scrollable extends Cell{
@@ -115,7 +116,8 @@ export interface Uploader{
     getFileInput():HTMLInputElement;
     getDropArea():HTMLElement;
     loadDone();
-    
+    file:string;
+    fileName:string;
 }
 
 export interface Image{

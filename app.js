@@ -11,6 +11,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             this.viewport = viewport;
             this.board = board;
             this.modules = modules;
+            this.globals = {
+            };
             modules.push(pieces);
             viewport.application = this;
             window['application'] = this;

@@ -10,9 +10,11 @@ declare var $;
 export class ChessApp{
     screens:interfaces.ScreenMap;
     currentScreen:interfaces.Screen;
+    globals:{};
     constructor(public viewport:pieces.ViewPort, public board:{}, 
 		public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
+	this.globals = {}
 	modules.push(pieces)
 	viewport.application = this
 	window['application'] =this
