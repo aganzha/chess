@@ -31,15 +31,20 @@ export interface Cell{
     record:CellRecord;
     getBox():Box;
     fillExtraAttrs();
-    // beforeAppend();
+    // этот метод вызывается, когда cell добавлен в parent.
+    // у него еще нет children. у него есть el(элемент) но онг еще не добавлен в DOM
     afterAppend();
+    
     updateEl(html:string);
+    // этот метод вызывается, когда cell добавлен в parent.
+    // у него уже есть children. у него есть el(элемент) но он еще не добавлен в DOM
     afterResolve();
-    // beforeResolve();    
     args:any[];
     searchPieces(cons?:string, className?:string,id?:string):Cell[];
     bubbleDown(callable:(cell:Cell)=>any);
     afterRender();
+    // этот метод вызывается, когда cell добавлен в parent.
+    // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
     appendDomMethod(el:HTMLElement);
 }
 export interface Box {
