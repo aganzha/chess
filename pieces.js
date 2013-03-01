@@ -204,6 +204,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         Image.prototype.drawImage = function (canvas, img) {
             canvas.width = this.args[1];
             canvas.height = this.args[2];
+            var me = this;
             $(img).on('load', function () {
                 var context = canvas.getContext('2d');
                 var getcha = false;
@@ -231,6 +232,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
                 } else {
                     context.drawImage(img, 0, 0, width, height);
+                }
+            }).on('error', function (e) {
+                if(me.args[3]) {
+                    me.draw(me.args[3]);
                 }
             });
             img.src = this.args[0];

@@ -13,7 +13,6 @@ function scroll(me:interfaces.Scrollable){
     var initial = me.getInitialBox()
     var passed = (initial.top - first.top)/first.height
     var limit = passed % me.pageSize
-    //console.log(limit,passed,me.scrollAfterNo, first, firstItem)
     if(limit>me.scrollAfterNo){
 	me.loadNextPage()
     }

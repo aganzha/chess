@@ -205,6 +205,7 @@ export class Image extends BaseCell implements interfaces.Image{
     drawImage(canvas:HTMLCanvasElement,img:HTMLImageElement){
 	canvas.width = this.args[1]
 	canvas.height = this.args[2]
+	var me = this
 	$(img).on('load',function(){
 	    var context = canvas.getContext('2d')
 	    var getcha = false
@@ -234,6 +235,10 @@ export class Image extends BaseCell implements interfaces.Image{
 	    }
 	    else{
 		context.drawImage(img,0,0,width,height);
+	    }
+	}).on('error',function(e){
+	    if(me.args[3]){
+		me.draw(me.args[3])
 	    }
 	})
 	img.src = this.args[0]
