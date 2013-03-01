@@ -18,7 +18,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
+            this.init();
         }
+        BaseCell.prototype.init = function () {
+        };
         BaseCell.prototype.forceDelayed = function (filler) {
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];

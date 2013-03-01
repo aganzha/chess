@@ -15,6 +15,7 @@ export interface DelayedCellFiller{
 
 export interface Cell{
     application:Application;
+    init();
     parent:Cell;
     children:Cell[];
     delayedChildren:Cell[];
