@@ -147,7 +147,6 @@ export class BaseCell implements interfaces.Cell{
 		collected.push(cell)
 		pushed=true
 	    }
-	    console.log(once,pushed)
 	    if(once && pushed){
 	    }
 	    else{
