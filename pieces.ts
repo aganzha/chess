@@ -104,7 +104,7 @@ export class BaseCell implements interfaces.Cell{
     appendDomMethod(el:HTMLElement){
 	this.el.appendChild(el)
     }
-    
+
     appendDelayed(cell:interfaces.Cell){
 	this.delayedChildren.push(cell)
     }
@@ -124,7 +124,7 @@ export class BaseCell implements interfaces.Cell{
     }
 
     searchDown(collected:BaseCell[],
-	       cons?:string, className?:string,id?:string){
+	       cons?:string, className?:string,id?:string,once?:bool){
 	for(var i=0,l=this.children.length;i<l;i++){
 	    var cell = <BaseCell>this.children[i];
 	    var rec = cell.record
@@ -147,17 +147,28 @@ export class BaseCell implements interfaces.Cell{
 		collected.push(cell)
 		pushed=true
 	    }
-	    cell.searchDown(collected, cons, className, id)
-	}	
+	    console.log(once,pushed)
+	    if(once && pushed){
+	    }
+	    else{
+		cell.searchDown(collected, cons, className, id, once)
+	    }
+	}
     }
-    searchPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
-	// TODO
-	// для каждого cell нужно сделать items,keys и values
-	// соотв здесь будет проход от скрина вниз!
+    query(cons?:string, className?:string,id?:string):interfaces.Cell[]{
 	var answer = <BaseCell[]>[]
 	this.searchDown(answer,cons,className,id)
 	return answer
-    }        
+    }
+    find(cons?:string, className?:string,id?:string):interfaces.Cell{
+	var answer = <interfaces.Cell>null
+	var acc = <BaseCell[]>[]
+	this.searchDown(acc,cons,className,id,true)
+	if(acc.length>0){
+	    answer=acc[0]
+	}
+	return answer
+    }
 }
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{

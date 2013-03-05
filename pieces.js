@@ -112,7 +112,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);
         };
-        BaseCell.prototype.searchDown = function (collected, cons, className, id) {
+        BaseCell.prototype.searchDown = function (collected, cons, className, id, once) {
             for(var i = 0, l = this.children.length; i < l; i++) {
                 var cell = this.children[i];
                 var rec = cell.record;
@@ -134,12 +134,25 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     collected.push(cell);
                     pushed = true;
                 }
-                cell.searchDown(collected, cons, className, id);
+                console.log(once, pushed);
+                if(once && pushed) {
+                } else {
+                    cell.searchDown(collected, cons, className, id, once);
+                }
             }
         };
-        BaseCell.prototype.searchPieces = function (cons, className, id) {
+        BaseCell.prototype.query = function (cons, className, id) {
             var answer = [];
             this.searchDown(answer, cons, className, id);
+            return answer;
+        };
+        BaseCell.prototype.find = function (cons, className, id) {
+            var answer = null;
+            var acc = [];
+            this.searchDown(acc, cons, className, id, true);
+            if(acc.length > 0) {
+                answer = acc[0];
+            }
             return answer;
         };
         return BaseCell;

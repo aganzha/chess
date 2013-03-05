@@ -62,16 +62,6 @@ function walkDown(parent:interfaces.Cell, collected:interfaces.Cell[],
 }
 
 
-export function getPieces(cons?:string, className?:string,id?:string):interfaces.Cell[]{
-    // TODO
-    // для каждого cell нужно сделать items,keys и values
-    // соотв здесь будет проход от скрина вниз!
-    var answer = <interfaces.Cell[]>[]
-    walkDown(<interfaces.Cell>window['application'].currentScreen, answer,
-		  cons,className,id)	
-    return answer
-}
-
 
 export function bind(func, context) {
     var nativeBind = Function.prototype.bind

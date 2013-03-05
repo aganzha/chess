@@ -57,12 +57,6 @@ define(["require", "exports"], function(require, exports) {
             walkDown(cell, collected, cons, className, id);
         }
     }
-    function getPieces(cons, className, id) {
-        var answer = [];
-        walkDown(window['application'].currentScreen, answer, cons, className, id);
-        return answer;
-    }
-    exports.getPieces = getPieces;
     function bind(func, context) {
         var nativeBind = Function.prototype.bind;
         var slice = Array.prototype.slice;

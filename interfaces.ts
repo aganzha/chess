@@ -41,7 +41,10 @@ export interface Cell{
     // у него уже есть children. у него есть el(элемент) но он еще не добавлен в DOM
     afterResolve();
     args:any[];
-    searchPieces(cons?:string, className?:string,id?:string):Cell[];
+
+    query(cons?:string, className?:string,id?:string):Cell[];
+    find(cons?:string, className?:string,id?:string):Cell;
+
     bubbleDown(callable:(cell:Cell)=>any);
     afterRender();
     // этот метод вызывается, когда cell добавлен в parent.
