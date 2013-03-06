@@ -134,7 +134,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     collected.push(cell);
                     pushed = true;
                 }
-                console.log(once, pushed);
                 if(once && pushed) {
                 } else {
                     cell.searchDown(collected, cons, className, id, once);

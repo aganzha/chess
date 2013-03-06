@@ -46,9 +46,9 @@ export interface Cell{
     find(cons?:string, className?:string,id?:string):Cell;
 
     bubbleDown(callable:(cell:Cell)=>any);
-    afterRender();
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
+    afterRender();   
     appendDomMethod(el:HTMLElement);
 }
 export interface Box {
