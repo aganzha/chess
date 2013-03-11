@@ -201,18 +201,18 @@ export class ViewPort extends BaseCell{
 }
 
 export class Image extends BaseCell implements interfaces.Image{
-    draw(src:string){
+    draw(src:string,error?:bool){
 	this.args[0] = src
 	if(this.el.tagName.toLowerCase()=='canvas'){
 	    var i = document.createElement('img')
-	    this.drawImage(<HTMLCanvasElement>this.el, <HTMLImageElement>i)
+	    this.drawImage(<HTMLCanvasElement>this.el, <HTMLImageElement>i, error)
 	}
 	else{
 	    (<HTMLImageElement>this.el).src=src
 	}
     }
 
-    drawImage(canvas:HTMLCanvasElement,img:HTMLImageElement){
+    drawImage(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
 	canvas.width = this.args[1]
 	canvas.height = this.args[2]
 	var me = this
@@ -247,8 +247,8 @@ export class Image extends BaseCell implements interfaces.Image{
 		context.drawImage(img,0,0,width,height);
 	    }
 	}).on('error',function(e){
-	    if(me.args[3]){
-		me.draw(me.args[3])
+	    if(me.args[3] && !error){
+		me.draw(me.args[3], true)
 	    }
 	})
 	img.src = this.args[0]
