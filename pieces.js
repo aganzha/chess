@@ -22,6 +22,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         }
         BaseCell.prototype.init = function () {
         };
+        BaseCell.prototype.log = function (some) {
+            console.log(some);
+        };
         BaseCell.prototype.forceDelayed = function (filler) {
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];

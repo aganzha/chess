@@ -18,6 +18,9 @@ export class BaseCell implements interfaces.Cell{
     }
     init(){
     }
+    log(some:any){
+	console.log(some)
+    }
     forceDelayed(filler:interfaces.DelayedCellFiller){
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
