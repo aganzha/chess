@@ -31,10 +31,7 @@ export class BaseCell implements interfaces.Cell{
 		klass=BaseCell
 	    }
 	    var clone = new klass(delayedCell.record, this.application)
-	    clone.html = delayedCell.html
-	    if(delayedCell.args.length>0){
-		this.log('clone',delayedCell.args[0],clone.args[0])
-	    }
+	    clone.html = delayedCell.html	    
 	    clone.args = []
 	    for(var j=0;j<delayedCell.args.length;j++){
 	    	clone.args.push(delayedCell.args[j])

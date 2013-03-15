@@ -123,6 +123,17 @@ export interface Valuable{
     defaultValue:string;
 }
 
+
+export interface Draggable extends Cell{
+    dX:number;//do not touch this numbers. just declare.
+    dY:number;
+    onStartDrag:(el:HTMLElement)=>bool;//if want drag to begin -> return true!!!
+    onDrag:()=>any;
+    onDrop:()=>any;
+}
+
+
+
 export interface Uploader{
     getFileInput():HTMLInputElement;
     getDropArea():HTMLElement;
