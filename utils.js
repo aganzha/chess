@@ -70,4 +70,12 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.bind = bind;
     ;
+    function s4() {
+        return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
+    }
+    ;
+    function guid() {
+        return s4() + s4();
+    }
+    exports.guid = guid;
 })

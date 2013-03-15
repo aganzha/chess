@@ -19,11 +19,16 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.delayedChildren = [];
             this.delayed = false;
             this.init();
+            this.guid = utils.guid();
         }
         BaseCell.prototype.init = function () {
         };
-        BaseCell.prototype.log = function (some) {
-            console.log(some);
+        BaseCell.prototype.log = function () {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                args[_i] = arguments[_i + 0];
+            }
+            console.log(arguments);
         };
         BaseCell.prototype.forceDelayed = function (filler) {
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
@@ -249,13 +254,16 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     context.drawImage(img, 0, 0, width, height);
                 }
             }).on('error', function (e) {
+                console.log('eeeeeeeeeerrror Why do not you render default image for me?');
                 if(me.args[3] && !error) {
+                    console.log('why?', me.args[3]);
                     me.draw(me.args[3], true);
                 }
             });
             img.src = this.args[0];
         };
         Image.prototype.createEl = function () {
+            this.log('createEl', this.args[0], this.guid);
             var answer = null;
             var img = document.createElement('img');
             if(this.html.length > 0) {

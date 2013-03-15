@@ -14,6 +14,7 @@ export interface DelayedCellFiller{
 }
 
 export interface Cell{
+    guid:string;
     application:Application;
     init();
     parent:Cell;
@@ -50,6 +51,7 @@ export interface Cell{
     // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
     afterRender();   
     appendDomMethod(el:HTMLElement);
+    log(...args: any[]);
 }
 export interface Box {
     left:number;

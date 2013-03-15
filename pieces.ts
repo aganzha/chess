@@ -9,17 +9,19 @@ export class BaseCell implements interfaces.Cell{
     delayedChildren:interfaces.Cell[];
     delayed:bool;
     args=[];
+    guid:string;
     constructor(public record:interfaces.CellRecord,
 		public application:interfaces.Application){
 	this.children = <interfaces.Cell[]>[]
 	this.delayedChildren = <interfaces.Cell[]>[]
 	this.delayed = false
 	this.init()
+	this.guid = utils.guid()
     }
     init(){
     }
-    log(some:any){
-	console.log(some)
+    log(...args: any[]){
+	console.log(arguments)
     }
     forceDelayed(filler:interfaces.DelayedCellFiller){
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
@@ -250,13 +252,19 @@ export class Image extends BaseCell implements interfaces.Image{
 		context.drawImage(img,0,0,width,height);
 	    }
 	}).on('error',function(e){
+	    console.log('eeeeeeeeeerrror Why do not you render default image for me?')
 	    if(me.args[3] && !error){
+		console.log('why?',me.args[3])
 		me.draw(me.args[3], true)
 	    }
 	})
 	img.src = this.args[0]
     }
     createEl(){
+
+	this.log('createEl',this.args[0],this.guid)
+
+
 	var answer = <HTMLElement>null
 	var img = <HTMLImageElement>document.createElement('img')
 	if(this.html.length>0){
