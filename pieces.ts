@@ -32,7 +32,13 @@ export class BaseCell implements interfaces.Cell{
 	    }
 	    var clone = new klass(delayedCell.record, this.application)
 	    clone.html = delayedCell.html
-	    clone.args = delayedCell.args
+	    if(delayedCell.args.length>0){
+		this.log('clone',delayedCell.args[0],clone.args[0])
+	    }
+	    clone.args = []
+	    for(var j=0;j<delayedCell.args.length;j++){
+	    	clone.args.push(delayedCell.args[j])
+	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
 	    // ?? may be filler must be before append (and render???)
 	    this.append(clone)
@@ -218,6 +224,7 @@ export class Image extends BaseCell implements interfaces.Image{
     }
 
     drawImage(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
+
 	canvas.width = this.args[1]
 	canvas.height = this.args[2]
 	var me = this
@@ -252,18 +259,13 @@ export class Image extends BaseCell implements interfaces.Image{
 		context.drawImage(img,0,0,width,height);
 	    }
 	}).on('error',function(e){
-	    console.log('eeeeeeeeeerrror Why do not you render default image for me?')
 	    if(me.args[3] && !error){
-		console.log('why?',me.args[3])
 		me.draw(me.args[3], true)
 	    }
 	})
 	img.src = this.args[0]
     }
     createEl(){
-
-	this.log('createEl',this.args[0],this.guid)
-
 
 	var answer = <HTMLElement>null
 	var img = <HTMLImageElement>document.createElement('img')
@@ -275,7 +277,9 @@ export class Image extends BaseCell implements interfaces.Image{
 	    if(this.args.length>0){
 		if(this.args[1] && this.args[2]){
 		    var canvas = <HTMLCanvasElement>document.createElement('canvas')
-		    this.drawImage(canvas,img)
+		    if(this.args[0]!=null){
+			this.drawImage(canvas,img)
+		    }
 		    answer = canvas
 		}
 		else{

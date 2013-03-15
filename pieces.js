@@ -39,7 +39,13 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 }
                 var clone = new klass(delayedCell.record, this.application);
                 clone.html = delayedCell.html;
-                clone.args = delayedCell.args;
+                if(delayedCell.args.length > 0) {
+                    this.log('clone', delayedCell.args[0], clone.args[0]);
+                }
+                clone.args = [];
+                for(var j = 0; j < delayedCell.args.length; j++) {
+                    clone.args.push(delayedCell.args[j]);
+                }
                 clone.delayedChildren = delayedCell.delayedChildren;
                 this.append(clone);
                 filler(clone);
@@ -254,16 +260,13 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     context.drawImage(img, 0, 0, width, height);
                 }
             }).on('error', function (e) {
-                console.log('eeeeeeeeeerrror Why do not you render default image for me?');
                 if(me.args[3] && !error) {
-                    console.log('why?', me.args[3]);
                     me.draw(me.args[3], true);
                 }
             });
             img.src = this.args[0];
         };
         Image.prototype.createEl = function () {
-            this.log('createEl', this.args[0], this.guid);
             var answer = null;
             var img = document.createElement('img');
             if(this.html.length > 0) {
@@ -273,7 +276,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 if(this.args.length > 0) {
                     if(this.args[1] && this.args[2]) {
                         var canvas = document.createElement('canvas');
-                        this.drawImage(canvas, img);
+                        if(this.args[0] != null) {
+                            this.drawImage(canvas, img);
+                        }
                         answer = canvas;
                     } else {
                         img.src = this.args[0];
