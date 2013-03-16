@@ -63,18 +63,13 @@ function beginDrag(e:MouseEvent, me:interfaces.Draggable){
     if(!me.dY){
 	me.dY = 0
     }
-    // var originals = function(){
-	
-    // }
         
-    me.log(me.dX, me.dY)
-
+    var body = $('body')
+    body.on('mousemove', function(e:MouseEvent){drag(e,me)});
+    body.on('mouseup', function(e:MouseEvent){drop(e,me)});
+    
     me.dX += x;
-    me.dY += y;
-
-    $('body').on('mousemove', function(e:MouseEvent){drag(e,me)});
-    $('body').on('mouseup', function(e:MouseEvent){drop(e,me, me.dX, me.dY)});
-
+    me.dY += y;    
 
     el.css({
 	position:'absolute',
@@ -85,18 +80,18 @@ function beginDrag(e:MouseEvent, me:interfaces.Draggable){
 
 function drag(e:MouseEvent, me:interfaces.Draggable){
     stopPropagation(e)
-    $(me.el).css({left:e.x+me.dX+'px',top:e.y+me.dY+'px'})
-    me.onDrag()
+    var box = me.confirmDrag({left:e.x+me.dX,top:e.y+me.dY,width:null,height:null})
+    $(me.el).css({left:box.left+'px',top:box.top+'px'})
+    //$(me.el).css({left:e.x+me.dX+'px',top:e.y+me.dY+'px'})
+    me.onDrag(box)
 }
 // TODO! move z-index to application level. make z-index manager
-function drop(e:MouseEvent, me:interfaces.Draggable, originalDx:number, originalDy:number){
+function drop(e:MouseEvent, me:interfaces.Draggable){
     stopPropagation(e)
-    $('body').off('mousemove')
-    $('body').off('mouseup')
+    var body = $('body')
+    body.off('mousemove')
+    body.off('mouseup')
     // TODO! replace 9 and 999 in z-index by attributes in dragable!
     $(me.el).css({'z-index':9,cursor:'inherit'});
-    me.log(me.dX, me.dY,originalDx,originalDy)
-    me.dX = originalDx
-    me.dY = originalDy
     me.onDrop();
 }

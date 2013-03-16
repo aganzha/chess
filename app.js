@@ -98,11 +98,13 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             }
             for(var recordString in board) {
                 var cell = this.instantiate(recordString, pieces.BaseCell);
-                delayed = delayed || this.isCellDelayed(recordString);
-                this.resolveCells(board[recordString], cell, delayed);
-                if(delayed) {
+                var di = delayed || this.isCellDelayed(recordString);
+                this.resolveCells(board[recordString], cell, di);
+                if(di) {
+                    console.log('delayed!', cell.record.cons);
                     parent.appendDelayed(cell);
                 } else {
+                    console.log('normal', cell.record.cons);
                     parent.append(cell);
                 }
             }

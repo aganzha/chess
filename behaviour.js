@@ -63,15 +63,15 @@ define(["require", "exports"], function(require, exports) {
         if(!me.dY) {
             me.dY = 0;
         }
-        me.log(me.dX, me.dY);
-        me.dX += x;
-        me.dY += y;
-        $('body').on('mousemove', function (e) {
+        var body = $('body');
+        body.on('mousemove', function (e) {
             drag(e, me);
         });
-        $('body').on('mouseup', function (e) {
-            drop(e, me, me.dX, me.dY);
+        body.on('mouseup', function (e) {
+            drop(e, me);
         });
+        me.dX += x;
+        me.dY += y;
         el.css({
             position: 'absolute',
             'z-index': '999',
@@ -80,23 +80,27 @@ define(["require", "exports"], function(require, exports) {
     }
     function drag(e, me) {
         stopPropagation(e);
-        $(me.el).css({
-            left: e.x + me.dX + 'px',
-            top: e.y + me.dY + 'px'
+        var box = me.confirmDrag({
+            left: e.x + me.dX,
+            top: e.y + me.dY,
+            width: null,
+            height: null
         });
-        me.onDrag();
+        $(me.el).css({
+            left: box.left + 'px',
+            top: box.top + 'px'
+        });
+        me.onDrag(box);
     }
-    function drop(e, me, originalDx, originalDy) {
+    function drop(e, me) {
         stopPropagation(e);
-        $('body').off('mousemove');
-        $('body').off('mouseup');
+        var body = $('body');
+        body.off('mousemove');
+        body.off('mouseup');
         $(me.el).css({
             'z-index': 9,
             cursor: 'inherit'
         });
-        me.log(me.dX, me.dY, originalDx, originalDy);
-        me.dX = originalDx;
-        me.dY = originalDy;
         me.onDrop();
     }
 })

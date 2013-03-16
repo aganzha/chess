@@ -128,8 +128,9 @@ export interface Draggable extends Cell{
     dX:number;//do not touch this numbers. just declare.
     dY:number;
     onStartDrag:(el:HTMLElement)=>bool;//if want drag to begin -> return true!!!
-    onDrag:()=>any;
+    onDrag:(box:Box)=>any;
     onDrop:()=>any;
+    confirmDrag(b:Box):Box;
 }
 
 
