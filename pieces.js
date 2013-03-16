@@ -30,9 +30,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             }
             console.log(arguments);
         };
-        BaseCell.prototype.forceDelayed = function (filler) {
+        BaseCell.prototype.forceDelayed = function (filler, selector) {
+            if(!selector) {
+                selector = function (cell) {
+                    return true;
+                };
+            }
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];
+                if(!selector(delayedCell)) {
+                    continue;
+                }
                 var klass = this.application.getCellClass(delayedCell.record);
                 if(klass == null) {
                     klass = BaseCell;
@@ -46,7 +54,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 clone.delayedChildren = delayedCell.delayedChildren;
                 this.append(clone);
                 filler(clone);
-                clone.forceDelayed(filler);
+                clone.forceDelayed(filler, function (cell) {
+                    return !cell.delayed;
+                });
             }
         };
         BaseCell.prototype.getBox = function () {

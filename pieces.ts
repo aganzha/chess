@@ -23,9 +23,19 @@ export class BaseCell implements interfaces.Cell{
     log(...args: any[]){
 	console.log(arguments)
     }
-    forceDelayed(filler:interfaces.DelayedCellFiller){
+    forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector){
+	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек 
+	// (см каменты в app.ts->resolveCells
+	
+	if(!selector){	    
+	    selector = function(cell:interfaces.Cell){return true}
+	}
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
-	    var delayedCell = this.delayedChildren[i];
+	    var delayedCell = this.delayedChildren[i];	   
+	    if(!selector(delayedCell)){
+		continue
+	    }
+
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    if(klass==null){
 		klass=BaseCell
@@ -37,10 +47,12 @@ export class BaseCell implements interfaces.Cell{
 	    	clone.args.push(delayedCell.args[j])
 	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
-	    // ?? may be filler must be before append (and render???)
 	    this.append(clone)
 	    filler(clone)
-	    clone.forceDelayed(filler)
+	    // вот тут важно, что на следующе уровни selector не передается
+	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
+	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
+	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	}
     }
     getBox(){

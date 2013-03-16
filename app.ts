@@ -111,8 +111,13 @@ export class ChessApp{
 	}
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString, pieces.BaseCell)
-	    var di = delayed || this.isCellDelayed(recordString)
-	    this.resolveCells(board[recordString], cell, di)//delayed
+	    cell.delayed = this.isCellDelayed(recordString)
+	    // ячейка может быть с андескором, поэтому она "отложена"
+	    // но она также может быть отложена и без андескора, т.к.
+	    // она находитя в отложенном треде (ass:{_bass:{smass:{_kalabass ...
+	    // все, что ниже ass - отложено. но только ячейки с андескором получают атрибут delayed
+	    var di = delayed || cell.delayed
+	    this.resolveCells(board[recordString], cell, di)
 	    if(di){
 		parent.appendDelayed(cell)
 	    }

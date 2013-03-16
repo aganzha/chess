@@ -22,7 +22,7 @@ export interface Cell{
     delayedChildren:Cell[];
     append(cell:Cell);
     appendDelayed(cell:Cell);
-    forceDelayed(filler:DelayedCellFiller);
+    forceDelayed(filler:DelayedCellFiller,selector?:CellSelector);
     delayed:bool;
     el:HTMLElement;
     tag:string;
@@ -75,6 +75,10 @@ export interface ScreenMap{
 export interface ScreenSelector{
     (screens:ScreenMap):Screen;
 }
+export interface CellSelector{
+    (cell:Cell):bool;
+}
+
 export interface Transition{
     union();
     redraw();
