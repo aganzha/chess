@@ -114,11 +114,9 @@ export class ChessApp{
 	    var di = delayed || this.isCellDelayed(recordString)
 	    this.resolveCells(board[recordString], cell, di)//delayed
 	    if(di){
-		console.log('delayed!',cell.record.cons)
 		parent.appendDelayed(cell)
 	    }
 	    else{
-		console.log('normal', cell.record.cons)
 		parent.append(cell)
 	    }
 	}

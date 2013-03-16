@@ -101,10 +101,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 var di = delayed || this.isCellDelayed(recordString);
                 this.resolveCells(board[recordString], cell, di);
                 if(di) {
-                    console.log('delayed!', cell.record.cons);
                     parent.appendDelayed(cell);
                 } else {
-                    console.log('normal', cell.record.cons);
                     parent.append(cell);
                 }
             }
