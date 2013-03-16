@@ -8,6 +8,7 @@ export class BaseCell implements interfaces.Cell{
     children:interfaces.Cell[];
     delayedChildren:interfaces.Cell[];
     delayed:bool;
+    board:{};
     args=[];
     guid:string;
     constructor(public record:interfaces.CellRecord,
@@ -93,12 +94,8 @@ export class BaseCell implements interfaces.Cell{
 	this.html = html
 	$(this.el).html(html)
     }
-    // beforeResolve(){
-    // }
     afterResolve(){
     }
-    // beforeAppend(){
-    // }
     afterAppend(){
     }
     afterRender(){
@@ -113,7 +110,6 @@ export class BaseCell implements interfaces.Cell{
     append(cell:interfaces.Cell){
 
 	this.prepareEl()
-	// cell.beforeAppend()
 	cell.parent = this
 	this.children.push(cell)
 	var ne = cell.render()
@@ -192,7 +188,6 @@ export class BaseCell implements interfaces.Cell{
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
     resolved:bool;
-    board:{};
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }

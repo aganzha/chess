@@ -111,6 +111,7 @@ export class ChessApp{
 	}
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString, pieces.BaseCell)
+	    cell.board = board[recordString]
 	    cell.delayed = this.isCellDelayed(recordString)
 	    // ячейка может быть с андескором, поэтому она "отложена"
 	    // но она также может быть отложена и без андескора, т.к.

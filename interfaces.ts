@@ -36,20 +36,20 @@ export interface Cell{
     // этот метод вызывается, когда cell добавлен в parent.
     // у него еще нет children. у него есть el(элемент) но онг еще не добавлен в DOM
     afterAppend();
-    
+
     updateEl(html:string);
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children. у него есть el(элемент) но он еще не добавлен в DOM
     afterResolve();
     args:any[];
-
+    board:{};
     query(cons?:string, className?:string,id?:string):Cell[];
     find(cons?:string, className?:string,id?:string):Cell;
 
     bubbleDown(callable:(cell:Cell)=>any);
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
-    afterRender();   
+    afterRender();
     appendDomMethod(el:HTMLElement);
     log(...args: any[]);
 }
@@ -65,7 +65,6 @@ export interface Screen extends Cell{
     afterSelfReplace(other:Screen);
     afterSelfApear(other:Screen);
     replaceBy(other:Screen);
-    board:{};    
     resolved:bool;
 }
 export interface ScreenMap{

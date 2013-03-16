@@ -98,6 +98,7 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
             }
             for(var recordString in board) {
                 var cell = this.instantiate(recordString, pieces.BaseCell);
+                cell.board = board[recordString];
                 cell.delayed = this.isCellDelayed(recordString);
                 var di = delayed || cell.delayed;
                 this.resolveCells(board[recordString], cell, di);
