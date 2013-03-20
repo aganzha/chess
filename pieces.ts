@@ -36,7 +36,7 @@ export class BaseCell implements interfaces.Cell{
 	    if(!selector(delayedCell)){
 		continue
 	    }
-
+	    delayedCell.delayed=false
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    if(klass==null){
 		klass=BaseCell
@@ -216,6 +216,10 @@ export class ViewPort extends BaseCell{
 }
 
 export class Image extends BaseCell implements interfaces.Image{
+
+    fitHeight:bool;
+    fitWidth:bool;
+
     draw(src:string,error?:bool){
 	this.args[0] = src
 	if(this.el.tagName.toLowerCase()=='canvas'){
@@ -271,11 +275,11 @@ export class Image extends BaseCell implements interfaces.Image{
     }
     createEl(){
 
-	var answer = <HTMLElement>null
+
 	var img = <HTMLImageElement>document.createElement('img')
+	var answer = <HTMLElement>img
 	if(this.html.length>0){
 	    img.src = this.html
-	    answer = img
 	}
 	else{
 	    if(this.args.length>0){

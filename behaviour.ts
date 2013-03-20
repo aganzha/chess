@@ -63,7 +63,7 @@ function beginDrag(e:MouseEvent, me:interfaces.Draggable){
     if(!me.dY){
 	me.dY = 0
     }
-        
+    
     var body = $('body')
     body.on('mousemove', function(e:MouseEvent){drag(e,me)});
     body.on('mouseup', function(e:MouseEvent){drop(e,me)});

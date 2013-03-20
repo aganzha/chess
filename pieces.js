@@ -41,6 +41,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 if(!selector(delayedCell)) {
                     continue;
                 }
+                delayedCell.delayed = false;
                 var klass = this.application.getCellClass(delayedCell.record);
                 if(klass == null) {
                     klass = BaseCell;
@@ -274,11 +275,10 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             img.src = this.args[0];
         };
         Image.prototype.createEl = function () {
-            var answer = null;
             var img = document.createElement('img');
+            var answer = img;
             if(this.html.length > 0) {
                 img.src = this.html;
-                answer = img;
             } else {
                 if(this.args.length > 0) {
                     if(this.args[1] && this.args[2]) {
