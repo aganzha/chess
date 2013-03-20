@@ -240,10 +240,20 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             canvas.height = this.args[2];
             var me = this;
             $(img).on('load', function () {
+                var ratio = img.width / img.height;
+                if(me.fitWidth) {
+                    canvas.width = me.fitWidth;
+                    canvas.height = me.fitWidth / ratio;
+                }
+                if(me.fitHeight) {
+                    console.log('ah!');
+                    canvas.height = me.fitHeight;
+                    canvas.width = me.fitHeight * ratio;
+                    console.log(canvas.width, canvas.height);
+                }
                 var context = canvas.getContext('2d');
                 var getcha = false;
                 var height = canvas.height, width = canvas.width;
-                var ratio = img.width / img.height;
                 var destWidth = canvas.width;
                 var destHeight = canvas.height;
                 if(height < img.height && width < img.width) {
