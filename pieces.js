@@ -295,6 +295,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                         var canvas = document.createElement('canvas');
                         if(this.args[0] != null) {
                             this.drawImage(canvas, img);
+                        } else {
+                            canvas.width = this.args[1];
+                            canvas.height = this.args[2];
                         }
                         answer = canvas;
                     } else {

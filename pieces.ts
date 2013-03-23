@@ -305,6 +305,10 @@ export class Image extends BaseCell implements interfaces.Image{
 		    if(this.args[0]!=null){
 			this.drawImage(canvas,img)
 		    }
+		    else{
+			canvas.width = this.args[1]
+			canvas.height = this.args[2]
+		    }
 		    answer = canvas
 		}
 		else{
