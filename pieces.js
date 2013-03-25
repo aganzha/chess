@@ -246,10 +246,8 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     canvas.height = me.fitWidth / ratio;
                 }
                 if(me.fitHeight) {
-                    console.log('ah!');
                     canvas.height = me.fitHeight;
                     canvas.width = me.fitHeight * ratio;
-                    console.log(canvas.width, canvas.height);
                 }
                 var context = canvas.getContext('2d');
                 var getcha = false;

@@ -247,10 +247,8 @@ export class Image extends BaseCell implements interfaces.Image{
 	    }
 
 	    if(me.fitHeight){
-		console.log('ah!')
 		canvas.height = me.fitHeight
 		canvas.width = me.fitHeight*ratio
-		console.log(canvas.width,canvas.height)
 	    }
 
 

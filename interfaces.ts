@@ -34,12 +34,14 @@ export interface Cell{
     getBox():Box;
     fillExtraAttrs();
     // этот метод вызывается, когда cell добавлен в parent.
-    // у него еще нет children. у него есть el(элемент) но онг еще не добавлен в DOM
+    // у него уже есть children и у него есть parent!. 
+    // у него есть el(элемент) но он еще не добавлен в DOM
     afterAppend();
 
     updateEl(html:string);
     // этот метод вызывается, когда cell добавлен в parent.
-    // у него уже есть children. у него есть el(элемент) но он еще не добавлен в DOM
+    // у него уже есть children, но нет parent у него есть el(элемент) но он еще не добавлен в DOM
+    // у него нет parent!
     afterResolve();
     args:any[];
     board:{};
