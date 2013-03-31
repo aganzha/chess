@@ -72,10 +72,18 @@ define(["require", "exports"], function(require, exports) {
         });
         me.dX += x;
         me.dY += y;
+        var box = me.confirmDrag({
+            left: e.x + me.dX,
+            top: e.y + me.dY,
+            width: null,
+            height: null
+        });
         el.css({
             position: 'absolute',
             'z-index': '999',
-            cursor: 'move'
+            cursor: 'move',
+            left: box.left + 'px',
+            top: box.top + 'px'
         });
     }
     function drag(e, me) {

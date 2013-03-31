@@ -130,6 +130,14 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             $(this.el).remove();
             this.el = null;
             this.children = [];
+            var newParentsChildren = [];
+            for(var i = 0; i < this.parent.children.length; i++) {
+                var cel = this.parent.children[i];
+                if(cel !== this) {
+                    newParentsChildren.push(cel);
+                }
+            }
+            this.parent.children = newParentsChildren;
         };
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);
@@ -315,10 +323,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             _super.apply(this, arguments);
 
         }
+        Uploader.prototype.needLoad = function (fname) {
+            return true;
+        };
         Uploader.prototype.loadFile = function (file) {
             this.fileName = file.name;
             this.fileSize = file.size;
             this.fileType = file.type;
+            this.rawFile = file;
+            if(!this.needLoad(this.fileName)) {
+                return;
+            }
             var me = this;
             var reader = new FileReader();
             reader.onload = function (ev) {

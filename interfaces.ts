@@ -146,6 +146,8 @@ export interface Uploader{
     loadDone();
     file:string;
     fileName:string;
+    rawFile:any;
+    needLoad(fname:string):bool;
 }
 
 export interface Image{

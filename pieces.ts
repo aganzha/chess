@@ -134,6 +134,14 @@ export class BaseCell implements interfaces.Cell{
 	$(this.el).remove()
 	this.el = null
 	this.children = []
+	var newParentsChildren = []
+	for(var i=0;i<this.parent.children.length;i++){
+	    var cel = this.parent.children[i]
+	    if(cel!==this){
+		newParentsChildren.push(cel)
+	    }
+	}
+	this.parent.children = newParentsChildren
     }
     domFromString(s:string){
 	return utils.Utils.DomFromString(s);
@@ -228,7 +236,6 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
     }
 
-
     fitHeight:number;
     fitWidth:number;   
 
@@ -238,7 +245,6 @@ export class Image extends BaseCell implements interfaces.Image{
 	canvas.height = this.args[2]
 	var me = this
 	$(img).on('load',function(){
-
 	    var ratio = img.width/img.height
 
 	    if(me.fitWidth){
@@ -250,7 +256,7 @@ export class Image extends BaseCell implements interfaces.Image{
 		canvas.height = me.fitHeight
 		canvas.width = me.fitHeight*ratio
 	    }
-
+	    
 
 	    var context = canvas.getContext('2d')
 	    var getcha = false
@@ -258,7 +264,6 @@ export class Image extends BaseCell implements interfaces.Image{
 
 	    var destWidth = canvas.width
 	    var destHeight = canvas.height
-
 	    if(height<img.height && width<img.width){
 		while(!getcha){
 		    height+=1
@@ -326,18 +331,26 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
     fileType:string;
     fileSize:number;
     file:string;
+    rawFile:any;
+    needLoad(fname:string){
+	return true
+    }
     loadFile(file){
 	// var files = e.target.files
 	// var file = files[0]
 	this.fileName = file.name
 	this.fileSize = file.size
 	this.fileType = file.type
+	this.rawFile = file
+	if(!this.needLoad(this.fileName)){
+	    return
+	}
 	var me = this
 	var reader = new FileReader();
 	reader.onload = function(ev){
 	    me.file = ev.target.result
 	    me.loadDone()
-	}
+	}	
 	reader.readAsDataURL(file);
     }
     afterRender(){
