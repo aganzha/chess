@@ -110,6 +110,9 @@ export interface Application{
     // instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
     globals:{};
+    on(event:string,callback:Function);
+    off(event:string,callback?:Function);
+    fire(event:string, ...args: any[]);
 }
 
 export interface Scrollable extends Cell{
