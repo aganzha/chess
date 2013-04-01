@@ -41,7 +41,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 if(!selector(delayedCell)) {
                     continue;
                 }
-                delayedCell.delayed = false;
                 var klass = this.application.getCellClass(delayedCell.record);
                 if(klass == null) {
                     klass = BaseCell;
@@ -59,6 +58,13 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     return !cell.delayed;
                 });
             }
+            var newDelayedCells = [];
+            for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
+                if(this.delayedChildren[i].delayed) {
+                    newDelayedCells.push(delayedCell);
+                }
+            }
+            this.delayedChildren = newDelayedCells;
         };
         BaseCell.prototype.getBox = function () {
             return $(this.el).offset();

@@ -150,4 +150,18 @@ export class ChessApp{
 	}
 	return {cons:cons,classes:classes,id:id}
     }
+    on(event:string, arg:Function){
+	$(this.viewport.el).on(event,arg)
+    }
+    off(event:string,arg?:Function){
+	if(arg){
+	    $(this.viewport.el).off(event,arg)
+	}
+	else{
+	    $(this.viewport.el).off(event)
+	}
+    }
+    fire(event:string, ...args: any[]){
+	$(this.viewport.el).trigger(event,args)
+    }
 }

@@ -136,6 +136,23 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                 id: id
             };
         };
+        ChessApp.prototype.on = function (event, arg) {
+            $(this.viewport.el).on(event, arg);
+        };
+        ChessApp.prototype.off = function (event, arg) {
+            if(arg) {
+                $(this.viewport.el).off(event, arg);
+            } else {
+                $(this.viewport.el).off(event);
+            }
+        };
+        ChessApp.prototype.fire = function (event) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            $(this.viewport.el).trigger(event, args);
+        };
         return ChessApp;
     })();
     exports.ChessApp = ChessApp;    

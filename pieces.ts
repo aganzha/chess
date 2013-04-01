@@ -26,8 +26,7 @@ export class BaseCell implements interfaces.Cell{
     }
     forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector){
 	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек 
-	// (см каменты в app.ts->resolveCells
-	
+	// (см каменты в app.ts->resolveCells	
 	if(!selector){	    
 	    selector = function(cell:interfaces.Cell){return true}
 	}
@@ -36,7 +35,8 @@ export class BaseCell implements interfaces.Cell{
 	    if(!selector(delayedCell)){
 		continue
 	    }
-	    delayedCell.delayed=false
+	    // а вот зачем я снимал этот атрибут интересно? нипянятна...
+	    // delayedCell.delayed=false
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    if(klass==null){
 		klass=BaseCell
@@ -55,6 +55,13 @@ export class BaseCell implements interfaces.Cell{
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	}
+	var newDelayedCells = []
+	for(var i=0,l=this.delayedChildren.length;i<l;i++){
+	    if(this.delayedChildren[i].delayed){
+		newDelayedCells.push(delayedCell)
+	    }
+	}
+	this.delayedChildren = newDelayedCells
     }
     getBox(){
 	return <interfaces.Box>$(this.el).offset()
