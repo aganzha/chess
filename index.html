@@ -37,7 +37,7 @@
 <p>
   Chess is a framework for creating single page javascript applications. This is NOT MVC framework.
   All idea behind Chess is declarative layout of reusable components. Chess is written in typescript
-  and depends on Require.js and Zepto.js
+  and depends on Require.js and Zepto.js (or JQuery)
 </p>
 
 <pre>
@@ -207,18 +207,40 @@ var board = {
       application.resolve(selector)
     </code>
   </pre>
-  Third parametr in application constructor is a list of modules, from which application 
+  Third parameter in application constructor is a list of modules, from which application 
   will select classes declared in board. If no class will found, Chess 
   will take BaseCell for that board record.
 </p>
 
 <h3>Chess Cell</h3>
 <p>
-  All your components must be inherited from pieces.BaseCell
+  All your components must be inherited from pieces.BaseCell.
   Here are methods which could be overloaded:
   <pre>
     <code>
-      
+      export class MyButton extends pieces.BaseCell{
+           // choose html tag another than div
+           createEl():HTMLElement{
+              var el = document.createElement('span')
+              // this.html is taken from declaration
+	      el.innerHTML = this.html
+	      return el
+          }
+          // fill html attributes here
+          fillExtraAttrs(){
+              $(this.el).css('width', '100px');
+          }
+          // PUT your logic in 3 below methods
+          afterResolve(){
+              
+          }
+          afterAppend(){
+
+          }
+          afterRender(){
+
+          }
+      }
     </code>
   </pre>
  
