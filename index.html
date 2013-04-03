@@ -120,7 +120,19 @@ var board = {
     'Unique<span class="bordo">#UID</span>':null,
     'Row<span class="bordo">.First</span>':null,
     'Row<span class="bordo">.Second.Last</span>':null,
-    
+
+    'Container':{
+        'Child':{
+              'Level1':{
+                  'Level2':null               
+               }
+         },
+         '<span class="bordo">_</span>Delayed':{
+               'Level1':{
+                   '_Delayed2'null
+               }
+         }
+    }    
 }
     </code>
   </pre>
@@ -134,6 +146,18 @@ var board = {
 &lt;div <span class="bordo">class="Unique" id="UID"</span>&gt;&lt;/div&gt;
 &lt;div <span class="bordo">class="Row First"</span>&gt;&lt;/div&gt;
 &lt;div <span class="bordo">class="Row Second Last"</span>&gt;&lt;/div&gt;
+
+&lt;div class="Container"&gt;
+  &lt;div class="Child"&gt;
+    &lt;div class="Level1"&gt;
+      &lt;div class="Level2"&gt;&lt;/div&gt;
+    &lt;/div&gt;    
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
 
 
     </code>
