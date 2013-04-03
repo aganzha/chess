@@ -18,21 +18,21 @@
     <div id="container">
       <div class="inner">
 
-        <header>
-          <h1>Chess</h1>
-          <h2>little typescript framework</h2>
-        </header>
+	<header>
+	  <h1>Chess</h1>
+	  <h2>little typescript framework</h2>
+	</header>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/aganzha/chess/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/aganzha/chess/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/aganzha/chess" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+	<section id="downloads" class="clearfix">
+	  <a href="https://github.com/aganzha/chess/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+	  <a href="https://github.com/aganzha/chess/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+	  <a href="https://github.com/aganzha/chess" id="view-on-github" class="button"><span>View on GitHub</span></a>
+	</section>
 
-        <hr>
+	<hr>
 
-        <section id="main_content">
-          <h3>How Chess can help you</h3>
+	<section id="main_content">
+	  <h3>How Chess can help you</h3>
 
 <p>
   Chess is a framework for creating single page javascript applications. This is NOT MVC framework.
@@ -43,14 +43,14 @@
 <pre>
   <code>
     var board = {
-          '<span class="blue">Title</span>':'This is a title',
-          '<span class="blue">Body</span>':{
-             '<span class="blue">LeftColumn</span>':{
-             }
-             '<span class="blue">RightColumn</span>':{
-                 <span class="blue">'Button'</span>:'Click me'
-             }
-          '<span class="blue">Footer</span>':null    
+	  '<span class="blue">Title</span>':'This is a title',
+	  '<span class="blue">Body</span>':{
+	     '<span class="blue">LeftColumn</span>':{
+	     }
+	     '<span class="blue">RightColumn</span>':{
+		 <span class="blue">'Button'</span>:'Click me'
+	     }
+	  '<span class="blue">Footer</span>':null
     }
   </code>
 </pre>
@@ -64,7 +64,7 @@
     &lt;div class="<span class="blue">Body</span>"&gt;
       &lt;div class="<span class="blue">LeftColumn</span>">&lt;/div&gt;
       &lt;div class="<span class="blue">RightColumn</span>">
-           &lt;div class="<span class="blue">Button</span>">Click me&lt;/div&gt;
+	   &lt;div class="<span class="blue">Button</span>">Click me&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class="<span class="blue">Footer</span>">&lt;/div&gt;
@@ -74,21 +74,21 @@
 <pre>
   <code>
     .<span class="blue">Title</span>{
-        font-size:14px;
+	font-size:14px;
     }
     .<span class="blue">Body</span>{
-        .<span class="blue">LeftColumn</span>{
-            foat:left;
-        }        
+	.<span class="blue">LeftColumn</span>{
+	    foat:left;
+	}
 	.<span class="blue">RightColumn</span>{
-            foat:right;
-        }
-        &:after{
-            clear:both;
-        }
+	    foat:right;
+	}
+	&:after{
+	    clear:both;
+	}
     }
     .<span class="blue">Footer</span>{
-        margin-top:20px;
+	margin-top:20px;
     }
   </code>
 </pre>
@@ -98,11 +98,11 @@
 <pre>
   <code>
     export class <span class="blue">Button</span>{
-        afterAppend(){
-            $(this.el).on('click', function(){
-                  alert('It works')
-            })
-        }
+	afterAppend(){
+	    $(this.el).on('click', function(){
+		  alert('It works')
+	    })
+	}
     }
   </code>
 </pre>
@@ -122,20 +122,19 @@ var board = {
     'Row<span class="bordo">.Second.Last</span>':null,
 
     'Container':{
-        'Child':{
-              'Level1':{
-                  'Level2':null               
-               }
-         },
-         '<span class="bordo">_</span>Delayed':{
-               'Level1':{
-                   '_Delayed2'null
-               }
-         }
-    }    
+	'Child':{
+	      'Level1':{
+		  'Level2':null
+	       }
+	 },
+	 '<span class="bordo" style="font-weight:bold;">_</span>Delayed':{
+	       'Level1':{
+		   '<span class="bordo" style="font-weight:bold;">_</span>Delayed2'null
+	       }
+	 }
+    }
 }
-    </code>
-  </pre>
+</code></pre>
   <pre class="rightCol">
     <code>
 
@@ -151,42 +150,93 @@ var board = {
   &lt;div class="Child"&gt;
     &lt;div class="Level1"&gt;
       &lt;div class="Level2"&gt;&lt;/div&gt;
-    &lt;/div&gt;    
+    &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 
-
-
-
+<a href="" class="blue">see using delayed</a>
 
 
     </code>
   </pre>
   <div style="clear:both"></div>
-  <ul>
-    <li>Empty div</li>
-  </ul>
 </p>
 
-<h3>Rather Drive Stick?</h3>
+<h3>Application</h3> <!-- Components(Chess Pieces) -->
+<p>
+  When declare your components it is not required to instantiate them in your code. It is not even
+  required to have all classes used at your board. Most time components are used for generating 
+  empty markup to style it via sass.
+  <ul>
+    <li>
+      All components are based on <strong>BaseCell</strong> class in chess/piecess module.
+    </li>
+    <li>
+      Main component to which your application is attached for is called <strong>Viewport</strong>
+      (pieces.Viewport class)
+      You can have several application on page each attached to its viewport.
+    </li>
+    <li>
+      First level components in board (the board variable) are called <strong>Screen</strong>s (pieces.Screen class)
+      You can have several screens in your application 
+      (separate screens for mobile app, modal forms etc).
+    </li>
+  </ul>
+  
+  To start you application, you must instantiate it with the component declaration and 
+  function which will choose screen for initial render.
+  
+  Here is the hello world:  
+  <pre>
+    <code>
+      ///&lt;reference path="jquery.d.ts"/&gt;
+      import chess = module("chess/app")
+      import interfaces = module("chess/interfaces")
+      import pieces = module("chess/pieces")
+      
+      var board = {
+         'Screen':'Hello world'
+      }
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+      var viewport = new pieces.ViewPort($('body')[0])
+      var application = new chess.ChessApp(viewport,board, [])
+      var selector = function(screens:interfaces.ScreenMap){
+             var answer = screens['Screen']
+             return answer
+      }
+      application.resolve(selector)
+    </code>
+  </pre>
+  Third parametr in application constructor is a list of modules, from which application 
+  will select classes declared in board. If no class will found, Chess 
+  will take BaseCell for that board record.
+</p>
 
-<h3>Authors and Contributors</h3>
+<h3>Chess Cell</h3>
+<p>
+  All your components must be inherited from pieces.BaseCell
+  Here are methods which could be overloaded:
+  <pre>
+    <code>
+      
+    </code>
+  </pre>
+ 
+</p>
 
 <p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
 
 <h3>Support or Contact</h3>
 
 <p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
+	</section>
 
-        <footer>
-          Chess is maintained by <a href="https://github.com/aganzha">aganzha</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
+	<footer>
+	  Chess is maintained by <a href="https://github.com/aganzha">aganzha</a><br>
+	  This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+	</footer>
 
-        
+
       </div>
     </div>
   </body>
