@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/chess.css" media="screen" />
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -31,20 +32,117 @@
         <hr>
 
         <section id="main_content">
-          <h3>Welcome to GitHub Pages.</h3>
+          <h3>How Chess can help you</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>
+  Chess is a framework for creating single page javascript applications. This is NOT MVC framework.
+  All idea behind Chess is declarative layout of reusable components. Chess is written in typescript
+  and depends on Require.js and Zepto.js
+</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<pre>
+  <code>
+    var board = {
+          '<span class="blue">Title</span>':'This is a title',
+          '<span class="blue">Body</span>':{
+             '<span class="blue">LeftColumn</span>':{
+             }
+             '<span class="blue">RightColumn</span>':{
+                 <span class="blue">'Button'</span>:'Click me'
+             }
+          '<span class="blue">Footer</span>':null    
+    }
+  </code>
+</pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>
+  Nevermind how complex your app is, traversing html elements in firebug or webkit dev tools will be very easy, because html classes  generated will match exactly with appropriate declarations:
+</p>
+<pre>
+  <code>
+    &lt;div class="<span class="blue">Title</span>"&gt;'This is a title&lt;/div&gt;
+    &lt;div class="<span class="blue">Body</span>"&gt;
+      &lt;div class="<span class="blue">LeftColumn</span>">&lt;/div&gt;
+      &lt;div class="<span class="blue">RightColumn</span>">
+           &lt;div class="<span class="blue">Button</span>">Click me&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="<span class="blue">Footer</span>">&lt;/div&gt;
+  </code>
+</pre>
+<p>Nevermind how complex your app is, changing styles for such an app is very easy. Especially when yo use SASS, cause your stylesheet rules could (Chess does not yet generate css) match exactly with appropriate declarations:</p>
+<pre>
+  <code>
+    .<span class="blue">Title</span>{
+        font-size:14px;
+    }
+    .<span class="blue">Body</span>{
+        .<span class="blue">LeftColumn</span>{
+            foat:left;
+        }        
+	.<span class="blue">RightColumn</span>{
+            foat:right;
+        }
+        &:after{
+            clear:both;
+        }
+    }
+    .<span class="blue">Footer</span>{
+        margin-top:20px;
+    }
+  </code>
+</pre>
+<p>
+  And finally, you can, for sure, hook in any place of your application with your typescript/javascript code.
+</p>
+<pre>
+  <code>
+    export class <span class="blue">Button</span>{
+        afterAppend(){
+            $(this.el).on('click', function(){
+                  alert('It works')
+            })
+        }
+    }
+  </code>
+</pre>
 
-<h3>Designer Templates</h3>
+<h3>Declaration Rules</h3>
+<p>
+  While declaring your components you can use next modificators:
+  <pre class="leftCol">
+    <code>
+var board = {
+    'EmptyEl':<span class="bordo">null</span>,
+    'TextInEl':'<span class="bordo">Just a text</span>',
+    'HtmlInEl':'<span class="bordo">&lt;span&gt;HTML&lt;/span&gt;'</span>,
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+    'Unique<span class="bordo">#UID</span>':null,
+    'Row<span class="bordo">.First</span>':null,
+    'Row<span class="bordo">.Second.Last</span>':null,
+    
+}
+    </code>
+  </pre>
+  <pre class="rightCol">
+    <code>
+
+&lt;div class="EmptyEl"&gt;&lt;/div&gt;
+&lt;div class="TextInEl"&gt;<span class="bordo">Just a text</span>&lt;/div&gt;
+&lt;div class="HtmlInEl"&gt;<span class="bordo">HTML</span>&lt;/div&gt;
+
+&lt;div <span class="bordo">class="Unique" id="UID"</span>&gt;&lt;/div&gt;
+&lt;div <span class="bordo">class="Row First"</span>&gt;&lt;/div&gt;
+&lt;div <span class="bordo">class="Row Second Last"</span>&gt;&lt;/div&gt;
+
+
+    </code>
+  </pre>
+  <div style="clear:both"></div>
+  <ul>
+    <li>Empty div</li>
+  </ul>
+</p>
 
 <h3>Rather Drive Stick?</h3>
 

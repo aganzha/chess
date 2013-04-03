@@ -1,0 +1,19 @@
+.inner{
+    width:720px;
+}
+.blue{
+    color:#f8a8ae;//74b6fe
+}
+pre.leftCol{
+    padding:10px;
+    float:left;
+    width:47%;
+}
+pre.rightCol{
+    padding:10px;
+    float:right;
+    width:47%;
+}
+.bordo{
+    color:#f6dfe0;
+}
