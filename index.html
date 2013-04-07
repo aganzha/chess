@@ -20,7 +20,7 @@
 
 	<header>
 	  <h1>Chess</h1>
-	  <h2>little typescript framework</h2>
+	  <h2>Small typescript framework</h2>
 	</header>
 
 	<section id="downloads" class="clearfix">
@@ -36,10 +36,11 @@
 
 <p>
   Chess is a framework for creating single page javascript applications. This is NOT MVC framework.
-  All idea behind Chess is declarative layout of reusable components. Chess is written in typescript
-  and depends on Require.js and Zepto.js (or JQuery)
+  An idea behind Chess is declarative layout of reusable components. Chess is written in typescript
+  and depends on Require.js and Zepto.js (or JQuery).
 </p>
 
+<p>Thats how layout declarations in Chess are look like:</p>
 <pre>
   <code>
     var board = {
@@ -60,7 +61,7 @@
 </p>
 <pre>
   <code>
-    &lt;div class="<span class="blue">Title</span>"&gt;'This is a title&lt;/div&gt;
+    &lt;div class="<span class="blue">Title</span>"&gt;This is a title&lt;/div&gt;
     &lt;div class="<span class="blue">Body</span>"&gt;
       &lt;div class="<span class="blue">LeftColumn</span>">&lt;/div&gt;
       &lt;div class="<span class="blue">RightColumn</span>">
@@ -82,9 +83,9 @@
 	}
 	.<span class="blue">RightColumn</span>{
 	    foat:right;
-	}
-	&:after{
-	    clear:both;
+    	    .<span class="blue">Button</span>{
+	        cursor:pointer;
+	    }
 	}
     }
     .<span class="blue">Footer</span>{
@@ -92,12 +93,14 @@
     }
   </code>
 </pre>
+
 <p>
-  And finally, you can, for sure, hook in any place of your application with your typescript/javascript code.
+  And finally you can hook in any place of your application with your code just 
+  providing class name used in your declarations:
 </p>
 <pre>
   <code>
-    export class <span class="blue">Button</span>{
+    export class <span class="blue">Button</span> extends pieces.BaseCell{
 	afterAppend(){
 	    $(this.el).on('click', function(){
 		  alert('It works')
@@ -113,9 +116,9 @@
   <pre class="leftCol">
     <code>
 var board = {
-    'EmptyEl':<span class="bordo">null</span>,
-    'TextInEl':'<span class="bordo">Just a text</span>',
-    'HtmlInEl':'<span class="bordo">&lt;span&gt;HTML&lt;/span&gt;'</span>,
+    'Empty':<span class="bordo">null</span>,
+    'Text':'<span class="bordo">Just a text</span>',
+    'Html':'<span class="bordo">&lt;span&gt;HTML&lt;/span&gt;'</span>,
 
     'Unique<span class="bordo">#UID</span>':null,
     'Row<span class="bordo">.First</span>':null,
@@ -138,9 +141,9 @@ var board = {
   <pre class="rightCol">
     <code>
 
-&lt;div class="EmptyEl"&gt;&lt;/div&gt;
-&lt;div class="TextInEl"&gt;<span class="bordo">Just a text</span>&lt;/div&gt;
-&lt;div class="HtmlInEl"&gt;<span class="bordo">HTML</span>&lt;/div&gt;
+&lt;div class="Empty"&gt;&lt;/div&gt;
+&lt;div class="Text"&gt;<span class="bordo">Just a text</span>&lt;/div&gt;
+&lt;div class="Html"&gt;<span class="bordo">&lt;span&gt;HTML&lt;/span&gt;</span>&lt;/div&gt;
 
 &lt;div <span class="bordo">class="Unique" id="UID"</span>&gt;&lt;/div&gt;
 &lt;div <span class="bordo">class="Row First"</span>&gt;&lt;/div&gt;
@@ -164,23 +167,25 @@ var board = {
 
 <h3>Application</h3> <!-- Components(Chess Pieces) -->
 <p>
-  When declare your components it is not required to instantiate them in your code. It is not even
-  required to have all classes used at your board. Most time components are used for generating 
-  empty markup to style it via sass.
+  For each component in your declaration, chess will look for class with the same name.
+  It is ok to not provide class for each component. 
+  When class could not be found Chess will create component from base classes.
+  Most of the time you will create components just to render markup backed up some css.  
   <ul>
     <li>
-      All components are based on <strong>BaseCell</strong> class in chess/piecess module.
+      All components are based on <strong>Cells</strong>(<span class="dark">pieces.BaseCell</span> 
+      class).
     </li>
     <li>
-      Main component to which your application is attached for is called <strong>Viewport</strong>
-      (pieces.Viewport class)
-      You can have several application on page each attached to its viewport.
-    </li>
-    <li>
-      First level components in board (the board variable) are called <strong>Screen</strong>s (pieces.Screen class)
+      First level components in board (the board variable) are called <strong>Screens</strong> (<span class="dark">pieces.Screen</span> class)
       You can have several screens in your application 
       (separate screens for mobile app, modal forms etc).
     </li>
+    <li>
+      Main component to which your application is attached for is called <strong>Viewport</strong>
+      (<span class="dark">pieces.Viewport</span> class).
+      You can have several application on page each attached to its viewport.
+    </li>    
   </ul>
   
   To start you application, you must instantiate it with the component declaration and 
@@ -201,15 +206,15 @@ var board = {
       var viewport = new pieces.ViewPort($('body')[0])
       var application = new chess.ChessApp(viewport,board, [])
       var selector = function(screens:interfaces.ScreenMap){
-             var answer = screens['Screen']
-             return answer
+             var selected = screens['Screen']
+             return selected
       }
       application.resolve(selector)
     </code>
   </pre>
   Third parameter in application constructor is a list of modules, from which application 
   will select classes declared in board. If no class will found, Chess 
-  will take BaseCell for that board record.
+  will take BaseCell for that component.
 </p>
 
 <h3>Chess Cell</h3>
@@ -219,26 +224,37 @@ var board = {
   <pre>
     <code>
       export class MyButton extends pieces.BaseCell{
-           // choose html tag another than div
-           createEl():HTMLElement{
+
+           <strong>// choose html tag another than div</strong>
+           <span class="blue">createEl()</span>:HTMLElement{
               var el = document.createElement('span')
-              // this.html is taken from declaration
+              // this.html attribute is taken from declaration
 	      el.innerHTML = this.html
 	      return el
           }
-          // fill html attributes here
-          fillExtraAttrs(){
+
+          <strong>// fill html attributes here</strong>
+          <span class="blue">fillExtraAttrs()</span>{
               $(this.el).css('width', '100px');
           }
-          // PUT your logic in 3 below methods
-          afterResolve(){
-              
-          }
-          afterAppend(){
 
+          <strong>// Put your business/gui logic in 3 below methods</strong>
+          <span class="blue">afterResolve()</span>{
+              // Component dom element is created, but it is not inserted into the 
+	      // DOM tree.
+	      // Element could have childnodes at this time but nothing known about element parent.
           }
-          afterRender(){
-
+          <span class="blue">afterAppend()</span>{
+	     // This is most usefull method.
+	     // Component dom element is created, but it is not inserted into the 
+	     // DOM tree.
+	     // Element could have childnodes and parent node.
+	     // This is the best place to put your event handlers code such as 
+	     // $(this.el).on('click', ...
+          }
+          <span class="blue">afterRender()</span>{
+	     // All DOM tree is ready now. You can put here code which require
+	     // measurements sich as offsetWidth etc.
           }
       }
     </code>
@@ -246,12 +262,11 @@ var board = {
  
 </p>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+
 
 <h3>Support or Contact</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-	</section>
+	  <p>aganzha@yandex.ru</p>
 
 	<footer>
 	  Chess is maintained by <a href="https://github.com/aganzha">aganzha</a><br>

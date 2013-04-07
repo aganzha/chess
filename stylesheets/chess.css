@@ -4,6 +4,9 @@
 .blue{
     color:#f8a8ae;//74b6fe
 }
+.dark{
+    color:#dd310d;
+}
 pre.leftCol{
     padding:10px;
     float:left;
