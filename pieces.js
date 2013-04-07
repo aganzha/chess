@@ -296,6 +296,14 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             });
             img.src = this.args[0];
         };
+        Image.prototype.clear = function () {
+            if(this.el.tagName.toLowerCase() == 'canvas') {
+                var canvas = this.el;
+                canvas.width = canvas.width;
+            } else {
+                $(this.el).attr('scr', '');
+            }
+        };
         Image.prototype.createEl = function () {
             var img = document.createElement('img');
             var answer = img;

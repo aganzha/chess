@@ -157,4 +157,5 @@ export interface Image{
     draw(imgSrc:string);
     fitWidth:number;
     fitHeight:number;
+    clear();
 }

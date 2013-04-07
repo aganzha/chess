@@ -300,8 +300,16 @@ export class Image extends BaseCell implements interfaces.Image{
 	})
 	img.src = this.args[0]
     }
+    clear(){
+	if(this.el.tagName.toLowerCase()=='canvas'){
+	    var canvas = <HTMLCanvasElement>this.el
+	    canvas.width = canvas.width
+	}
+	else{
+	    $(this.el).attr('scr','')
+	}
+    }
     createEl(){
-
 
 	var img = <HTMLImageElement>document.createElement('img')
 	var answer = <HTMLElement>img
