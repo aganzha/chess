@@ -170,7 +170,7 @@ var board = {
   For each component in your declaration, chess will look for class with the same name.
   It is ok to not provide class for each component. 
   When class could not be found Chess will create component from base classes.
-  Most of the time you will create components just to render markup backed up some css.  
+  Most of the time you will create components just to render markup backed up by some css.  
   <ul>
     <li>
       All components are based on <strong>Cells</strong>(<span class="dark">pieces.BaseCell</span> 
@@ -182,13 +182,13 @@ var board = {
       (separate screens for mobile app, modal forms etc).
     </li>
     <li>
-      Main component to which your application is attached for is called <strong>Viewport</strong>
+      Main component to which your application is attached is called <strong>Viewport</strong>
       (<span class="dark">pieces.Viewport</span> class).
       You can have several application on page each attached to its viewport.
     </li>    
   </ul>
   
-  To start you application, you must instantiate it with the component declaration and 
+  To start application, you must instantiate it with the component declaration and 
   function which will choose screen for initial render.
   
   Here is the hello world:  
@@ -242,7 +242,8 @@ var board = {
           <span class="blue">afterResolve()</span>{
               // Component dom element is created, but it is not inserted into the 
 	      // DOM tree.
-	      // Element could have childnodes at this time but nothing known about element parent.
+	      // Element could have childnodes at this time but 
+	      // nothing known about element parent.
           }
           <span class="blue">afterAppend()</span>{
 	     // This is most usefull method.
@@ -254,7 +255,7 @@ var board = {
           }
           <span class="blue">afterRender()</span>{
 	     // All DOM tree is ready now. You can put here code which require
-	     // measurements sich as offsetWidth etc.
+	     // measurements sach as offsetWidth etc.
           }
       }
     </code>
