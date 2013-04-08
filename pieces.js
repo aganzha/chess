@@ -340,11 +340,14 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
         Uploader.prototype.needLoad = function (fname) {
             return true;
         };
+        Uploader.prototype.fileChoosen = function () {
+        };
         Uploader.prototype.loadFile = function (file) {
             this.fileName = file.name;
             this.fileSize = file.size;
             this.fileType = file.type;
             this.rawFile = file;
+            this.fileChoosen();
             if(!this.needLoad(this.fileName)) {
                 return;
             }

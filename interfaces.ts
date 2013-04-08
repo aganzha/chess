@@ -147,6 +147,7 @@ export interface Uploader{
     getFileInput():HTMLInputElement;
     getDropArea():HTMLElement;
     loadDone();
+    fileChoosen();
     file:string;
     fileName:string;
     rawFile:any;

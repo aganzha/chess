@@ -350,6 +350,8 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
     needLoad(fname:string){
 	return true
     }
+    fileChoosen(){
+    }
     loadFile(file){
 	// var files = e.target.files
 	// var file = files[0]
@@ -357,6 +359,7 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
 	this.fileSize = file.size
 	this.fileType = file.type
 	this.rawFile = file
+	this.fileChoosen()
 	if(!this.needLoad(this.fileName)){
 	    return
 	}
