@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <!-- <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'> -->
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
@@ -35,7 +35,8 @@
 	  <h3>How Chess can help you</h3>
 
 <p>
-  Chess is a framework for creating single page javascript applications. This is NOT MVC framework.
+  Chess is a layout framework for javascript applications.
+  This is NOT MVC framework.
   An idea behind Chess is declarative layout of reusable components. Chess is written in typescript
   and depends on Require.js and Zepto.js (or JQuery).
 </p>
@@ -84,7 +85,7 @@
 	.<span class="blue">RightColumn</span>{
 	    foat:right;
     	    .<span class="blue">Button</span>{
-	        cursor:pointer;
+		cursor:pointer;
 	    }
 	}
     }
@@ -95,7 +96,7 @@
 </pre>
 
 <p>
-  And finally you can hook in any place of your application with your code just 
+  And finally you can hook in any place of your application with your code just
   providing class name used in your declarations:
 </p>
 <pre>
@@ -168,52 +169,52 @@ var board = {
 <h3>Application</h3> <!-- Components(Chess Pieces) -->
 <p>
   For each component in your declaration, chess will look for class with the same name.
-  It is ok to not provide class for each component. 
+  It is ok to not provide class for each component.
   When class could not be found Chess will create component from base classes.
-  Most of the time you will create components just to render markup backed up by some css.  
+  Most of the time you will create components just to render markup backed up by some css.
   <ul>
     <li>
-      All components are based on <strong>Cells</strong>(<span class="dark">pieces.BaseCell</span> 
+      All components are based on <strong>Cells</strong>(<span class="dark">pieces.BaseCell</span>
       class).
     </li>
     <li>
       First level components in board (the board variable) are called <strong>Screens</strong> (<span class="dark">pieces.Screen</span> class)
-      You can have several screens in your application 
+      You can have several screens in your application
       (separate screens for mobile app, modal forms etc).
     </li>
     <li>
       Main component to which your application is attached is called <strong>Viewport</strong>
       (<span class="dark">pieces.Viewport</span> class).
       You can have several application on page each attached to its viewport.
-    </li>    
+    </li>
   </ul>
-  
-  To start application, you must instantiate it with the component declaration and 
+
+  To start application, you must instantiate it with the component declaration and
   function which will choose screen for initial render.
-  
-  Here is the hello world:  
+
+  Here is the hello world:
   <pre>
     <code>
       ///&lt;reference path="jquery.d.ts"/&gt;
       import chess = module("chess/app")
       import interfaces = module("chess/interfaces")
       import pieces = module("chess/pieces")
-      
+
       var board = {
-         'Screen':'Hello world'
+	 'Screen':'Hello world'
       }
 
       var viewport = new pieces.ViewPort($('body')[0])
       var application = new chess.ChessApp(viewport,board, [])
       var selector = function(screens:interfaces.ScreenMap){
-             var selected = screens['Screen']
-             return selected
+	     var selected = screens['Screen']
+	     return selected
       }
       application.resolve(selector)
     </code>
   </pre>
-  Third parameter in application constructor is a list of modules, from which application 
-  will select classes declared in board. If no class will found, Chess 
+  Third parameter in application constructor is a list of modules, from which application
+  will select classes declared in board. If no class will found, Chess
   will take BaseCell for that component.
 </p>
 
@@ -225,44 +226,129 @@ var board = {
     <code>
       export class MyButton extends pieces.BaseCell{
 
-           <strong>// choose html tag another than div</strong>
-           <span class="blue">createEl()</span>:HTMLElement{
-              var el = document.createElement('span')
-              // this.html attribute is taken from declaration
+	   <strong>// choose html tag another than div</strong>
+	   <span class="blue">createEl()</span>:HTMLElement{
+	      var el = document.createElement('span')
+	      // this.html attribute is taken from declaration
 	      el.innerHTML = this.html
 	      return el
-          }
+	  }
 
-          <strong>// fill html attributes here</strong>
-          <span class="blue">fillExtraAttrs()</span>{
-              $(this.el).css('width', '100px');
-          }
+	  <strong>// fill html attributes here</strong>
+	  <span class="blue">fillExtraAttrs()</span>{
+	      $(this.el).css('width', '100px');
+	  }
 
-          <strong>// Put your business/gui logic in 3 below methods</strong>
-          <span class="blue">afterResolve()</span>{
-              // Component dom element is created, but it is not inserted into the 
+	  <strong>// Put your business/gui logic in 3 below methods</strong>
+	  <span class="blue">afterResolve()</span>{
+	      // Component dom element is created, but it is not inserted into the
 	      // DOM tree.
-	      // Element could have childnodes at this time but 
+	      // Element could have childnodes at this time but
 	      // nothing known about element parent.
-          }
-          <span class="blue">afterAppend()</span>{
+	  }
+	  <span class="blue">afterAppend()</span>{
 	     // This is most usefull method.
-	     // Component dom element is created, but it is not inserted into the 
+	     // Component dom element is created, but it is not inserted into the
 	     // DOM tree.
 	     // Element could have childnodes and parent node.
-	     // This is the best place to put your event handlers code such as 
+	     // This is the best place to put your event handlers code such as
 	     // $(this.el).on('click', ...
-          }
-          <span class="blue">afterRender()</span>{
+	  }
+	  <span class="blue">afterRender()</span>{
 	     // All DOM tree is ready now. You can put here code which require
 	     // measurements sach as offsetWidth etc.
-          }
+	  }
       }
     </code>
   </pre>
- 
+</p>
+<p>
+  Here some attributes and methods of cells which you will use quite often
+  (from chess/interfaces.ts):
+  <pre>
+    <code>
+      export <strong>interface Cell</strong>{
+	    // applicatin reference
+	    <span class="blue">application</span>:Application;
+	    // parent cell
+	    <span class="blue">parent</span>:Cell;
+	    // array of child cells
+	    <span class="blue">children</span>:Cell[];
+	    // DOM element of the cell
+	    <span class="blue">el</span>:HTMLElement;
+
+	    // cell record in layout
+	    <span class="blue">record</span>:{cons:string;classes:string[];id:string;};
+
+	    // method for search children
+	    <span class="blue">query</span>(cons?:string, className?:string,id?:string):Cell[];
+	    // same as above but return first found child
+	    <span class="blue">find</span>(cons?:string, className?:string,id?:string):Cell;
+      }
+    </code>
+  </pre>
+  <strong>Cons</strong> in cell record and <strong>cons</strong> parameter in find 
+  and query is a component key in layout declaration before any dot
+  or hash. For example in <em>var board = { 'Main.SomeClass' = null }</em> cons is the string 'Main'.
 </p>
 
+<h3>Delayed Cell</h3>
+<p>
+  To declare components which are not available at startup time use <strong>Delayed Cells</strong>
+  <pre class="leftCol">
+    <code>
+      var board = {
+          'List':{
+               '<span class="blue">_</span>ListItem':{
+                   'Title':null,
+                   'Body':null,
+                   'Button':'Click me'   
+               }
+           }
+      }
+    </code>
+  </pre>
+  <pre class="rightCol">
+    <code>
+      &lt;div class="List"&gt;&lt;/div&gt;
+
+
+
+
+
+
+
+
+    </code>
+  </pre>
+  An underscore before component name means that component will be created, but not renderred
+  to the DOM tree. You choose when and how many times to render it.
+  <pre>
+    <code>
+var list = application.viewport.find('List')
+
+$.ajax({
+    url:'/your_datasource',
+    success:function(data:IYourObject[]){
+	for(var i =0,l=data.length;i&lt;l;i++){
+	    list.<span class="blue">forceDelayed</span>(function(<span class="blue">cell</span>:interfaces.Cell){
+		switch(cell.record.cons){
+		    case ('ListItem'):
+			//next cell
+			break
+		    case ('Title'):
+			// fill title
+			cell.updateEl(data[i].title)
+			break
+		    case ('Body'):
+			// fill body
+			cell.updateEl(data[i].body)
+			break
+		}
+	    })
+    </code>
+  </pre>
+</p>
 
 
 <h3>Support or Contact</h3>
