@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <!-- <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'> -->
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
@@ -347,6 +347,26 @@ $.ajax({
 		}
 	    })
     </code>
+  </pre>
+  Each cell has <strong>forceDelayed</strong> method which receives as an argument a function
+  which will be called with each cell in the delayed declaration. The example above will render
+  next markup for the output from '/your_datasource' <br/>[{"title":"<span class="dark">Item1</span>","body":"<span class="dark">this is first item</span>"},{"title":"<span class="dark">Item2</span>","body":"<span class="dark">this is second item</span>"}] :
+  <pre>
+    <code>
+      &lt;div class="List"&gt;
+	&lt;div class="ListItem"&gt;
+	  &lt;div class="<span class="bordo">Title</span>"<span class="blue">Item1</span>&gt;&lt;/div&gt;
+	  &lt;div class="<span class="bordo">Body</span>"&gt;<span class="blue">This is first item</span>&lt;/div&gt;
+	  &lt;div class="Button"&gt;Click me&lt;/div&gt;
+	&lt;/div&gt;
+	&lt;div class="ListItem"&gt;
+	  &lt;div class="<span class="bordo">Title</span>"&gt;<span class="blue">Item2</span>&lt;/div&gt;
+	  &lt;div class="<span class="bordo">Body</span>"&gt;<span class="blue">This is second item</span>&lt;/div&gt;
+	  &lt;div class="Button"&gt;Click me&lt;/div&gt;
+	&lt;/div&gt;
+      &lt;/div&gt;
+
+    </code>    
   </pre>
 </p>
 
