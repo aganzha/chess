@@ -249,6 +249,51 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 (this.el).src = src;
             }
         };
+        Image.prototype.getSourceBox = function (imgWidth, imgHeight, canvasWidth, canvasHeight) {
+            var ratio = imgWidth / imgHeight;
+            var sX = 0, sY = 0;
+            var sWidth = imgWidth, sHeight = imgHeight;
+            var dWidth = canvasWidth, dHeight = canvasHeight;
+            var wrat = imgWidth / canvasWidth;
+            var hrat = imgHeight / canvasHeight;
+            if(wrat < 1 && hrat < 1) {
+                if(wrat <= hrat) {
+                    var resultHeight = canvasWidth / ratio;
+                    var croppedHeight = (resultHeight - canvasHeight);
+                    sY = croppedHeight / 2 * wrat;
+                } else {
+                    var resultWidth = canvasHeight * ratio;
+                    var croppedWidth = (resultWidth - canvasWidth);
+                    sX = (croppedWidth / 2) * hrat;
+                }
+            } else if(wrat < 1 && hrat >= 1) {
+                var resultHeight = canvasWidth / ratio;
+                var croppedHeight = (resultHeight - canvasHeight);
+                sY = croppedHeight / 2 * wrat;
+            } else if(hrat < 1 && wrat >= 1) {
+                var resultWidth = canvasHeight * ratio;
+                var croppedWidth = (resultWidth - canvasWidth);
+                sX = (croppedWidth / 2) * hrat;
+            } else {
+                if(wrat > hrat) {
+                    console.log(4, imgWidth, imgHeight, canvasWidth, canvasHeight, wrat, hrat);
+                    var resultWidth = canvasHeight * ratio;
+                    var croppedWidth = (resultWidth - canvasWidth);
+                    sX = (croppedWidth / 2) * hrat;
+                    console.log(resultWidth, croppedWidth, sX);
+                } else {
+                    var resultHeight = canvasWidth / ratio;
+                    var croppedHeight = (resultHeight - canvasHeight);
+                    sY = croppedHeight / 2 * wrat;
+                }
+            }
+            return {
+                left: sX,
+                top: sY,
+                width: canvasWidth,
+                height: canvasHeight
+            };
+        };
         Image.prototype.drawImageInCanvas = function (canvas, img, error) {
             canvas.width = this.args[1];
             canvas.height = this.args[2];
@@ -264,31 +309,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     canvas.width = me.fitHeight * ratio;
                 }
                 var context = canvas.getContext('2d');
-                var getcha = false;
-                var height = canvas.height, width = canvas.width;
-                var destWidth = canvas.width;
-                var destHeight = canvas.height;
-                if(height < img.height && width < img.width) {
-                    while(!getcha) {
-                        height += 1;
-                        width += 1;
-                        if(true) {
-                            if(height == img.height) {
-                                getcha = true;
-                                width = height * ratio;
-                                destWidth = destHeight * ratio;
-                            }
-                            if(width == img.width) {
-                                getcha = true;
-                                height = width / ratio;
-                                destHeight = destWidth / ratio;
-                            }
-                        }
+                if(canvas.width < img.width) {
+                    if(canvas.height < img.height) {
                     }
-                    context.drawImage(img, 0, 0, width, height, 0, 0, destWidth, destHeight);
-                } else {
-                    context.drawImage(img, 0, 0, width, height);
                 }
+                if(canvas.height < img.height) {
+                    if(canvas.width < img.width) {
+                    }
+                }
+                var sourceBox = me.getSourceBox(img.width, img.height, canvas.width, canvas.height);
+                context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height);
+                console.log(img.src);
             }).on('error', function (e) {
                 if(me.args[3] && !error) {
                     me.draw(me.args[3], true);
