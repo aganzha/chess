@@ -256,52 +256,48 @@ export class Image extends BaseCell implements interfaces.Image{
 	var dWidth = canvasWidth,dHeight=canvasHeight
 	var wrat = imgWidth/canvasWidth
 	var hrat = imgHeight/canvasHeight
+	var cropHeight = function(){
+	    var resultHeight = canvasWidth/ratio
+	    var croppedHeight = (resultHeight-canvasHeight)
+	    sY = croppedHeight/2*wrat
+	}
+	var cropWidth = function(){
+	    var resultWidth = canvasHeight*ratio
+	    var croppedWidth = (resultWidth-canvasWidth)
+	    sX = (croppedWidth/2)*hrat
+	}
 	if(wrat<1 && hrat<1){
 	    if(wrat<=hrat){
 		//tez(1,5,10,10)
 		// нужно подтягивать ширину картинки к ширине канваса
-		var resultHeight = canvasWidth/ratio
-		var croppedHeight = (resultHeight-canvasHeight)
-		sY = croppedHeight/2*wrat
+		cropHeight()
 	    }
 	    else{
 		////tez(1,5,10,10)
 		// нужно подтягивать высоту картинки к высоте канваса
-		var resultWidth = canvasHeight*ratio
-		var croppedWidth = (resultWidth-canvasWidth)
-		sX = (croppedWidth/2)*hrat
+		cropWidth()
 	    }
 	}
 	else if(wrat<1 && hrat >=1){
 	    // нужно подтягивать ширину картинки к ширине канваса
 	    //tez(5,20,10,10)
-	    var resultHeight = canvasWidth/ratio
-	    var croppedHeight = (resultHeight-canvasHeight)
-	    sY = croppedHeight/2*wrat
+	    cropHeight()
 	}
 	else if(hrat<1 && wrat >=1){
 	    ////tez(20,5,10,10)
 	    // нужно подтягивать высоту картинки к высоте канваса
-	    var resultWidth = canvasHeight*ratio
-	    var croppedWidth = (resultWidth-canvasWidth)
-	    sX = (croppedWidth/2)*hrat
+	    cropWidth()
 	}
 	else{//wrat>=1 && hrat>=1
 	    if(wrat>hrat){
-		console.log(4, imgWidth,imgHeight, canvasWidth, canvasHeight,wrat,hrat)
 		//tez(100,50,10,10) нужно жать высоту картинки до высоты
 		// канваса
-		var resultWidth = canvasHeight*ratio
-		var croppedWidth = (resultWidth-canvasWidth)
-		sX = (croppedWidth/2)*hrat
-		console.log(resultWidth,croppedWidth,sX)
+		cropWidth()
 	    }
 	    else{
 		// tez(50,100,10,10)
 		// нужно жать ширину картинки до ширины канваса
-		var resultHeight = canvasWidth/ratio
-		var croppedHeight = (resultHeight-canvasHeight)
-		sY = croppedHeight/2*wrat
+		cropHeight()
 	    }
 	}
 	return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}

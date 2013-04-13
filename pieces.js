@@ -256,35 +256,31 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             var dWidth = canvasWidth, dHeight = canvasHeight;
             var wrat = imgWidth / canvasWidth;
             var hrat = imgHeight / canvasHeight;
-            if(wrat < 1 && hrat < 1) {
-                if(wrat <= hrat) {
-                    var resultHeight = canvasWidth / ratio;
-                    var croppedHeight = (resultHeight - canvasHeight);
-                    sY = croppedHeight / 2 * wrat;
-                } else {
-                    var resultWidth = canvasHeight * ratio;
-                    var croppedWidth = (resultWidth - canvasWidth);
-                    sX = (croppedWidth / 2) * hrat;
-                }
-            } else if(wrat < 1 && hrat >= 1) {
+            var cropHeight = function () {
                 var resultHeight = canvasWidth / ratio;
                 var croppedHeight = (resultHeight - canvasHeight);
                 sY = croppedHeight / 2 * wrat;
-            } else if(hrat < 1 && wrat >= 1) {
+            };
+            var cropWidth = function () {
                 var resultWidth = canvasHeight * ratio;
                 var croppedWidth = (resultWidth - canvasWidth);
                 sX = (croppedWidth / 2) * hrat;
+            };
+            if(wrat < 1 && hrat < 1) {
+                if(wrat <= hrat) {
+                    cropHeight();
+                } else {
+                    cropWidth();
+                }
+            } else if(wrat < 1 && hrat >= 1) {
+                cropHeight();
+            } else if(hrat < 1 && wrat >= 1) {
+                cropWidth();
             } else {
                 if(wrat > hrat) {
-                    console.log(4, imgWidth, imgHeight, canvasWidth, canvasHeight, wrat, hrat);
-                    var resultWidth = canvasHeight * ratio;
-                    var croppedWidth = (resultWidth - canvasWidth);
-                    sX = (croppedWidth / 2) * hrat;
-                    console.log(resultWidth, croppedWidth, sX);
+                    cropWidth();
                 } else {
-                    var resultHeight = canvasWidth / ratio;
-                    var croppedHeight = (resultHeight - canvasHeight);
-                    sY = croppedHeight / 2 * wrat;
+                    cropHeight();
                 }
             }
             return {
@@ -319,7 +315,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 }
                 var sourceBox = me.getSourceBox(img.width, img.height, canvas.width, canvas.height);
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height);
-                console.log(img.src);
             }).on('error', function (e) {
                 if(me.args[3] && !error) {
                     me.draw(me.args[3], true);
