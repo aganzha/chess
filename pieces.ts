@@ -25,13 +25,13 @@ export class BaseCell implements interfaces.Cell{
 	console.log(arguments)
     }
     forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector){
-	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек 
-	// (см каменты в app.ts->resolveCells	
-	if(!selector){	    
+	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек
+	// (см каменты в app.ts->resolveCells
+	if(!selector){
 	    selector = function(cell:interfaces.Cell){return true}
 	}
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
-	    var delayedCell = this.delayedChildren[i];	   
+	    var delayedCell = this.delayedChildren[i];
 	    if(!selector(delayedCell)){
 		continue
 	    }
@@ -42,7 +42,7 @@ export class BaseCell implements interfaces.Cell{
 		klass=BaseCell
 	    }
 	    var clone = new klass(delayedCell.record, this.application)
-	    clone.html = delayedCell.html	    
+	    clone.html = delayedCell.html
 	    clone.args = []
 	    for(var j=0;j<delayedCell.args.length;j++){
 	    	clone.args.push(delayedCell.args[j])
@@ -236,7 +236,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	this.args[0] = src
 	if(this.el.tagName.toLowerCase()=='canvas'){
 	    var i = document.createElement('img')
-	    this.drawImage(<HTMLCanvasElement>this.el, <HTMLImageElement>i, error)
+	    this.drawImageInCanvas(<HTMLCanvasElement>this.el, <HTMLImageElement>i, error)
 	}
 	else{
 	    (<HTMLImageElement>this.el).src=src
@@ -244,10 +244,9 @@ export class Image extends BaseCell implements interfaces.Image{
     }
 
     fitHeight:number;
-    fitWidth:number;   
+    fitWidth:number;
 
-    drawImage(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
-
+    drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
 	canvas.width = this.args[1]
 	canvas.height = this.args[2]
 	var me = this
@@ -263,7 +262,7 @@ export class Image extends BaseCell implements interfaces.Image{
 		canvas.height = me.fitHeight
 		canvas.width = me.fitHeight*ratio
 	    }
-	    
+
 
 	    var context = canvas.getContext('2d')
 	    var getcha = false
@@ -310,7 +309,6 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
     }
     createEl(){
-
 	var img = <HTMLImageElement>document.createElement('img')
 	var answer = <HTMLElement>img
 	if(this.html.length>0){
@@ -321,7 +319,7 @@ export class Image extends BaseCell implements interfaces.Image{
 		if(this.args[1] && this.args[2]){
 		    var canvas = <HTMLCanvasElement>document.createElement('canvas')
 		    if(this.args[0]!=null){
-			this.drawImage(canvas,img)
+			this.drawImageInCanvas(canvas,img)
 		    }
 		    else{
 			canvas.width = this.args[1]
@@ -336,6 +334,17 @@ export class Image extends BaseCell implements interfaces.Image{
 	    }
 	}
 	return answer
+    }
+    scale(factor:number){
+	var img = <HTMLImageElement>document.createElement('img')
+	img.onload = function(){
+	    var newWidth = img.width*factor
+	    var newHeight = img.height*factor
+	    var canvas = <HTMLCanvasElement>this.el
+	    var destWidth = canvas.width
+	    var destHeight = canvas.height
+	}
+	img.src = this.args[0]
     }
 }
 
@@ -368,7 +377,7 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
 	reader.onload = function(ev){
 	    me.file = ev.target.result
 	    me.loadDone()
-	}	
+	}
 	reader.readAsDataURL(file);
     }
     afterRender(){

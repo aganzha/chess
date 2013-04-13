@@ -244,12 +244,12 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.args[0] = src;
             if(this.el.tagName.toLowerCase() == 'canvas') {
                 var i = document.createElement('img');
-                this.drawImage(this.el, i, error);
+                this.drawImageInCanvas(this.el, i, error);
             } else {
                 (this.el).src = src;
             }
         };
-        Image.prototype.drawImage = function (canvas, img, error) {
+        Image.prototype.drawImageInCanvas = function (canvas, img, error) {
             canvas.width = this.args[1];
             canvas.height = this.args[2];
             var me = this;
@@ -314,7 +314,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     if(this.args[1] && this.args[2]) {
                         var canvas = document.createElement('canvas');
                         if(this.args[0] != null) {
-                            this.drawImage(canvas, img);
+                            this.drawImageInCanvas(canvas, img);
                         } else {
                             canvas.width = this.args[1];
                             canvas.height = this.args[2];
@@ -327,6 +327,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 }
             }
             return answer;
+        };
+        Image.prototype.scale = function (factor) {
+            var img = document.createElement('img');
+            img.onload = function () {
+                var newWidth = img.width * factor;
+                var newHeight = img.height * factor;
+                var canvas = this.el;
+                var destWidth = canvas.width;
+                var destHeight = canvas.height;
+            };
+            img.src = this.args[0];
         };
         return Image;
     })(BaseCell);
