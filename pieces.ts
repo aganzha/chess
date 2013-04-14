@@ -243,28 +243,26 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
     }
 
-    fitHeight:number;
-    fitWidth:number;
-
-    getSourceBox(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
+    getSourceBoxForCompleteCanvas(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
 	// https://developer.mozilla.org/en-US/docs/HTML/Canvas/Tutorial/Using_images?redirectlocale=en-US&redirectslug=Canvas_tutorial%2FUsing_images
-	// Стратегия такая, что канвас всегда заполнен на 100%
-	// т.е. dX=0, dY=0, dWidth=canvas.width, dHeight=canvas.height
 	var ratio = imgWidth/imgHeight
 	var sX=0,sY=0
 	var sWidth = imgWidth,sHeight = imgHeight
-	var dWidth = canvasWidth,dHeight=canvasHeight
 	var wrat = imgWidth/canvasWidth
 	var hrat = imgHeight/canvasHeight
 	var cropHeight = function(){
+	    var resultWidth = canvasWidth
 	    var resultHeight = canvasWidth/ratio
-	    var croppedHeight = (resultHeight-canvasHeight)
-	    sY = croppedHeight/2*wrat
+	    var croppedFromHeight = (resultHeight-canvasHeight)
+	    sY = croppedFromHeight/2*wrat
+	    sHeight = sHeight-(2*sY)
 	}
 	var cropWidth = function(){
+	    var resultHeight = canvasHeight
 	    var resultWidth = canvasHeight*ratio
-	    var croppedWidth = (resultWidth-canvasWidth)
-	    sX = (croppedWidth/2)*hrat
+	    var croppedFromWidth = (resultWidth-canvasWidth)
+	    sX = (croppedFromWidth/2)*hrat
+	    sWidth = sWidth-(2*sX)
 	}
 	if(wrat<1 && hrat<1){
 	    if(wrat<=hrat){
@@ -300,9 +298,70 @@ export class Image extends BaseCell implements interfaces.Image{
 		cropHeight()
 	    }
 	}
-	return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
+	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
+	return {left:sX, top:sY, width:sWidth, height:sHeight}
     }
+    
+    getDestBoxForCompleteImage(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
+	var ratio = imgWidth/imgHeight
+	var dX=0,dY=0
+	var dWidth = imgWidth,dHeight = imgHeight
+	var dWidth = canvasWidth,dHeight=canvasHeight
+	var wrat = imgWidth/canvasWidth
+	var hrat = imgHeight/canvasHeight
 
+	var scaleWidth = function(){
+	    var resultWidth = canvasWidth
+	    var resultHeight = canvasWidth/ratio
+	    var restInHeight = (canvasHeight-resultHeight)
+	    dY = restInHeight/2*hrat
+	    dHeight = resultHeight//dHeight-(2*dY)
+	}
+	var scaleHeight = function(){
+	    // this case not tested yet
+	    var resultHeight = canvasHeight
+	    var resultWidth = canvasHeight*ratio
+	    var restInWidth = (canvasWidth-resultWidth)
+	    dX = (restInWidth/2)*hrat
+	    dWidth = resultWidth
+	}
+	if(wrat<1 && hrat<1){
+	    if(wrat<=hrat){
+		//tez(1,5,10,10)		
+		// нужно подтягивать высоту картинки к высоте канваса
+		scaleHeight()
+	    }
+	    else{
+		////tez(5,1,10,10)
+		// нужно подтягивать ширину картинки к ширине канваса
+		scaleWidth()
+	    }
+	}
+	else if(wrat<1 && hrat >=1){
+	    // нужно подтягивать ширину картинки к ширине канваса
+	    //tez(5,20,10,10)
+	    scaleWidth()
+	}
+	else if(hrat<1 && wrat >=1){
+	    ////tez(20,5,10,10)
+	    // нужно подтягивать высоту картинки к высоте канваса	    
+	    scaleHeight()
+	}
+	else{//wrat>=1 && hrat>=1
+	    if(wrat>hrat){
+		//tez(100,50,10,10)
+		// нужно жать ширину картинки до ширины канваса
+		scaleWidth()
+	    }
+	    else{
+		// tez(50,100,10,10)
+		// нужно жать высоту картинки до высоты канваса
+		scaleHeight()
+	    }
+	}
+	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
+	return {left:dX, top:dY, width:dWidth, height:dHeight}
+    }
 
     drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
 	canvas.width = this.args[1]
@@ -311,28 +370,28 @@ export class Image extends BaseCell implements interfaces.Image{
 	$(img).on('load',function(){
 	    var ratio = img.width/img.height
 
-	    if(me.fitWidth){
-		canvas.width = me.fitWidth
-		canvas.height = me.fitWidth/ratio
-	    }
-
-	    if(me.fitHeight){
-		canvas.height = me.fitHeight
-		canvas.width = me.fitHeight*ratio
-	    }
-
 	    var context = canvas.getContext('2d')
-	    if(canvas.width<img.width){
-		
-		if(canvas.height<img.height){
-		}
+	    
+	    var sourceBox = {top:0,left:0,width:img.width,height:img.height}
+	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
+	    console.log(destBox)
+	    if(me.args[4]){
+	    	if(me.args[4]=='completeImage'){
+	    	    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
+	    							 canvas.width, canvas.height)
+	    	}
+	    	else if(me.args[4]=='completeCanvas'){
+	    	    sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+	    							     canvas.width, canvas.height)
+	    	}
 	    }
-	    if(canvas.height<img.height){
-		if(canvas.width<img.width){
-		}
+	    else{
+		// complete canvas by default
+	    	sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+	    							 canvas.width, canvas.height)
 	    }
-	    var sourceBox = me.getSourceBox(img.width, img.height, canvas.width, canvas.height)
-	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height);
+	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
+	     		      destBox.left,destBox.top,destBox.width,destBox.height)
 	}).on('error',function(e){
 	    if(me.args[3] && !error){
 		me.draw(me.args[3], true)
@@ -377,15 +436,21 @@ export class Image extends BaseCell implements interfaces.Image{
 	return answer
     }
     scale(factor:number){
-	var img = <HTMLImageElement>document.createElement('img')
-	img.onload = function(){
-	    var newWidth = img.width*factor
-	    var newHeight = img.height*factor
-	    var canvas = <HTMLCanvasElement>this.el
-	    var destWidth = canvas.width
-	    var destHeight = canvas.height
-	}
-	img.src = this.args[0]
+    	var img = <HTMLImageElement>document.createElement('img')
+    	var canvas = <HTMLCanvasElement>this.el
+	var context = canvas.getContext('2d')
+	var me = this
+    	img.onload = function(){
+    	    // var newWidth = img.width*factor
+    	    // var newHeight = img.height*factor
+    	    // var destWidth = canvas.width
+    	    // var destHeight = canvas.height
+	    var sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+							     canvas.width, canvas.height)
+	    // теперь нужно sourceBox отскейлить
+	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height)
+    	}
+    	img.src = this.args[0]
     }
 }
 

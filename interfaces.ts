@@ -155,8 +155,10 @@ export interface Uploader{
 }
 
 export interface Image{
+    // args:  [image_source:string, width:number, height:number, 
+    //           fallback_image_source:string, strategy:string]
+    // strategies: 'canvasComplete', 'imageComplete'
     draw(imgSrc:string);
-    fitWidth:number;
-    fitHeight:number;
     clear();
+    scale(factor:number);
 }
