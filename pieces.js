@@ -357,7 +357,6 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     width: canvas.width,
                     height: canvas.height
                 };
-                console.log(destBox);
                 if(me.args[4]) {
                     if(me.args[4] == 'completeImage') {
                         destBox = me.getDestBoxForCompleteImage(img.width, img.height, canvas.width, canvas.height);
@@ -408,13 +407,24 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             return answer;
         };
         Image.prototype.scale = function (factor) {
+            this.clear();
             var img = document.createElement('img');
             var canvas = this.el;
             var context = canvas.getContext('2d');
             var me = this;
             img.onload = function () {
+                var destBox = {
+                    top: 0,
+                    left: 0,
+                    width: canvas.width,
+                    height: canvas.height
+                };
                 var sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
-                context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height);
+                sourceBox.left = sourceBox.left + (sourceBox.width - sourceBox.width / factor) / 2;
+                sourceBox.top = sourceBox.top + (sourceBox.height - sourceBox.height / factor) / 2;
+                sourceBox.width = sourceBox.width / factor;
+                sourceBox.height = sourceBox.height / factor;
+                context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
             };
             img.src = this.args[0];
         };

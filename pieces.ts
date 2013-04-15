@@ -301,7 +301,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
 	return {left:sX, top:sY, width:sWidth, height:sHeight}
     }
-    
+
     getDestBoxForCompleteImage(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
 	var ratio = imgWidth/imgHeight
 	var dX=0,dY=0
@@ -327,7 +327,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
 	if(wrat<1 && hrat<1){
 	    if(wrat<=hrat){
-		//tez(1,5,10,10)		
+		//tez(1,5,10,10)
 		// нужно подтягивать высоту картинки к высоте канваса
 		scaleHeight()
 	    }
@@ -344,7 +344,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
 	else if(hrat<1 && wrat >=1){
 	    ////tez(20,5,10,10)
-	    // нужно подтягивать высоту картинки к высоте канваса	    
+	    // нужно подтягивать высоту картинки к высоте канваса
 	    scaleHeight()
 	}
 	else{//wrat>=1 && hrat>=1
@@ -371,10 +371,10 @@ export class Image extends BaseCell implements interfaces.Image{
 	    var ratio = img.width/img.height
 
 	    var context = canvas.getContext('2d')
-	    
+
 	    var sourceBox = {top:0,left:0,width:img.width,height:img.height}
 	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
-	    console.log(destBox)
+
 	    if(me.args[4]){
 	    	if(me.args[4]=='completeImage'){
 	    	    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
@@ -435,20 +435,29 @@ export class Image extends BaseCell implements interfaces.Image{
 	}
 	return answer
     }
+    // initialSourceBox:interfaces.Box;
     scale(factor:number){
+	this.clear()
     	var img = <HTMLImageElement>document.createElement('img')
     	var canvas = <HTMLCanvasElement>this.el
 	var context = canvas.getContext('2d')
 	var me = this
     	img.onload = function(){
-    	    // var newWidth = img.width*factor
-    	    // var newHeight = img.height*factor
-    	    // var destWidth = canvas.width
-    	    // var destHeight = canvas.height
-	    var sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-							     canvas.width, canvas.height)
-	    // теперь нужно sourceBox отскейлить
-	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height)
+	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}	    
+	    var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
+	    						    canvas.width, canvas.height)
+	    // sourceBox уже соответствует размеру canvas
+	    // его просто нужно умножить на factor
+	    // зумаут мы не можем делать. мы и так показали картинку полностью. делать
+	    // ее меньше канваса нет смысла. т.е. фактор будет точно больше 1
+	    // скажем если фактор = 2, то исходную ширину(и высоту тоже) нужно РАЗДЕЛИТЬ на 2
+	    // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
+	    sourceBox.left = sourceBox.left+(sourceBox.width-sourceBox.width/factor)/2
+	    sourceBox.top = sourceBox.top+(sourceBox.height-sourceBox.height/factor)/2
+	    sourceBox.width = sourceBox.width/factor
+	    sourceBox.height = sourceBox.height/factor
+	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
+			      destBox.left,destBox.top,destBox.width,destBox.height)
     	}
     	img.src = this.args[0]
     }
