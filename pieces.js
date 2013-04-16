@@ -57,6 +57,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
+                clone.afterRender();
             }
             var newDelayedCells = [];
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
