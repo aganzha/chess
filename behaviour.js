@@ -109,6 +109,11 @@ define(["require", "exports"], function(require, exports) {
             'z-index': 9,
             cursor: 'inherit'
         });
-        me.onDrop();
+        me.onDrop({
+            left: e.x + me.dX,
+            top: e.y + me.dY,
+            width: null,
+            height: null
+        });
     }
 })

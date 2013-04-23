@@ -137,10 +137,9 @@ export interface Draggable extends Cell{
     dY:number;
     onStartDrag:(el:HTMLElement)=>bool;//if want drag to begin -> return true!!!
     onDrag:(box:Box)=>any;
-    onDrop:()=>any;
+    onDrop:(box:Box)=>any;
     confirmDrag(b:Box):Box;
 }
-
 
 
 export interface Uploader{
@@ -157,7 +156,7 @@ export interface Uploader{
 export interface Image{
     // args:  [image_source:string, width:number, height:number, 
     //           fallback_image_source:string, strategy:string]
-    // strategies: 'canvasComplete', 'imageComplete'
+    // strategies: 'canvasComplete' 'imageComplete'
     draw(imgSrc:string);
     clear();
     scale(factor:number);

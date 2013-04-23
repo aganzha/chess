@@ -380,21 +380,21 @@ export class Image extends BaseCell implements interfaces.Image{
 	    if(me.args[4]){
 	    	if(me.args[4]=='completeImage'){
 	    	    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
-	    							 canvas.width, canvas.height)
+	    						    canvas.width, canvas.height)
 	    	}
 	    	else if(me.args[4]=='completeCanvas'){
 	    	    sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-	    							     canvas.width, canvas.height)
+	    							 canvas.width, canvas.height)
 	    	}
 	    }
 	    else{
 		// complete canvas by default
 	    	sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-	    							 canvas.width, canvas.height)
+	    						     canvas.width, canvas.height)
 	    }
 	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
 	     		      destBox.left,destBox.top,destBox.width,destBox.height)
-	}).on('error',function(e){
+	}).on('error',function(e){	    
 	    if(me.args[3] && !error){
 		me.draw(me.args[3], true)
 	    }
