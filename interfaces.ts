@@ -149,6 +149,7 @@ export interface Uploader{
     fileChoosen();
     file:string;
     fileName:string;
+    fileType:string;
     rawFile:any;
     needLoad(fname:string):bool;
 }
