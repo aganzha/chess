@@ -241,13 +241,20 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             _super.apply(this, arguments);
 
         }
+        Image.prototype.onload = function () {
+        };
         Image.prototype.draw = function (src, error) {
             this.args[0] = src;
             if(this.el.tagName.toLowerCase() == 'canvas') {
                 var i = document.createElement('img');
                 this.drawImageInCanvas(this.el, i, error);
             } else {
-                (this.el).src = src;
+                var me = this;
+                var img = this.el;
+                img.onload = function () {
+                    me.onload();
+                };
+                img.src = src;
             }
         };
         Image.prototype.getSourceBoxForCompleteCanvas = function (imgWidth, imgHeight, canvasWidth, canvasHeight) {
@@ -368,6 +375,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                 }
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
+                me.onload();
             }).on('error', function (e) {
                 if(me.args[3] && !error) {
                     me.draw(me.args[3], true);

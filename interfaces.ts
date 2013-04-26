@@ -161,4 +161,5 @@ export interface Image{
     draw(imgSrc:string);
     clear();
     scale(factor:number);
+    onload();
 }
