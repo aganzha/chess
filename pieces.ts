@@ -320,46 +320,54 @@ export class Image extends BaseCell implements interfaces.Image{
 	    var resultWidth = canvasWidth
 	    var resultHeight = canvasWidth/ratio
 	    var restInHeight = (canvasHeight-resultHeight)
-	    dY = restInHeight/2*hrat
-	    dHeight = resultHeight//dHeight-(2*dY)
+	    dY = restInHeight/2
+	    dHeight = resultHeight
 	}
 	var scaleHeight = function(){
 	    // this case not tested yet
 	    var resultHeight = canvasHeight
 	    var resultWidth = canvasHeight*ratio
 	    var restInWidth = (canvasWidth-resultWidth)
-	    dX = (restInWidth/2)*hrat
+	    dX = restInWidth/2
 	    dWidth = resultWidth
 	}
 	if(wrat<1 && hrat<1){
+	    //console.log(1)
 	    if(wrat<=hrat){
+		//console.log(111)
 		//tez(1,5,10,10)
 		// нужно подтягивать высоту картинки к высоте канваса
 		scaleHeight()
 	    }
 	    else{
+		// console.log(112)
 		////tez(5,1,10,10)
 		// нужно подтягивать ширину картинки к ширине канваса
 		scaleWidth()
 	    }
 	}
 	else if(wrat<1 && hrat >=1){
+	    // console.log(12)//PASSED
 	    // нужно подтягивать ширину картинки к ширине канваса
-	    //tez(5,20,10,10)
-	    scaleWidth()
-	}
-	else if(hrat<1 && wrat >=1){
-	    ////tez(20,5,10,10)
-	    // нужно подтягивать высоту картинки к высоте канваса
+	    //tez(5,20,10,10)	    
 	    scaleHeight()
 	}
+	else if(hrat<1 && wrat >=1){
+	    // console.log(13)
+	    ////tez(20,5,10,10)
+	    // нужно подтягивать высоту картинки к высоте канваса
+	    scaleWidth()
+	}
 	else{//wrat>=1 && hrat>=1
+	    //console.log(14)//PASSED
 	    if(wrat>hrat){
+		//console.log(141)//PASSED
 		//tez(100,50,10,10)
 		// нужно жать ширину картинки до ширины канваса
 		scaleWidth()
 	    }
 	    else{
+		//console.log(142)//PASSED
 		// tez(50,100,10,10)
 		// нужно жать высоту картинки до высоты канваса
 		scaleHeight()

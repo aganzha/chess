@@ -312,14 +312,14 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 var resultWidth = canvasWidth;
                 var resultHeight = canvasWidth / ratio;
                 var restInHeight = (canvasHeight - resultHeight);
-                dY = restInHeight / 2 * hrat;
+                dY = restInHeight / 2;
                 dHeight = resultHeight;
             };
             var scaleHeight = function () {
                 var resultHeight = canvasHeight;
                 var resultWidth = canvasHeight * ratio;
                 var restInWidth = (canvasWidth - resultWidth);
-                dX = (restInWidth / 2) * hrat;
+                dX = restInWidth / 2;
                 dWidth = resultWidth;
             };
             if(wrat < 1 && hrat < 1) {
@@ -329,9 +329,9 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     scaleWidth();
                 }
             } else if(wrat < 1 && hrat >= 1) {
-                scaleWidth();
-            } else if(hrat < 1 && wrat >= 1) {
                 scaleHeight();
+            } else if(hrat < 1 && wrat >= 1) {
+                scaleWidth();
             } else {
                 if(wrat > hrat) {
                     scaleWidth();
