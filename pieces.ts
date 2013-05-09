@@ -405,8 +405,8 @@ export class Image extends BaseCell implements interfaces.Image{
 	    						     canvas.width, canvas.height)
 	    }
 	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
-	     		      destBox.left,destBox.top,destBox.width,destBox.height)
-	    this.imageBox = destBox
+	     		      destBox.left,destBox.top,destBox.width,destBox.height)	    
+	    me.imageBox = destBox
 	    me.onload()
 	}).on('error',function(e){	    
 	    if(me.args[3] && !error){
