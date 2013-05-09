@@ -307,7 +307,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
 	return {left:sX, top:sY, width:sWidth, height:sHeight}
     }
-
+    imageBox:interfaces.Box;
     getDestBoxForCompleteImage(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
 	var ratio = imgWidth/imgHeight
 	var dX=0,dY=0
@@ -406,6 +406,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	    }
 	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
 	     		      destBox.left,destBox.top,destBox.width,destBox.height)
+	    this.imageBox = destBox
 	    me.onload()
 	}).on('error',function(e){	    
 	    if(me.args[3] && !error){

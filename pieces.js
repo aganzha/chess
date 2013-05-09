@@ -375,6 +375,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                     sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                 }
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
+                this.imageBox = destBox;
                 me.onload();
             }).on('error', function (e) {
                 if(me.args[3] && !error) {

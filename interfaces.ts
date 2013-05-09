@@ -162,4 +162,5 @@ export interface Image{
     clear();
     scale(factor:number);
     onload();
+    imageBox:Box;
 }
