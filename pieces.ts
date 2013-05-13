@@ -66,7 +66,13 @@ export class BaseCell implements interfaces.Cell{
 	this.delayedChildren = newDelayedCells
     }
     getBox(){
-	return <interfaces.Box>$(this.el).offset()
+	var answer = <interfaces.Box>$(this.el).offset()
+	if(!answer.width || !answer.height){
+            var obj = this.el.getBoundingClientRect()
+       	    answer['width']= Math.round(obj.width)    
+       	    answer['height']= Math.round(obj.height)
+       	}
+	return answer
     }
     fillElAttrs(){
 	var el = this.el

@@ -68,7 +68,13 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             this.delayedChildren = newDelayedCells;
         };
         BaseCell.prototype.getBox = function () {
-            return $(this.el).offset();
+            var answer = $(this.el).offset();
+            if(!answer.width || !answer.height) {
+                var obj = this.el.getBoundingClientRect();
+                answer['width'] = Math.round(obj.width);
+                answer['height'] = Math.round(obj.height);
+            }
+            return answer;
         };
         BaseCell.prototype.fillElAttrs = function () {
             var el = this.el;
