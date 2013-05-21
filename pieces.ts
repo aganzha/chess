@@ -384,9 +384,18 @@ export class Image extends BaseCell implements interfaces.Image{
     }
 
     drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
+
+	var me = this
+	var errBack = ()=>{
+	    if(me.args[3] && !error){
+		me.draw(me.args[3], true)
+	    }
+	}
+	if(!this.args[0]){
+	    errBack()
+	}
 	canvas.width = this.args[1]
 	canvas.height = this.args[2]
-	var me = this
 	$(img).on('load',function(){
 	    var ratio = img.width/img.height
 
@@ -415,9 +424,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	    me.imageBox = destBox
 	    me.onload()
 	}).on('error',function(e){	    
-	    if(me.args[3] && !error){
-		me.draw(me.args[3], true)
-	    }
+	    errBack()
 	})
 	img.src = this.args[0]
     }

@@ -353,9 +353,17 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
             };
         };
         Image.prototype.drawImageInCanvas = function (canvas, img, error) {
+            var me = this;
+            var errBack = function () {
+                if(me.args[3] && !error) {
+                    me.draw(me.args[3], true);
+                }
+            };
+            if(!this.args[0]) {
+                errBack();
+            }
             canvas.width = this.args[1];
             canvas.height = this.args[2];
-            var me = this;
             $(img).on('load', function () {
                 var ratio = img.width / img.height;
                 var context = canvas.getContext('2d');
@@ -384,9 +392,7 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 me.imageBox = destBox;
                 me.onload();
             }).on('error', function (e) {
-                if(me.args[3] && !error) {
-                    me.draw(me.args[3], true);
-                }
+                errBack();
             });
             img.src = this.args[0];
         };
