@@ -143,6 +143,7 @@ export interface Draggable extends Cell{
 
 
 export interface Uploader{
+    binary:bool;
     getFileInput():HTMLInputElement;
     getDropArea():HTMLElement;
     loadDone();

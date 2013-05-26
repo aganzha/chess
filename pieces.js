@@ -479,7 +479,11 @@ define(["require", "exports", "chess/interfaces", "chess/utils"], function(requi
                 me.file = ev.target.result;
                 me.loadDone();
             };
-            reader.readAsDataURL(file);
+            if(this.binary) {
+                reader.readAsArrayBuffer(file);
+            } else {
+                reader.readAsDataURL(file);
+            }
         };
         Uploader.prototype.afterRender = function () {
             var me = this;

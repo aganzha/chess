@@ -500,6 +500,7 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
     fileSize:number;
     file:string;
     rawFile:any;
+    binary:bool;
     needLoad(fname:string){
 	return true
     }
@@ -522,7 +523,12 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
 	    me.file = ev.target.result
 	    me.loadDone()
 	}
-	reader.readAsDataURL(file);
+	if(this.binary){
+	    reader.readAsArrayBuffer(file)
+	}
+	else{
+	    reader.readAsDataURL(file)
+	}
     }
     afterRender(){
 	var me = this
