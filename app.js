@@ -66,8 +66,8 @@ define(["require", "exports", "chess/transition", "chess/pieces", "chess/utils"]
                             var tr = new transition.Transition(me, selector, {
                                 success: function () {
                                     oldScreen.afterSelfReplace(newScreen);
-                                    newScreen.afterSelfApear(oldScreen);
                                     me.currentScreen.fillElAttrs();
+                                    newScreen.afterSelfApear(oldScreen);
                                 },
                                 fail: function () {
                                 }
