@@ -76,12 +76,8 @@ export class ChessApp{
 					{
 					    success:function(){
 						oldScreen.afterSelfReplace(newScreen)
-
-						// kill all transition classes and styles!
 						me.currentScreen.fillElAttrs()
-
 						newScreen.afterSelfApear(oldScreen)
-						// oldScreen.destroy() use afterSelfReplace for that!
 					    },
 					    fail:function(){
 						// rollback current screen?
