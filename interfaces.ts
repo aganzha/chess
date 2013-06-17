@@ -36,6 +36,7 @@ export interface Cell{
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children и у него есть parent!. 
     // у него есть el(элемент) но он еще не добавлен в DOM
+    // этот метод НЕ НУЖНО использовать для delayed элементов
     afterAppend();
 
     updateEl(html:string);
@@ -51,6 +52,7 @@ export interface Cell{
     bubbleDown(callable:(cell:Cell)=>any);
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
+    // этот метод нужно использовать для delayed элементов
     afterRender();
     appendDomMethod(el:HTMLElement);
     log(...args: any[]);
