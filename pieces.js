@@ -5,6 +5,15 @@ var __extends = this.__extends || function (d, b) {
 };
 var interfaces = require("./interfaces")
 var utils = require("./utils")
+var TestEl = (function () {
+    function TestEl() {
+        this.className = 'testElClass';
+    }
+    TestEl.prototype.appendChild = function (el) {
+    };
+    return TestEl;
+})();
+exports.TestEl = TestEl;
 var BaseCell = (function () {
     function BaseCell(record, application) {
         this.record = record;
@@ -92,8 +101,13 @@ var BaseCell = (function () {
     BaseCell.prototype.fillExtraAttrs = function () {
     };
     BaseCell.prototype.createEl = function () {
-        var el = document.createElement(this.tag);
-        el.innerHTML = this.html;
+        var el = null;
+        try  {
+            var el = document.createElement(this.tag);
+            el.innerHTML = this.html;
+        } catch (x) {
+            el = new TestEl();
+        }
         return el;
     };
     BaseCell.prototype.prepareEl = function () {

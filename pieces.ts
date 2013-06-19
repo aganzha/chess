@@ -2,6 +2,14 @@ import interfaces = module("./interfaces")
 import utils = module("./utils")
 declare var $;
 
+export class TestEl {
+    className:string;
+    constructor(){
+	this.className = 'testElClass'
+    }
+    appendChild(el:TestEl){
+    }
+}
 export class BaseCell implements interfaces.Cell{
     el:HTMLElement;
     parent:interfaces.Cell;
@@ -95,8 +103,15 @@ export class BaseCell implements interfaces.Cell{
     tag='div';
     html='';
     createEl():HTMLElement{
-	var el = document.createElement(this.tag)
-	el.innerHTML = this.html
+	var el = null
+	try{
+	    // этот try для node, в котором гоняются тесты
+	    var el = document.createElement(this.tag)
+	    el.innerHTML = this.html
+	}
+	catch(x){
+	    el = new TestEl()
+	}
 	return el
     }
     prepareEl(){
