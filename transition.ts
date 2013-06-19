@@ -1,4 +1,4 @@
-import interfaces = module("chess/interfaces")
+import interfaces = module("./interfaces")
 declare var $;
 
 

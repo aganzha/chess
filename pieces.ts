@@ -1,5 +1,5 @@
-import interfaces = module("chess/interfaces")
-import utils = module("chess/utils")
+import interfaces = module("./interfaces")
+import utils = module("./utils")
 declare var $;
 
 export class BaseCell implements interfaces.Cell{

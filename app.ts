@@ -1,7 +1,7 @@
-import interfaces = module("chess/interfaces")
-import transition = module("chess/transition")
-import pieces = module("chess/pieces")
-import utils = module("chess/utils")
+import interfaces = module("./interfaces")
+import transition = module("./transition")
+import pieces = module("./pieces")
+import utils = module("./utils")
 
 declare var $;
 
