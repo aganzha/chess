@@ -4,10 +4,15 @@ declare var $;
 
 export class TestEl {
     className:string;
+    childNodes:any[];
     constructor(){
 	this.className = 'testElClass'
+	this.childNodes = []
     }
     appendChild(el:TestEl){
+    }
+    createDocumentFragment(){
+	return new TestEl()
     }
 }
 export class BaseCell implements interfaces.Cell{
