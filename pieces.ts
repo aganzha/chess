@@ -32,6 +32,11 @@ export class BaseCell implements interfaces.Cell{
 	this.init()
 	this.guid = utils.guid()
     }
+    map(callable:(cell:interfaces.Cell,i?:number)=>any){
+	for(var i=0;i<this.children.length;i++){
+	    callable(this.children[i],i)
+	}
+    }
     init(){
     }
     log(...args: any[]){

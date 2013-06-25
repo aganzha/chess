@@ -34,6 +34,11 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.init();
             this.guid = utils.guid();
         }
+        BaseCell.prototype.map = function (callable) {
+            for(var i = 0; i < this.children.length; i++) {
+                callable(this.children[i], i);
+            }
+        };
         BaseCell.prototype.init = function () {
         };
         BaseCell.prototype.log = function () {

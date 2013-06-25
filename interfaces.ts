@@ -56,6 +56,7 @@ export interface Cell{
     afterRender();
     appendDomMethod(el:HTMLElement);
     log(...args: any[]);
+    map(callable:(cell:Cell,i?:number)=>any);
 }
 export interface Box {
     left:number;
