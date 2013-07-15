@@ -233,6 +233,37 @@ export class Transition implements interfaces.Transition{
     }
     classDelay=200;
     cssDelay = 600;
+
+
+    setTranslate(el,x,y,z){
+	$(el).css({
+	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
+	    '-moz-transition': '-webkit-transform 0.3s ease-in',
+	    '-o-transition': '-webkit-transform 0.3s ease-in',
+	    'transition': '-webkit-transform 0.3s ease-in',
+	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+	})
+    }
+    removeTranslate(el){
+	$(el).css({
+	    '-webkit-transition': null,
+	    '-moz-transition': null,
+	    '-o-transition': null,
+	    'transition': null,
+	    '-webkit-transform':null,
+	    '-moz-transform': null,
+	    '-ms-transform': null,
+	    '-o-transform': null,
+	    'transform': null,
+	    'width':null,
+	    'height':null
+	})
+    }
+
     slideLeft(){
 	var me = this;
 	me.renderNewScreen()
@@ -248,37 +279,19 @@ export class Transition implements interfaces.Transition{
 	    height:itemBox.height+'px',
 	    float:'left'
 	});
-	$(me.coming.parent.el).css({
-	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
-	    '-moz-transition': '-webkit-transform 0.3s ease-in',
-	    '-o-transition': '-webkit-transform 0.3s ease-in',
-	    'transition': '-webkit-transform 0.3s ease-in',
-	    '-webkit-transform':'translate3d('+(0-itemBox.width)+'px, 0, 0)',
-	    '-moz-transform': 'translate3d('+(0-itemBox.width)+'px, 0, 0)',
-	    '-ms-transform': 'translate3d('+(0-itemBox.width)+'px, 0, 0)',
-	    '-o-transform': 'translate3d('+(0-itemBox.width)+'px, 0, 0)',
-	    'transform': 'translate3d('+(0-itemBox.width)+'px, 0, 0)'
-	})
+	me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
+
 	setTimeout(function(){
 	    var bx = me.coming.getBox()
 	    $(me.going.el).css({
-		'width':'0px'
+	    	'width':'0px'
 	    })
+	    me.removeTranslate(me.coming.parent.el)
 	    $(me.coming.parent.el).css({
-		'-webkit-transition': null,
-		'-moz-transition': null,
-		'-o-transition': null,
-		'transition': null,
-		'-webkit-transform':null,
-		'-moz-transform': null,
-		'-ms-transform': null,
-		'-o-transform': null,
-		'transform': null,
-		'width':null,
-		'height':null
-	    })
-	    me.success()
-
+	     	'width':null,
+	     	'height':null
+	     })
+	     me.success()
 	},1000)	
     }
 
