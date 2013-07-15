@@ -2,11 +2,15 @@
 @import "compass/css3/box-sizing";
 @import "compass/css3/transform";
 
+/* body{ */
+/*     @include transform(translate3d(0,0,0)); */
+/*     @include transition(-webkit-transform 0.3s ease-in); */
+/* } */
 html, body {
     margin: 0;
     width: 100%;
     height: 100%;
-    overflow:hidden;
+    overflow:hidden;        
     @include box-sizing('border-box');
     div{
 	@include box-sizing('border-box');

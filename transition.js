@@ -22,7 +22,6 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         };
         Transition.prototype.renderNewScreen = function () {
             this.app.resolve(this.selector);
-            this.coming.forceRender();
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();
@@ -207,23 +206,44 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
                 height: itemBox.height + 'px',
-                float: 'left'
+                float: 'right'
             });
             $(me.going.el).css({
                 width: itemBox.width + 'px',
                 height: itemBox.height + 'px',
                 float: 'left'
             });
-            $(me.going.el).addClass('slideLeft');
+            $(me.coming.parent.el).css({
+                '-webkit-transition': '-webkit-transform 0.3s ease-in',
+                '-moz-transition': '-webkit-transform 0.3s ease-in',
+                '-o-transition': '-webkit-transform 0.3s ease-in',
+                'transition': '-webkit-transform 0.3s ease-in',
+                '-webkit-transform': 'translate3d(' + (0 - itemBox.width) + 'px, 0, 0)',
+                '-moz-transform': 'translate3d(' + (0 - itemBox.width) + 'px, 0, 0)',
+                '-ms-transform': 'translate3d(' + (0 - itemBox.width) + 'px, 0, 0)',
+                '-o-transform': 'translate3d(' + (0 - itemBox.width) + 'px, 0, 0)',
+                'transform': 'translate3d(' + (0 - itemBox.width) + 'px, 0, 0)'
+            });
             setTimeout(function () {
+                var bx = me.coming.getBox();
                 $(me.going.el).css({
-                    'margin-left': 0 - itemBox.width + 'px'
+                    'width': '0px'
                 });
-                setTimeout(function () {
-                    me.resetParent();
-                    me.success();
-                }, me.cssDelay);
-            }, this.classDelay);
+                $(me.coming.parent.el).css({
+                    '-webkit-transition': null,
+                    '-moz-transition': null,
+                    '-o-transition': null,
+                    'transition': null,
+                    '-webkit-transform': null,
+                    '-moz-transform': null,
+                    '-ms-transform': null,
+                    '-o-transform': null,
+                    'transform': null,
+                    'width': null,
+                    'height': null
+                });
+                me.success();
+            }, 1000);
         };
         Transition.prototype.slideRight = function () {
             var me = this;
