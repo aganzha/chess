@@ -70,6 +70,7 @@ export interface Screen extends Cell{
     afterSelfReplace(other:Screen);
     afterSelfApear(other:Screen);
     replaceBy(other:Screen);
+    forceRender();
     resolved:bool;
 }
 export interface ScreenMap{

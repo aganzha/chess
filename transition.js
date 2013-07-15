@@ -5,15 +5,24 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         function Transition(app, selector, callbacks) {
             this.app = app;
             this.selector = selector;
-            this.slideDelay = 400;
+            this.classDelay = 200;
+            this.cssDelay = 600;
             this.going = app.currentScreen;
             this.coming = selector(app.screens);
             this.success = callbacks.success;
             this.fail = callbacks.fail;
             this.parentBox = this.going.parent.getBox();
         }
+        Transition.prototype.pausecomp = function (millis) {
+            var date = new Date();
+            var curDate = null;
+            do {
+                curDate = new Date();
+            }while(curDate - date < millis);
+        };
         Transition.prototype.renderNewScreen = function () {
             this.app.resolve(this.selector);
+            this.coming.forceRender();
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();
@@ -41,7 +50,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             setTimeout(function () {
                 me.going.el.className += ' pop';
                 me.coming.el.className += ' pop';
-            }, 50);
+            }, this.classDelay / 2);
             setTimeout(function () {
                 $(me.going.el).css({
                     width: '0px',
@@ -62,7 +71,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                         me.success();
                     }, 250);
                 }, 250);
-            }, 100);
+            }, this.classDelay);
         };
         Transition.prototype.fade = function () {
             var me = this;
@@ -83,7 +92,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.el).css({
                     opacity: '0.0'
                 });
-            }, 100);
+            }, this.classDelay);
             setTimeout(function () {
                 $(me.coming.el).css({
                     opacity: '1.0',
@@ -92,8 +101,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 setTimeout(function () {
                     me.releasePosition();
                     me.success();
-                }, me.slideDelay);
-            }, me.slideDelay);
+                }, me.cssDelay);
+            }, me.cssDelay);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
             var widthOrHeight = 'height';
@@ -128,7 +137,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     me.releasePosition();
                     me.success();
                 }, 400);
-            }, 100);
+            }, this.classDelay);
         };
         Transition.prototype.coverLeft = function () {
             this.cover('left', true);
@@ -176,7 +185,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     me.resetParent();
                     me.success();
                 }, 400);
-            }, 100);
+            }, this.classDelay);
         };
         Transition.prototype.revealLeft = function () {
             this.reveal('left', true);
@@ -210,11 +219,11 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.el).css({
                     'margin-left': 0 - itemBox.width + 'px'
                 });
-            }, 100);
-            setTimeout(function () {
-                me.resetParent();
-                me.success();
-            }, this.slideDelay);
+                setTimeout(function () {
+                    me.resetParent();
+                    me.success();
+                }, me.cssDelay);
+            }, this.classDelay);
         };
         Transition.prototype.slideRight = function () {
             var me = this;
@@ -238,11 +247,11 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.coming.el).css({
                     'margin-left': '0px'
                 });
-            }, 100);
+            }, this.classDelay);
             setTimeout(function () {
                 me.resetParent();
                 me.success();
-            }, this.slideDelay);
+            }, this.cssDelay);
         };
         Transition.prototype.slideUp = function () {
             var me = this;
@@ -254,11 +263,11 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.el).css({
                     'margin-top': 0 - itemBox.height + 'px'
                 });
-            }, 100);
+            }, this.classDelay);
             setTimeout(function () {
                 me.resetParent();
                 me.success();
-            }, this.slideDelay);
+            }, this.cssDelay);
         };
         Transition.prototype.slideDown = function () {
             var me = this;
@@ -272,16 +281,16 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             });
             setTimeout(function () {
                 $(me.coming.el).addClass('slideDown');
-            }, 50);
+            }, this.classDelay / 2);
             setTimeout(function () {
                 $(me.coming.el).css({
                     'margin-top': 0
                 });
-            }, 100);
+            }, this.classDelay);
             setTimeout(function () {
                 me.resetParent();
                 me.success();
-            }, this.slideDelay);
+            }, this.cssDelay);
         };
         Transition.prototype.fixBackground = function (cell, css) {
             var background = $(cell.el).css('background-color') || $(cell.el).css('background-image');
@@ -305,8 +314,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         };
         Transition.prototype.resetParent = function () {
             $(this.coming.parent.el).css({
-                width: this.parentBox.width + 'px',
-                height: this.parentBox.height + 'px'
+                width: null,
+                height: null
             });
         };
         return Transition;

@@ -245,6 +245,13 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             _super.prototype.destroy.call(this);
             this.resolved = false;
         };
+        BaseScreen.prototype.forceRender = function () {
+            var _this = this;
+            $(this.el).children().first().before('<div>Force render!</div>');
+            setTimeout(function () {
+                $(_this.el).children().first().remove();
+            }, 80);
+        };
         return BaseScreen;
     })(BaseCell);
     exports.BaseScreen = BaseScreen;    

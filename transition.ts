@@ -18,8 +18,16 @@ export class Transition implements interfaces.Transition{
 	this.parentBox = this.going.parent.getBox()
 
     }
+    pausecomp(millis)
+    {
+	var date = new Date();
+	var curDate = null;
+	do { curDate = new Date(); }
+	while(curDate-date < millis);
+    }
     renderNewScreen(){
 	this.app.resolve(this.selector)
+	this.coming.forceRender()
     }
     union(){
 	this.renderNewScreen()
@@ -52,7 +60,7 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    me.going.el.className+=' pop'
 	    me.coming.el.className+= ' pop'
-	}, 50)
+	}, this.classDelay/2)
 	setTimeout(function(){
 	    $(me.going.el).css({
 		width:'0px',
@@ -73,7 +81,7 @@ export class Transition implements interfaces.Transition{
 		    me.success()
 		},250)
 	    },250);
-	},100);
+	},this.classDelay);
     }
     fade(){
 	var me = this;
@@ -94,7 +102,7 @@ export class Transition implements interfaces.Transition{
 	setTimeout(function(){
 	    $(me.going.el).css({
 		opacity:'0.0'
-	    })},100)
+	    })},this.classDelay)
 	setTimeout(function(){
 	    $(me.coming.el).css({
 	    	opacity:'1.0',
@@ -103,8 +111,8 @@ export class Transition implements interfaces.Transition{
 	    setTimeout(function(){
 		me.releasePosition()
 		me.success()
-	    },me.slideDelay)
-	},me.slideDelay)
+	    },me.cssDelay)
+	},me.cssDelay)
     }
 
     cover(leftOrTop:string,
@@ -149,7 +157,7 @@ export class Transition implements interfaces.Transition{
 		me.releasePosition()
 		me.success();
 	    },400)
-	},100);
+	},this.classDelay);
     }
 
     coverLeft(){
@@ -208,7 +216,7 @@ export class Transition implements interfaces.Transition{
 		me.resetParent()
 		me.success()
 	    },400)
-	},100);
+	},this.classDelay);
     }
 
     revealLeft(){
@@ -223,15 +231,12 @@ export class Transition implements interfaces.Transition{
     revealDown(){
 	this.reveal('top',true)
     }
-
-    slideDelay = 400;
+    classDelay=200;
+    cssDelay = 600;
     slideLeft(){
 	var me = this;
-
 	me.renderNewScreen()
-
 	var itemBox = this.going.getBox()
-
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
@@ -243,17 +248,18 @@ export class Transition implements interfaces.Transition{
 	    height:itemBox.height+'px',
 	    float:'left'
 	});
-
+	
 	$(me.going.el).addClass('slideLeft')
 	setTimeout(function(){
 	    $(me.going.el).css({
 		'margin-left':0-itemBox.width+'px',
 	    })
-	},100)
-	setTimeout(function(){
-	    me.resetParent()
-	    me.success()
-	}, this.slideDelay)
+	    setTimeout(function(){
+		me.resetParent()
+		me.success()
+	    }, me.cssDelay)
+	},this.classDelay)
+	
     }
 
     slideRight(){
@@ -282,12 +288,12 @@ export class Transition implements interfaces.Transition{
 	    $(me.coming.el).css({
 		'margin-left':'0px'
 	    });
-	}, 100)
+	}, this.classDelay)
 
 	setTimeout(function(){
 	    me.resetParent()
 	    me.success();
-	},this.slideDelay);
+	},this.cssDelay);
     }
 
     slideUp(){
@@ -305,12 +311,12 @@ export class Transition implements interfaces.Transition{
 	    $(me.going.el).css({
 		'margin-top':0-itemBox.height+'px'
 	    });
-	}, 100)
+	}, this.classDelay)
 
 	setTimeout(function(){
 	    me.resetParent()
 	    me.success();
-	},this.slideDelay);
+	},this.cssDelay);
     }
 
     slideDown(){
@@ -330,18 +336,18 @@ export class Transition implements interfaces.Transition{
 
 	setTimeout(function(){
 	    $(me.coming.el).addClass('slideDown');
-	}, 50)
+	}, this.classDelay/2)
 
 	setTimeout(function(){
 	    $(me.coming.el).css({
 		'margin-top':0
 	    })
-	}, 100)
+	}, this.classDelay)
 
 	setTimeout(function(){
 	    me.resetParent()
 	    me.success()
-	},this.slideDelay)
+	},this.cssDelay)
     }
 
     fixBackground(cell:interfaces.Cell, css:{}){
@@ -367,7 +373,9 @@ export class Transition implements interfaces.Transition{
 	})
     }
     resetParent(){	
+	// $(this.coming.parent.el)
+	//     .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
 	$(this.coming.parent.el)
-	    .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
+	    .css({width:null,height:null})
     }
 }

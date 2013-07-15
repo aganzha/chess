@@ -11,7 +11,7 @@ export class ChessApp{
     screens:interfaces.ScreenMap;
     currentScreen:interfaces.Screen;
     globals:{};
-    constructor(public viewport:pieces.ViewPort, public board:{}, 
+    constructor(public viewport:pieces.ViewPort, public board:{},
 		public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
 	this.globals = {}
@@ -36,7 +36,7 @@ export class ChessApp{
 		klass = this.modules[i][record.cons]
 		break
 	    }
-	}	
+	}
 	return klass
     }
     instantiate(recordString:string, baseClass:any){
@@ -50,7 +50,7 @@ export class ChessApp{
     resolve(selector:interfaces.ScreenSelector){
 	var screen = selector(this.screens)
 	if(!screen.resolved){
-	    // screen may be allready resolved in case of Union transition	
+	    // screen may be allready resolved in case of Union transition
 	    this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
@@ -62,7 +62,7 @@ export class ChessApp{
 	this.currentScreen =screen
 	//console.log(this.currentScreen)
     }
-    transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){	
+    transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
 	utils.Utils.destroyFlyWeight()
 	var oldScreen = this.currentScreen
 	var newScreen = selector(this.screens)

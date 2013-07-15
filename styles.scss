@@ -1,5 +1,7 @@
 @import "compass/css3/transition";
 @import "compass/css3/box-sizing";
+@import "compass/css3/transform";
+
 html, body {
     margin: 0;
     width: 100%;
@@ -11,16 +13,20 @@ html, body {
     }
 
     .slideLeft,.slideRight{
+	@include transform(translate3d(0,0,0));
 	@include transition(margin-left 0.3s ease-in);
     }
     .slideDown,.slideUp{
+	@include transform(translate3d(0,0,0));
 	@include transition(margin-top 0.3s ease-in);
     }
     .fade{
+	@include transform(translate3d(0,0,0));
 	@include transition(opacity 0.3s ease-in);
     }
     .pop{
 	overflow:hidden;
+	@include transform(translate3d(0,0,0));
 	@include transition(width 0.2s ease-in,
 			    height 0.2s ease-in,
 			    margin-top 0.2s ease-in,
@@ -28,6 +34,7 @@ html, body {
     }
 
     .reveal, .cover{
+	@include transform(translate3d(0,0,0));
 	@include transition(left 0.3s ease-in, top 0.3s ease-in);
     }
 }

@@ -252,6 +252,13 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
 	super.destroy()
 	this.resolved=false
     }
+    forceRender(){
+	$(this.el).children().first().before('<div>Force render!</div>')
+	setTimeout(()=>{
+	    $(this.el).children().first().remove()
+	},80)
+    }
+    
 }
 export class ViewPort extends BaseCell{
     constructor(el:HTMLElement){
