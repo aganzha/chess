@@ -263,7 +263,19 @@ export class Transition implements interfaces.Transition{
 	    'height':null
 	})
     }
-
+    removeIphoneFlash(el){
+	$(el).css({
+	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+	    'transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+	    '-webkit-transform': 'translate(0px, 0px) translateZ(0px)'
+	    })
+	// it will raise flash!
+	// $(el).css({
+	//     '-webkit-transition': null,
+	//     'transition': null,
+	//     '-webkit-transform': null
+	//     })
+    }
     slideLeft(){
 	var me = this;
 	me.renderNewScreen()
@@ -282,16 +294,15 @@ export class Transition implements interfaces.Transition{
 	me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
 
 	setTimeout(function(){
-	    var bx = me.coming.getBox()
-	    $(me.going.el).css({
-	    	'width':'0px'
-	    })
+	    var bx = me.coming.getBox()	    
 	    me.removeTranslate(me.coming.parent.el)
 	    $(me.coming.parent.el).css({
 	     	'width':null,
 	     	'height':null
-	     })
-	     me.success()
+	    })
+	    //var first = $(me.coming.el)//.find('#Menu')//.children().first()	    	    	    
+	    me.removeIphoneFlash(me.coming.el)
+	    me.success()
 	},1000)	
     }
 

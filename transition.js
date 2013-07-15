@@ -226,6 +226,13 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 'height': null
             });
         };
+        Transition.prototype.removeIphoneFlash = function (el) {
+            $(el).css({
+                '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+                'transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+                '-webkit-transform': 'translate(0px, 0px) translateZ(0px)'
+            });
+        };
         Transition.prototype.slideLeft = function () {
             var me = this;
             me.renderNewScreen();
@@ -244,14 +251,12 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             me.setTranslate(me.going.parent.el, 0 - itemBox.width, 0, 0);
             setTimeout(function () {
                 var bx = me.coming.getBox();
-                $(me.going.el).css({
-                    'width': '0px'
-                });
                 me.removeTranslate(me.coming.parent.el);
                 $(me.coming.parent.el).css({
                     'width': null,
                     'height': null
                 });
+                me.removeIphoneFlash(me.coming.el);
                 me.success();
             }, 1000);
         };
