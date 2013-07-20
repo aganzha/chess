@@ -339,25 +339,7 @@ export class Transition implements interfaces.Transition{
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
 
-	//me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
-
-	setTimeout(function(){
-	    var bx = me.coming.getBox()
-	    //me.removeTranslate(me.coming.parent.el)
-	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
-	    					       me.removeTransformParams()),
-					 {
-					     width:null,
-					     height:null
-					 })
-	    $(me.going.parent.el).css(trParams)
-	    $(me.coming.parent.el).css({
-	     	'width':null,
-	     	'height':null
-	    })
-	    me.removeIphoneFlash(me.coming.el)
-	    me.success()
-	},1000)
+	me.cleanUpTransform()
     }
     slideRight(){
 	var me = this;
@@ -389,23 +371,27 @@ export class Transition implements interfaces.Transition{
 				     width:itemBox.width*2
 				     })
 	    $(me.going.parent.el).css(trParams)
-	    setTimeout(()=>{
-		var bx = me.coming.getBox()
-		var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
-	    						   me.removeTransformParams()),
-					     {
-						 width:null,
-						 height:null
-					     })
-		$(me.going.parent.el).css(trParams)
-		$(me.coming.parent.el).css({
-	     	    'width':null,
-	     	    'height':null
-		})
-		me.removeIphoneFlash(me.coming.el)
-		me.success()
-	    },1000)
+	    me.cleanUpTransform()
 	},100)
+    }
+    cleanUpTransform(){
+	var me = this
+	setTimeout(()=>{
+	    var bx = me.coming.getBox()
+	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
+	    					       me.removeTransformParams()),
+					 {
+					     width:null,
+					     height:null
+					 })
+	    $(me.going.parent.el).css(trParams)
+	    $(me.coming.parent.el).css({
+	     	'width':null,
+	     	'height':null
+	    })
+	    me.removeIphoneFlash(me.coming.el)
+	    me.success()
+	},1000)
     }
 
     slideUp(){

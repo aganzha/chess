@@ -267,20 +267,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             });
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParams());
             $(me.going.parent.el).css(trParams);
-            setTimeout(function () {
-                var bx = me.coming.getBox();
-                var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
-                    width: null,
-                    height: null
-                });
-                $(me.going.parent.el).css(trParams);
-                $(me.coming.parent.el).css({
-                    'width': null,
-                    'height': null
-                });
-                me.removeIphoneFlash(me.coming.el);
-                me.success();
-            }, 1000);
+            me.cleanUpTransform();
         };
         Transition.prototype.slideRight = function () {
             var me = this;
@@ -307,21 +294,25 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     width: itemBox.width * 2
                 });
                 $(me.going.parent.el).css(trParams);
-                setTimeout(function () {
-                    var bx = me.coming.getBox();
-                    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
-                        width: null,
-                        height: null
-                    });
-                    $(me.going.parent.el).css(trParams);
-                    $(me.coming.parent.el).css({
-                        'width': null,
-                        'height': null
-                    });
-                    me.removeIphoneFlash(me.coming.el);
-                    me.success();
-                }, 1000);
+                me.cleanUpTransform();
             }, 100);
+        };
+        Transition.prototype.cleanUpTransform = function () {
+            var me = this;
+            setTimeout(function () {
+                var bx = me.coming.getBox();
+                var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
+                    width: null,
+                    height: null
+                });
+                $(me.going.parent.el).css(trParams);
+                $(me.coming.parent.el).css({
+                    'width': null,
+                    'height': null
+                });
+                me.removeIphoneFlash(me.coming.el);
+                me.success();
+            }, 1000);
         };
         Transition.prototype.slideUp = function () {
             var me = this;
