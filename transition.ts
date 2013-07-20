@@ -237,11 +237,11 @@ export class Transition implements interfaces.Transition{
 
     getTransformParams(x,y,z){
 	return {
-	'-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	'-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	'-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	'-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
 	}
     }
     getTransitionParams(){
@@ -312,7 +312,7 @@ export class Transition implements interfaces.Transition{
 	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
 	    'transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
 	    '-webkit-transform': 'translate(0px, 0px) translateZ(0px)'
-	    })
+	})
 	// it will raise flash!
 	// $(el).css({
 	//     '-webkit-transition': null,
@@ -338,18 +338,18 @@ export class Transition implements interfaces.Transition{
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
-	
+
 	//me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
 
 	setTimeout(function(){
-	    var bx = me.coming.getBox()	    
+	    var bx = me.coming.getBox()
 	    //me.removeTranslate(me.coming.parent.el)
 	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
 	    					       me.removeTransformParams()),
 					 {
 					     width:null,
 					     height:null
-					 })	    
+					 })
 	    $(me.going.parent.el).css(trParams)
 	    $(me.coming.parent.el).css({
 	     	'width':null,
@@ -357,74 +357,56 @@ export class Transition implements interfaces.Transition{
 	    })
 	    me.removeIphoneFlash(me.coming.el)
 	    me.success()
-	},1000)	
+	},1000)
     }
     slideRight(){
 	var me = this;
 	var itemBox = this.going.getBox()
-	$(me.coming.parent.el).css('width',itemBox.width*2+'px')	
+	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
+				     {
+					 width:itemBox.width*2
+				     })
+	
+	$(me.going.parent.el).css(trParams)
+	$(me.going.el).css({
+	    width:itemBox.width,
+	    height:itemBox.height,
+	    float:'right'
+	});
+
+	me.renderNewScreen()
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
 	    height:itemBox.height+'px',
 	    float:'left'
 	})
-	return
-	me.renderNewScreen()
 	$(me.going.el).before($(me.coming.el));
-	$(me.going.el).css({
-	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
-	    float:'right'
-	});
-	
-	return
-	//me.setTranslate(me.going.parent.el,itemBox.width,0,0)
 
-	setTimeout(function(){
-	    var bx = me.coming.getBox()	    
-	    //me.removeTranslate(me.coming.parent.el)
-	    $(me.coming.parent.el).css({
-	     	'width':null,
-	     	'height':null
-	    })
-	    me.removeIphoneFlash(me.coming.el)
-	    me.success()
-	},1000)	
+	setTimeout(()=>{
+	    $(me.going.parent.el).css(me.getTransitionParams())
+	    trParams = me.joinParams(me.getTransformParams(0,0,0),
+				     {
+				     width:itemBox.width*2
+				     })
+	    $(me.going.parent.el).css(trParams)
+	    setTimeout(()=>{
+		var bx = me.coming.getBox()
+		var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
+	    						   me.removeTransformParams()),
+					     {
+						 width:null,
+						 height:null
+					     })
+		$(me.going.parent.el).css(trParams)
+		$(me.coming.parent.el).css({
+	     	    'width':null,
+	     	    'height':null
+		})
+		me.removeIphoneFlash(me.coming.el)
+		me.success()
+	    },1000)
+	},100)
     }
-
-    // slideRight(){
-    // 	var me = this
-
-    // 	me.renderNewScreen()
-
-    // 	var itemBox = this.going.getBox();
-
-    // 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
-
-    // 	$(me.coming.el).css({
-    // 	    'margin-left':0-itemBox.width+'px',
-    // 	    width:itemBox.width+'px',
-    // 	    height:itemBox.height+'px',
-    // 	    float:'left'
-    // 	})
-    // 	$(me.going.el).css({
-    // 	    width:itemBox.width+'px',
-    // 	    height:itemBox.height+'px',
-    // 	    float:'left'
-    // 	});
-    // 	$(me.going.el).before($(me.coming.el));
-    // 	$(me.coming.el).addClass('slideRight');
-    // 	setTimeout(function(){
-    // 	    $(me.coming.el).css({
-    // 		'margin-left':'0px'
-    // 	    });
-    // 	}, this.classDelay)
-
-    // 	setTimeout(function(){
-    // 	    me.resetParent()
-    // 	    me.success();
-    // 	},this.cssDelay);
-    // }
 
     slideUp(){
 	var me = this;
@@ -502,7 +484,7 @@ export class Transition implements interfaces.Transition{
 	    height:''
 	})
     }
-    resetParent(){	
+    resetParent(){
 	// $(this.coming.parent.el)
 	//     .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
 	$(this.coming.parent.el)
