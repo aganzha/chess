@@ -198,33 +198,50 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         Transition.prototype.revealDown = function () {
             this.reveal('top', true);
         };
-        Transition.prototype.setTranslate = function (el, x, y, z) {
-            $(el).css({
-                '-webkit-transition': '-webkit-transform 0.3s ease-in',
-                '-moz-transition': '-webkit-transform 0.3s ease-in',
-                '-o-transition': '-webkit-transform 0.3s ease-in',
-                'transition': '-webkit-transform 0.3s ease-in',
+        Transition.prototype.getTransformParams = function (x, y, z) {
+            return {
                 '-webkit-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
                 '-moz-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
                 '-ms-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
                 '-o-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
                 'transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)'
-            });
+            };
         };
-        Transition.prototype.removeTranslate = function (el) {
-            $(el).css({
-                '-webkit-transition': null,
-                '-moz-transition': null,
-                '-o-transition': null,
-                'transition': null,
+        Transition.prototype.getTransitionParams = function () {
+            return {
+                '-webkit-transition': '-webkit-transform 0.3s ease-in',
+                '-moz-transition': '-webkit-transform 0.3s ease-in',
+                '-o-transition': '-webkit-transform 0.3s ease-in',
+                'transition': '-webkit-transform 0.3s ease-in'
+            };
+        };
+        Transition.prototype.joinParams = function (p1, p2) {
+            var res = {
+            };
+            for(var k in p1) {
+                res[k] = p1[k];
+            }
+            for(var k in p2) {
+                res[k] = p2[k];
+            }
+            return res;
+        };
+        Transition.prototype.removeTransformParams = function () {
+            return {
                 '-webkit-transform': null,
                 '-moz-transform': null,
                 '-ms-transform': null,
                 '-o-transform': null,
-                'transform': null,
-                'width': null,
-                'height': null
-            });
+                'transform': null
+            };
+        };
+        Transition.prototype.removeTransitionParams = function () {
+            return {
+                '-webkit-transition': null,
+                '-moz-transition': null,
+                '-o-transition': null,
+                'transition': null
+            };
         };
         Transition.prototype.removeIphoneFlash = function (el) {
             $(el).css({
@@ -248,10 +265,15 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 height: itemBox.height + 'px',
                 float: 'left'
             });
-            me.setTranslate(me.going.parent.el, 0 - itemBox.width, 0, 0);
+            var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParams());
+            $(me.going.parent.el).css(trParams);
             setTimeout(function () {
                 var bx = me.coming.getBox();
-                me.removeTranslate(me.coming.parent.el);
+                var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
+                    width: null,
+                    height: null
+                });
+                $(me.going.parent.el).css(trParams);
                 $(me.coming.parent.el).css({
                     'width': null,
                     'height': null
@@ -262,31 +284,31 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         };
         Transition.prototype.slideRight = function () {
             var me = this;
-            me.renderNewScreen();
             var itemBox = this.going.getBox();
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
-                'margin-left': 0 - itemBox.width + 'px',
                 width: itemBox.width + 'px',
                 height: itemBox.height + 'px',
                 float: 'left'
             });
+            return;
+            me.renderNewScreen();
+            $(me.going.el).before($(me.coming.el));
             $(me.going.el).css({
                 width: itemBox.width + 'px',
                 height: itemBox.height + 'px',
-                float: 'left'
+                float: 'right'
             });
-            $(me.going.el).before($(me.coming.el));
-            $(me.coming.el).addClass('slideRight');
+            return;
             setTimeout(function () {
-                $(me.coming.el).css({
-                    'margin-left': '0px'
+                var bx = me.coming.getBox();
+                $(me.coming.parent.el).css({
+                    'width': null,
+                    'height': null
                 });
-            }, this.classDelay);
-            setTimeout(function () {
-                me.resetParent();
+                me.removeIphoneFlash(me.coming.el);
                 me.success();
-            }, this.cssDelay);
+            }, 1000);
         };
         Transition.prototype.slideUp = function () {
             var me = this;

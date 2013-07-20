@@ -235,34 +235,78 @@ export class Transition implements interfaces.Transition{
     cssDelay = 600;
 
 
-    setTranslate(el,x,y,z){
-	$(el).css({
+    getTransformParams(x,y,z){
+	return {
+	'-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	'-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	'-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	'-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+	}
+    }
+    getTransitionParams(){
+	return 	    {
 	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
 	    '-moz-transition': '-webkit-transform 0.3s ease-in',
 	    '-o-transition': '-webkit-transform 0.3s ease-in',
-	    'transition': '-webkit-transform 0.3s ease-in',
-	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
-	})
+	    'transition': '-webkit-transform 0.3s ease-in'
+	}
     }
-    removeTranslate(el){
-	$(el).css({
-	    '-webkit-transition': null,
-	    '-moz-transition': null,
-	    '-o-transition': null,
-	    'transition': null,
+    joinParams(p1,p2){
+	var res = {}
+	for(var k in p1){
+	    res[k]= p1[k]
+	}
+	for(var k in p2){
+	    res[k]= p2[k]
+	}
+	return res
+    }
+    removeTransformParams(){
+	return {
 	    '-webkit-transform':null,
 	    '-moz-transform': null,
 	    '-ms-transform': null,
 	    '-o-transform': null,
 	    'transform': null,
-	    'width':null,
-	    'height':null
-	})
+	}
     }
+    removeTransitionParams(){
+	return {
+	    '-webkit-transition': null,
+	    '-moz-transition': null,
+	    '-o-transition': null,
+	    'transition': null
+	}
+    }
+    // setTranslate(el,x,y,z){
+    // 	$(el).css({
+    // 	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
+    // 	    '-moz-transition': '-webkit-transform 0.3s ease-in',
+    // 	    '-o-transition': '-webkit-transform 0.3s ease-in',
+    // 	    'transition': '-webkit-transform 0.3s ease-in',
+    // 	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+    // 	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+    // 	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+    // 	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+    // 	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+    // 	})
+    // }
+    // removeTranslate(el){
+    // 	$(el).css({
+    // 	    '-webkit-transition': null,
+    // 	    '-moz-transition': null,
+    // 	    '-o-transition': null,
+    // 	    'transition': null,
+    // 	    '-webkit-transform':null,
+    // 	    '-moz-transform': null,
+    // 	    '-ms-transform': null,
+    // 	    '-o-transform': null,
+    // 	    'transform': null,
+    // 	    'width':null,
+    // 	    'height':null
+    // 	})
+    // }
     removeIphoneFlash(el){
 	$(el).css({
 	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
@@ -291,54 +335,96 @@ export class Transition implements interfaces.Transition{
 	    height:itemBox.height+'px',
 	    float:'left'
 	});
-	me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
+	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
+				     me.getTransitionParams())
+	$(me.going.parent.el).css(trParams)
+	
+	//me.setTranslate(me.going.parent.el,0-itemBox.width,0,0)
 
 	setTimeout(function(){
 	    var bx = me.coming.getBox()	    
-	    me.removeTranslate(me.coming.parent.el)
+	    //me.removeTranslate(me.coming.parent.el)
+	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
+	    					       me.removeTransformParams()),
+					 {
+					     width:null,
+					     height:null
+					 })	    
+	    $(me.going.parent.el).css(trParams)
 	    $(me.coming.parent.el).css({
 	     	'width':null,
 	     	'height':null
 	    })
-	    //var first = $(me.coming.el)//.find('#Menu')//.children().first()	    	    	    
+	    me.removeIphoneFlash(me.coming.el)
+	    me.success()
+	},1000)	
+    }
+    slideRight(){
+	var me = this;
+	var itemBox = this.going.getBox()
+	$(me.coming.parent.el).css('width',itemBox.width*2+'px')	
+	$(me.coming.el).css({
+	    width:itemBox.width+'px',
+	    height:itemBox.height+'px',
+	    float:'left'
+	})
+	return
+	me.renderNewScreen()
+	$(me.going.el).before($(me.coming.el));
+	$(me.going.el).css({
+	    width:itemBox.width+'px',
+	    height:itemBox.height+'px',
+	    float:'right'
+	});
+	
+	return
+	//me.setTranslate(me.going.parent.el,itemBox.width,0,0)
+
+	setTimeout(function(){
+	    var bx = me.coming.getBox()	    
+	    //me.removeTranslate(me.coming.parent.el)
+	    $(me.coming.parent.el).css({
+	     	'width':null,
+	     	'height':null
+	    })
 	    me.removeIphoneFlash(me.coming.el)
 	    me.success()
 	},1000)	
     }
 
-    slideRight(){
-	var me = this
+    // slideRight(){
+    // 	var me = this
 
-	me.renderNewScreen()
+    // 	me.renderNewScreen()
 
-	var itemBox = this.going.getBox();
+    // 	var itemBox = this.going.getBox();
 
-	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
+    // 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 
-	$(me.coming.el).css({
-	    'margin-left':0-itemBox.width+'px',
-	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
-	    float:'left'
-	})
-	$(me.going.el).css({
-	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
-	    float:'left'
-	});
-	$(me.going.el).before($(me.coming.el));
-	$(me.coming.el).addClass('slideRight');
-	setTimeout(function(){
-	    $(me.coming.el).css({
-		'margin-left':'0px'
-	    });
-	}, this.classDelay)
+    // 	$(me.coming.el).css({
+    // 	    'margin-left':0-itemBox.width+'px',
+    // 	    width:itemBox.width+'px',
+    // 	    height:itemBox.height+'px',
+    // 	    float:'left'
+    // 	})
+    // 	$(me.going.el).css({
+    // 	    width:itemBox.width+'px',
+    // 	    height:itemBox.height+'px',
+    // 	    float:'left'
+    // 	});
+    // 	$(me.going.el).before($(me.coming.el));
+    // 	$(me.coming.el).addClass('slideRight');
+    // 	setTimeout(function(){
+    // 	    $(me.coming.el).css({
+    // 		'margin-left':'0px'
+    // 	    });
+    // 	}, this.classDelay)
 
-	setTimeout(function(){
-	    me.resetParent()
-	    me.success();
-	},this.cssDelay);
-    }
+    // 	setTimeout(function(){
+    // 	    me.resetParent()
+    // 	    me.success();
+    // 	},this.cssDelay);
+    // }
 
     slideUp(){
 	var me = this;
