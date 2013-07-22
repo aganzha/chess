@@ -279,46 +279,13 @@ export class Transition implements interfaces.Transition{
 	    'transition': null
 	}
     }
-    // setTranslate(el,x,y,z){
-    // 	$(el).css({
-    // 	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
-    // 	    '-moz-transition': '-webkit-transform 0.3s ease-in',
-    // 	    '-o-transition': '-webkit-transform 0.3s ease-in',
-    // 	    'transition': '-webkit-transform 0.3s ease-in',
-    // 	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
-    // 	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-    // 	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-    // 	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-    // 	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
-    // 	})
-    // }
-    // removeTranslate(el){
-    // 	$(el).css({
-    // 	    '-webkit-transition': null,
-    // 	    '-moz-transition': null,
-    // 	    '-o-transition': null,
-    // 	    'transition': null,
-    // 	    '-webkit-transform':null,
-    // 	    '-moz-transform': null,
-    // 	    '-ms-transform': null,
-    // 	    '-o-transform': null,
-    // 	    'transform': null,
-    // 	    'width':null,
-    // 	    'height':null
-    // 	})
-    // }
+
     removeIphoneFlash(el){
 	$(el).css({
 	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
 	    'transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
 	    '-webkit-transform': 'translate(0px, 0px) translateZ(0px)'
 	})
-	// it will raise flash!
-	// $(el).css({
-	//     '-webkit-transition': null,
-	//     'transition': null,
-	//     '-webkit-transform': null
-	//     })
     }
     slideLeft(){
 	var me = this;
@@ -338,7 +305,6 @@ export class Transition implements interfaces.Transition{
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
-
 	me.cleanUpTransform()
     }
     slideRight(){
