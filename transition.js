@@ -253,7 +253,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         Transition.prototype.slideLeft = function () {
             var me = this;
             me.renderNewScreen();
-            var itemBox = this.going.getBox();
+            var itemBox = me.fixPosition(me.going);
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
@@ -271,7 +271,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         };
         Transition.prototype.slideRight = function () {
             var me = this;
-            var itemBox = this.going.getBox();
+            var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
                 width: itemBox.width * 2
             });
@@ -308,7 +308,9 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.parent.el).css(trParams);
                 $(me.coming.parent.el).css({
                     'width': null,
-                    'height': null
+                    'height': null,
+                    'min-height': null,
+                    'min-width': null
                 });
                 me.removeIphoneFlash(me.coming.el);
                 me.success();
@@ -318,40 +320,27 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
-            $(me.going.el).addClass('slideUp');
-            setTimeout(function () {
-                $(me.going.el).css({
-                    'margin-top': 0 - itemBox.height + 'px'
-                });
-            }, this.classDelay);
-            setTimeout(function () {
-                me.resetParent();
-                me.success();
-            }, this.cssDelay);
+            $(me.coming.parent.el).css('min-height', itemBox.height * 2 + 'px');
+            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParams());
+            $(me.going.parent.el).css(trParams);
+            me.cleanUpTransform();
         };
         Transition.prototype.slideDown = function () {
             var me = this;
+            var itemBox = this.fixPosition(me.going);
             me.renderNewScreen();
-            var itemBox = this.fixPosition(this.going);
-            this.fixPosition(this.coming);
-            $(me.coming.parent.el).css('height', itemBox.height * 2 + 'px');
-            $(me.going.el).before($(me.coming.el));
-            $(me.coming.el).css({
-                'margin-top': '-' + me.parentBox.height + 'px'
+            this.fixPosition(me.coming);
+            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), {
+                'min-height': itemBox.height * 2
             });
+            $(me.going.el).before($(me.coming.el));
+            $(me.going.parent.el).css(trParams);
             setTimeout(function () {
-                $(me.coming.el).addClass('slideDown');
-            }, this.classDelay / 2);
-            setTimeout(function () {
-                $(me.coming.el).css({
-                    'margin-top': 0
-                });
-            }, this.classDelay);
-            setTimeout(function () {
-                me.resetParent();
-                me.success();
-            }, this.cssDelay);
+                $(me.going.parent.el).css(me.getTransitionParams());
+                var trParams = me.getTransformParams(0, 0, 0);
+                $(me.going.parent.el).css(trParams);
+                me.cleanUpTransform();
+            }, 100);
         };
         Transition.prototype.fixBackground = function (cell, css) {
             var background = $(cell.el).css('background-color') || $(cell.el).css('background-image');
@@ -363,7 +352,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var box = cell.parent.getBox();
             $(cell.el).css({
                 width: box.width,
-                height: box.height
+                height: box.height,
+                overflow: 'hidden'
             });
             return box;
         };
