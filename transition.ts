@@ -361,7 +361,7 @@ export class Transition implements interfaces.Transition{
 	    })
 	    me.removeIphoneFlash(me.coming.el)
 	    me.success()
-	},1000)
+	},500)
     }
 
     slideUp(){

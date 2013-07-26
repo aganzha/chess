@@ -314,7 +314,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 });
                 me.removeIphoneFlash(me.coming.el);
                 me.success();
-            }, 1000);
+            }, 500);
         };
         Transition.prototype.slideUp = function () {
             var me = this;
