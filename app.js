@@ -62,6 +62,8 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
+                    var base = newScreen;
+                    base._renderred = false;
                     newScreen.beforeSelfApear(oldScreen, {
                         success: function () {
                             var tr = new transition.Transition(me, selector, {

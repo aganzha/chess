@@ -70,6 +70,11 @@ export class ChessApp{
 	var me = this
 	oldScreen.beforeSelfReplace(newScreen, {
 	    success:function(){
+		// screen в отличие от Cell не создается каждый раз заново,
+		// поэтому нужно чистить все перед его появлеием. 
+		var base = <pieces.BaseCell>newScreen
+		base._renderred = false
+
 		newScreen.beforeSelfApear(oldScreen,{
 		    success:function(){
 			var tr = new transition
