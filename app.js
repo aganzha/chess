@@ -49,7 +49,8 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
                 screen.bubbleDown(function (cell) {
-                    cell.afterRender();
+                    var base = cell;
+                    base._safeAfterRender();
                 });
             }
             this.currentScreen = screen;

@@ -72,8 +72,8 @@ export class BaseCell implements interfaces.Cell{
 	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
-	    // внизу дом уже срендерен предыдущем выражением, так что можно вызывать
-	    clone.afterRender()
+	    // внизу дом уже срендерен предыдущем выражением, так что можно вызывать	    
+	    clone._safeAfterRender()
 	}
 	var newDelayedCells = []
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
@@ -133,6 +133,14 @@ export class BaseCell implements interfaces.Cell{
     updateEl(html:string){
 	this.html = html
 	$(this.el).html(html)
+    }
+    _renderred:bool;
+    _safeAfterRender(){
+	if(this._renderred){
+	    return
+	}
+	this._renderred = true
+	this.afterRender()
     }
     afterResolve(){
     }

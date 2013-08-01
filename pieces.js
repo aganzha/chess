@@ -75,7 +75,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
-                clone.afterRender();
+                clone._safeAfterRender();
             }
             var newDelayedCells = [];
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
@@ -131,6 +131,13 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         BaseCell.prototype.updateEl = function (html) {
             this.html = html;
             $(this.el).html(html);
+        };
+        BaseCell.prototype._safeAfterRender = function () {
+            if(this._renderred) {
+                return;
+            }
+            this._renderred = true;
+            this.afterRender();
         };
         BaseCell.prototype.afterResolve = function () {
         };
