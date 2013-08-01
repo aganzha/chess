@@ -27,7 +27,7 @@ export class Transition implements interfaces.Transition{
     }
     renderNewScreen(){
 	this.app.resolve(this.selector)
-	this.coming.forceRender()
+	//this.coming.forceRender()
     }
     union(){
 	this.renderNewScreen()
@@ -233,121 +233,168 @@ export class Transition implements interfaces.Transition{
     }
     classDelay=200;
     cssDelay = 600;
+
+
+    getTransformParams(x,y,z){
+	return {
+	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+	}
+    }
+    getTransitionParams(){
+	return 	    {
+	    '-webkit-transition': '-webkit-transform 0.3s ease-in',
+	    '-moz-transition': '-webkit-transform 0.3s ease-in',
+	    '-o-transition': '-webkit-transform 0.3s ease-in',
+	    'transition': '-webkit-transform 0.3s ease-in'
+	}
+    }
+    joinParams(p1,p2){
+	var res = {}
+	for(var k in p1){
+	    res[k]= p1[k]
+	}
+	for(var k in p2){
+	    res[k]= p2[k]
+	}
+	return res
+    }
+    removeTransformParams(){
+	return {
+	    '-webkit-transform':null,
+	    '-moz-transform': null,
+	    '-ms-transform': null,
+	    '-o-transform': null,
+	    'transform': null,
+	}
+    }
+    removeTransitionParams(){
+	return {
+	    '-webkit-transition': null,
+	    '-moz-transition': null,
+	    '-o-transition': null,
+	    'transition': null
+	}
+    }
+
+    removeIphoneFlash(el){
+	$(el).css({
+	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+	    'transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
+	    '-webkit-transform': 'translate(0px, 0px) translateZ(0px)'
+	})
+    }
     slideLeft(){
 	var me = this;
 	me.renderNewScreen()
-	var itemBox = this.going.getBox()
+	//var itemBox = this.going.getBox()
+	var itemBox = me.fixPosition(me.going)
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
 	    height:itemBox.height+'px',
-	    float:'left'
+	    float:'right'
 	})
 	$(me.going.el).css({
 	    width:itemBox.width+'px',
 	    height:itemBox.height+'px',
 	    float:'left'
 	});
-	
-	$(me.going.el).addClass('slideLeft')
-	setTimeout(function(){
-	    $(me.going.el).css({
-		'margin-left':0-itemBox.width+'px',
-	    })
-	    setTimeout(function(){
-		me.resetParent()
-		me.success()
-	    }, me.cssDelay)
-	},this.classDelay)
-	
+	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
+				     me.getTransitionParams())
+	$(me.going.parent.el).css(trParams)
+	me.cleanUpTransform()
     }
-
     slideRight(){
-	var me = this
+	var me = this;
+	//var itemBox = this.going.getBox()
+	var itemBox = me.fixPosition(me.going)
+	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
+				     {
+					 width:itemBox.width*2
+				     })
+	
+	$(me.going.parent.el).css(trParams)
+	$(me.going.el).css({
+	    width:itemBox.width,
+	    height:itemBox.height,
+	    float:'right'
+	});
 
 	me.renderNewScreen()
-
-	var itemBox = this.going.getBox();
-
-	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
-
 	$(me.coming.el).css({
-	    'margin-left':0-itemBox.width+'px',
 	    width:itemBox.width+'px',
 	    height:itemBox.height+'px',
 	    float:'left'
 	})
-	$(me.going.el).css({
-	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
-	    float:'left'
-	});
 	$(me.going.el).before($(me.coming.el));
-	$(me.coming.el).addClass('slideRight');
-	setTimeout(function(){
-	    $(me.coming.el).css({
-		'margin-left':'0px'
-	    });
-	}, this.classDelay)
 
-	setTimeout(function(){
-	    me.resetParent()
-	    me.success();
-	},this.cssDelay);
+	setTimeout(()=>{
+	    $(me.going.parent.el).css(me.getTransitionParams())
+	    trParams = me.joinParams(me.getTransformParams(0,0,0),
+				     {
+				     width:itemBox.width*2
+				     })
+	    $(me.going.parent.el).css(trParams)
+	    me.cleanUpTransform()
+	},100)
+    }
+    cleanUpTransform(){
+	var me = this
+	setTimeout(()=>{
+	    var bx = me.coming.getBox()
+	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
+	    					       me.removeTransformParams()),
+					 {
+					     width:null,
+					     height:null
+					 })
+	    $(me.going.parent.el).css(trParams)
+	    $(me.coming.parent.el).css({
+	     	'width':null,
+	     	'height':null,
+		'min-height':null,
+		'min-width':null
+	    })
+	    me.removeIphoneFlash(me.coming.el)
+	    me.success()
+	},500)
     }
 
     slideUp(){
 	var me = this;
-
 	me.renderNewScreen()
-
 	var itemBox = me.fixPosition(me.going)
-
-	$(me.coming.parent.el).css('height',itemBox.height*2+'px')
-
-	$(me.going.el).addClass('slideUp')
-
-	setTimeout(function(){
-	    $(me.going.el).css({
-		'margin-top':0-itemBox.height+'px'
-	    });
-	}, this.classDelay)
-
-	setTimeout(function(){
-	    me.resetParent()
-	    me.success();
-	},this.cssDelay);
+	//var itemBox = this.going.getBox()
+	$(me.coming.parent.el).css('min-height',itemBox.height*2+'px')
+	var trParams = me.joinParams(me.getTransformParams(0,0-itemBox.height,0),
+				     me.getTransitionParams())
+	$(me.going.parent.el).css(trParams)
+	me.cleanUpTransform()
     }
 
     slideDown(){
 
 	var me = this;
 
+	var itemBox = this.fixPosition(me.going)
 	me.renderNewScreen()
-
-	var itemBox = this.fixPosition(this.going)
-	this.fixPosition(this.coming)
-
-	$(me.coming.parent.el).css('height',itemBox.height*2+'px')
-
+	this.fixPosition(me.coming)
+	var trParams = me.joinParams(me.getTransformParams(0,0-itemBox.height,0),
+				     {
+					 'min-height':itemBox.height*2
+				     })
 	$(me.going.el).before($(me.coming.el));
-
-	$(me.coming.el).css({'margin-top':'-'+me.parentBox.height+'px'})
-
-	setTimeout(function(){
-	    $(me.coming.el).addClass('slideDown');
-	}, this.classDelay/2)
-
-	setTimeout(function(){
-	    $(me.coming.el).css({
-		'margin-top':0
-	    })
-	}, this.classDelay)
-
-	setTimeout(function(){
-	    me.resetParent()
-	    me.success()
-	},this.cssDelay)
+	$(me.going.parent.el).css(trParams)
+	setTimeout(()=>{
+	    $(me.going.parent.el).css(me.getTransitionParams())
+		var trParams = me.getTransformParams(0,0,0)
+		$(me.going.parent.el).css(trParams)
+		me.cleanUpTransform()
+	},100)	
     }
 
     fixBackground(cell:interfaces.Cell, css:{}){
@@ -362,7 +409,8 @@ export class Transition implements interfaces.Transition{
 	var box = cell.parent.getBox()
 	$(cell.el).css({
 	    width:box.width,
-	    height:box.height
+	    height:box.height,
+	    overflow:'hidden'
 	})
 	return box
     }
@@ -372,7 +420,7 @@ export class Transition implements interfaces.Transition{
 	    height:''
 	})
     }
-    resetParent(){	
+    resetParent(){
 	// $(this.coming.parent.el)
 	//     .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
 	$(this.coming.parent.el)

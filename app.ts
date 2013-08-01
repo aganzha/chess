@@ -54,8 +54,9 @@ export class ChessApp{
 	    this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
-	    screen.bubbleDown(function(cell){
-		cell.afterRender()
+	    screen.bubbleDown(function(cell){		
+		var base = <pieces.BaseCell>cell
+		base._safeAfterRender()
 	    });
 	}
 	// install z-index here man!
