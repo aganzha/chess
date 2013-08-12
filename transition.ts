@@ -279,7 +279,7 @@ export class Transition implements interfaces.Transition{
 	    'transition': null
 	}
     }
-
+    // this is a hack. somehow it worked, but it is not required now
     removeIphoneFlash(el){
 	$(el).css({
 	    '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
@@ -336,7 +336,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.going.parent.el).css(me.getTransitionParams())
 	    trParams = me.joinParams(me.getTransformParams(0,0,0),
 				     {
-				     width:itemBox.width*2
+					 width:itemBox.width*2
 				     })
 	    $(me.going.parent.el).css(trParams)
 	    me.cleanUpTransform()
@@ -359,7 +359,7 @@ export class Transition implements interfaces.Transition{
 		'min-height':null,
 		'min-width':null
 	    })
-	    me.removeIphoneFlash(me.coming.el)
+	    //me.removeIphoneFlash(me.coming.el)
 	    me.success()
 	},500)
     }
@@ -377,7 +377,7 @@ export class Transition implements interfaces.Transition{
     }
 
     slideDown(){
-
+	
 	var me = this;
 
 	var itemBox = this.fixPosition(me.going)
@@ -389,11 +389,12 @@ export class Transition implements interfaces.Transition{
 				     })
 	$(me.going.el).before($(me.coming.el));
 	$(me.going.parent.el).css(trParams)
+	var me = this
 	setTimeout(()=>{
 	    $(me.going.parent.el).css(me.getTransitionParams())
-		var trParams = me.getTransformParams(0,0,0)
-		$(me.going.parent.el).css(trParams)
-		me.cleanUpTransform()
+	    var trParams = me.getTransformParams(0,0,0)
+	    $(me.going.parent.el).css(trParams)
+	    me.cleanUpTransform()
 	},100)	
     }
 

@@ -312,7 +312,6 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     'min-height': null,
                     'min-width': null
                 });
-                me.removeIphoneFlash(me.coming.el);
                 me.success();
             }, 500);
         };
@@ -335,6 +334,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             });
             $(me.going.el).before($(me.coming.el));
             $(me.going.parent.el).css(trParams);
+            var me = this;
             setTimeout(function () {
                 $(me.going.parent.el).css(me.getTransitionParams());
                 var trParams = me.getTransformParams(0, 0, 0);
