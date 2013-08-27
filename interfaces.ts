@@ -39,7 +39,7 @@ export interface Cell{
     // этот метод НЕ НУЖНО использовать для delayed элементов
     afterAppend();
     _renderred:boolean;
-
+    createEl():HTMLElement;
     updateEl(html:string);
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children, но нет parent у него есть el(элемент) но он еще не добавлен в DOM

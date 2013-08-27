@@ -244,19 +244,19 @@ define(["require", "exports"], function(require, exports) {
         };
         Transition.prototype.removeTransformParams = function () {
             return {
-                '-webkit-transform': null,
-                '-moz-transform': null,
-                '-ms-transform': null,
-                '-o-transform': null,
-                'transform': null
+                '-webkit-transform': "",
+                '-moz-transform': "",
+                '-ms-transform': "",
+                '-o-transform': "",
+                'transform': ""
             };
         };
         Transition.prototype.removeTransitionParams = function () {
             return {
-                '-webkit-transition': null,
-                '-moz-transition': null,
-                '-o-transition': null,
-                'transition': null
+                '-webkit-transition': "",
+                '-moz-transition': "",
+                '-o-transition': "",
+                'transition': ""
             };
         };
 
@@ -327,14 +327,15 @@ define(["require", "exports"], function(require, exports) {
                     width: null,
                     height: null
                 });
-                $(me.going.parent.el).css(trParams);
+                $(me.coming.parent.el).css(trParams);
                 $(me.coming.parent.el).css({
-                    'width': null,
-                    'height': null,
-                    'min-height': null,
-                    'min-width': null
+                    'width': "",
+                    'height': "",
+                    'min-height': "",
+                    'min-width': ""
                 });
 
+                console.log('da!', me.coming.parent.el, trParams);
                 me.success();
             }, 500);
         };

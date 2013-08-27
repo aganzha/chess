@@ -264,19 +264,19 @@ export class Transition implements interfaces.Transition{
     }
     removeTransformParams(){
 	return {
-	    '-webkit-transform':null,
-	    '-moz-transform': null,
-	    '-ms-transform': null,
-	    '-o-transform': null,
-	    'transform': null,
+	    '-webkit-transform':"",
+	    '-moz-transform': "",
+	    '-ms-transform': "",
+	    '-o-transform': "",
+	    'transform': "",//was null for zepto
 	}
     }
     removeTransitionParams(){
 	return {
-	    '-webkit-transition': null,
-	    '-moz-transition': null,
-	    '-o-transition': null,
-	    'transition': null
+	    '-webkit-transition': "",
+	    '-moz-transition': "",
+	    '-o-transition': "",
+	    'transition': "" //was null for zepto
 	}
     }
     // this is a hack. somehow it worked, but it is not required now
@@ -352,14 +352,15 @@ export class Transition implements interfaces.Transition{
 					     width:null,
 					     height:null
 					 })
-	    $(me.going.parent.el).css(trParams)
+	    $(me.coming.parent.el).css(trParams)
 	    $(me.coming.parent.el).css({
-	     	'width':null,
-	     	'height':null,
-		'min-height':null,
-		'min-width':null
+	     	'width':"",
+	     	'height':"",
+		'min-height':"",//it was null! for zepto
+		'min-width':""
 	    })
 	    //me.removeIphoneFlash(me.coming.el)
+	    console.log('da!',me.coming.parent.el,trParams)
 	    me.success()
 	},500)
     }
