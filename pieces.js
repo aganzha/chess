@@ -1,11 +1,11 @@
 var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", "./interfaces", "./utils"], function(require, exports, __interfaces__, __utils__) {
-    var interfaces = __interfaces__;
-
+define(["require", "exports", "./utils"], function(require, exports, __utils__) {
+    
     var utils = __utils__;
 
     var TestEl = (function () {
@@ -20,7 +20,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         return TestEl;
     })();
-    exports.TestEl = TestEl;    
+    exports.TestEl = TestEl;
     var BaseCell = (function () {
         function BaseCell(record, application) {
             this.record = record;
@@ -35,7 +35,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.guid = utils.guid();
         }
         BaseCell.prototype.map = function (callable) {
-            for(var i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 callable(this.children[i], i);
             }
         };
@@ -49,37 +49,40 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             console.log(arguments);
         };
         BaseCell.prototype.forceDelayed = function (filler, selector) {
-            if(!selector) {
+            if (!selector) {
                 selector = function (cell) {
                     return true;
                 };
             }
-            for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
+            for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];
-                if(!selector(delayedCell)) {
+                if (!selector(delayedCell)) {
                     continue;
                 }
+
                 var klass = this.application.getCellClass(delayedCell.record);
-                if(klass == null) {
+                if (klass == null) {
                     klass = BaseCell;
                 }
                 var clone = new klass(delayedCell.record, this.application);
                 clone.html = delayedCell.html;
                 clone.args = [];
-                for(var j = 0; j < delayedCell.args.length; j++) {
+                for (var j = 0; j < delayedCell.args.length; j++) {
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
                 this.append(clone);
                 filler(clone);
+
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
+
                 clone._safeAfterRender();
             }
             var newDelayedCells = [];
-            for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
-                if(this.delayedChildren[i].delayed) {
+            for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
+                if (this.delayedChildren[i].delayed) {
                     newDelayedCells.push(delayedCell);
                 }
             }
@@ -87,7 +90,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         BaseCell.prototype.getBox = function () {
             var answer = $(this.el).offset();
-            if(!answer.width || !answer.height) {
+            if (!answer.width || !answer.height) {
                 var obj = this.el.getBoundingClientRect();
                 answer['width'] = Math.round(obj.width);
                 answer['height'] = Math.round(obj.height);
@@ -96,34 +99,36 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         BaseCell.prototype.fillElAttrs = function () {
             var el = this.el;
+
             $(el).removeAttr('class');
             $(el).removeAttr('style');
             var classes = this.record.classes;
-            for(var i = 0, l = classes.length; i < l; i++) {
-                if(i != 0) {
+            for (var i = 0, l = classes.length; i < l; i++) {
+                if (i != 0)
                     el.className += " ";
-                }
                 el.className += classes[i];
             }
-            if(this.record.id) {
+            if (this.record.id) {
                 el.id = this.record.id;
             }
             this.fillExtraAttrs();
         };
         BaseCell.prototype.fillExtraAttrs = function () {
         };
+
         BaseCell.prototype.createEl = function () {
             var el = null;
             try  {
                 var el = document.createElement(this.tag);
                 el.innerHTML = this.html;
             } catch (x) {
-                el = new TestEl();
+                var tl = new TestEl();
+                el = tl;
             }
             return el;
         };
         BaseCell.prototype.prepareEl = function () {
-            if(!this.el) {
+            if (!this.el) {
                 this.el = this.createEl();
                 this.fillElAttrs();
             }
@@ -132,8 +137,9 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.html = html;
             $(this.el).html(html);
         };
+
         BaseCell.prototype._safeAfterRender = function () {
-            if(this._renderred) {
+            if (this._renderred) {
                 return;
             }
             this._renderred = true;
@@ -147,10 +153,11 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         BaseCell.prototype.bubbleDown = function (callable) {
             callable(this);
-            for(var i = 0, l = this.children.length; i < l; i++) {
+            for (var i = 0, l = this.children.length; i < l; i++) {
                 this.children[i].bubbleDown(callable);
             }
         };
+
         BaseCell.prototype.append = function (cell) {
             this.prepareEl();
             cell.parent = this;
@@ -159,9 +166,11 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.appendDomMethod(ne);
             cell.afterAppend();
         };
+
         BaseCell.prototype.appendDomMethod = function (el) {
             this.el.appendChild(el);
         };
+
         BaseCell.prototype.appendDelayed = function (cell) {
             this.delayedChildren.push(cell);
         };
@@ -174,9 +183,9 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.el = null;
             this.children = [];
             var newParentsChildren = [];
-            for(var i = 0; i < this.parent.children.length; i++) {
+            for (var i = 0; i < this.parent.children.length; i++) {
                 var cel = this.parent.children[i];
-                if(cel !== this) {
+                if (cel !== this) {
                     newParentsChildren.push(cel);
                 }
             }
@@ -185,29 +194,31 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         BaseCell.prototype.domFromString = function (s) {
             return utils.Utils.DomFromString(s);
         };
+
         BaseCell.prototype.searchDown = function (collected, cons, className, id, once) {
-            for(var i = 0, l = this.children.length; i < l; i++) {
+            for (var i = 0, l = this.children.length; i < l; i++) {
                 var cell = this.children[i];
                 var rec = cell.record;
                 var pushed = false;
-                if(!pushed && cons && rec.cons == cons) {
+
+                if (!pushed && cons && rec.cons == cons) {
                     collected.push(cell);
                     pushed = true;
                 }
-                if(!pushed && className) {
-                    for(var j = 0, m = rec.classes.length; j < m; j++) {
-                        if(rec.classes[j] == className) {
+                if (!pushed && className) {
+                    for (var j = 0, m = rec.classes.length; j < m; j++) {
+                        if (rec.classes[j] == className) {
                             pushed = true;
                             collected.push(cell);
                             break;
                         }
                     }
                 }
-                if(!pushed && id && rec.id == id) {
+                if (!pushed && id && rec.id == id) {
                     collected.push(cell);
                     pushed = true;
                 }
-                if(once && pushed) {
+                if (once && pushed) {
                 } else {
                     cell.searchDown(collected, cons, className, id, once);
                 }
@@ -222,19 +233,19 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             var answer = null;
             var acc = [];
             this.searchDown(acc, cons, className, id, true);
-            if(acc.length > 0) {
+            if (acc.length > 0) {
                 answer = acc[0];
             }
             return answer;
         };
         return BaseCell;
     })();
-    exports.BaseCell = BaseCell;    
+    exports.BaseCell = BaseCell;
+
     var BaseScreen = (function (_super) {
         __extends(BaseScreen, _super);
         function BaseScreen() {
             _super.apply(this, arguments);
-
         }
         BaseScreen.prototype.beforeSelfReplace = function (other, callBacks) {
             callBacks.success();
@@ -261,34 +272,30 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         return BaseScreen;
     })(BaseCell);
-    exports.BaseScreen = BaseScreen;    
+    exports.BaseScreen = BaseScreen;
     var ViewPort = (function (_super) {
         __extends(ViewPort, _super);
         function ViewPort(el) {
             this.el = el;
-                _super.call(this, {
-        cons: '',
-        id: '',
-        classes: []
-    }, null);
+            _super.call(this, { cons: '', id: '', classes: [] }, null);
         }
         ViewPort.prototype.createEl = function () {
             return this.el;
         };
         return ViewPort;
     })(BaseCell);
-    exports.ViewPort = ViewPort;    
+    exports.ViewPort = ViewPort;
+
     var Image = (function (_super) {
         __extends(Image, _super);
         function Image() {
             _super.apply(this, arguments);
-
         }
         Image.prototype.onload = function () {
         };
         Image.prototype.draw = function (src, error) {
             this.args[0] = src;
-            if(this.el.tagName.toLowerCase() == 'canvas') {
+            if (this.el.tagName.toLowerCase() == 'canvas') {
                 var i = document.createElement('img');
                 this.drawImageInCanvas(this.el, i, error);
             } else {
@@ -300,6 +307,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 img.src = src;
             }
         };
+
         Image.prototype.getSourceBoxForCompleteCanvas = function (imgWidth, imgHeight, canvasWidth, canvasHeight) {
             var ratio = imgWidth / imgHeight;
             var sX = 0, sY = 0;
@@ -320,30 +328,27 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 sX = (croppedFromWidth / 2) * hrat;
                 sWidth = sWidth - (2 * sX);
             };
-            if(wrat < 1 && hrat < 1) {
-                if(wrat <= hrat) {
+            if (wrat < 1 && hrat < 1) {
+                if (wrat <= hrat) {
                     cropHeight();
                 } else {
                     cropWidth();
                 }
-            } else if(wrat < 1 && hrat >= 1) {
+            } else if (wrat < 1 && hrat >= 1) {
                 cropHeight();
-            } else if(hrat < 1 && wrat >= 1) {
+            } else if (hrat < 1 && wrat >= 1) {
                 cropWidth();
             } else {
-                if(wrat > hrat) {
+                if (wrat > hrat) {
                     cropWidth();
                 } else {
                     cropHeight();
                 }
             }
-            return {
-                left: sX,
-                top: sY,
-                width: sWidth,
-                height: sHeight
-            };
+
+            return { left: sX, top: sY, width: sWidth, height: sHeight };
         };
+
         Image.prototype.getDestBoxForCompleteImage = function (imgWidth, imgHeight, canvasWidth, canvasHeight) {
             var ratio = imgWidth / imgHeight;
             var dX = 0, dY = 0;
@@ -351,6 +356,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             var dWidth = canvasWidth, dHeight = canvasHeight;
             var wrat = imgWidth / canvasWidth;
             var hrat = imgHeight / canvasHeight;
+
             var scaleWidth = function () {
                 var resultWidth = canvasWidth;
                 var resultHeight = canvasWidth / ratio;
@@ -365,61 +371,51 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 dX = restInWidth / 2;
                 dWidth = resultWidth;
             };
-            if(wrat < 1 && hrat < 1) {
-                if(wrat <= hrat) {
+            if (wrat < 1 && hrat < 1) {
+                if (wrat <= hrat) {
                     scaleHeight();
                 } else {
                     scaleWidth();
                 }
-            } else if(wrat < 1 && hrat >= 1) {
+            } else if (wrat < 1 && hrat >= 1) {
                 scaleHeight();
-            } else if(hrat < 1 && wrat >= 1) {
+            } else if (hrat < 1 && wrat >= 1) {
                 scaleWidth();
             } else {
-                if(wrat > hrat) {
+                if (wrat > hrat) {
                     scaleWidth();
                 } else {
                     scaleHeight();
                 }
             }
-            return {
-                left: dX,
-                top: dY,
-                width: dWidth,
-                height: dHeight
-            };
+
+            return { left: dX, top: dY, width: dWidth, height: dHeight };
         };
+
         Image.prototype.drawImageInCanvas = function (canvas, img, error) {
             var me = this;
             var errBack = function () {
-                if(me.args[3] && !error) {
+                if (me.args[3] && !error) {
                     me.draw(me.args[3], true);
                 }
             };
-            if(!this.args[0]) {
+            if (!this.args[0]) {
                 errBack();
             }
             canvas.width = this.args[1];
             canvas.height = this.args[2];
             $(img).on('load', function () {
                 var ratio = img.width / img.height;
+
                 var context = canvas.getContext('2d');
-                var sourceBox = {
-                    top: 0,
-                    left: 0,
-                    width: img.width,
-                    height: img.height
-                };
-                var destBox = {
-                    top: 0,
-                    left: 0,
-                    width: canvas.width,
-                    height: canvas.height
-                };
-                if(me.args[4]) {
-                    if(me.args[4] == 'completeImage') {
+
+                var sourceBox = { top: 0, left: 0, width: img.width, height: img.height };
+                var destBox = { top: 0, left: 0, width: canvas.width, height: canvas.height };
+
+                if (me.args[4]) {
+                    if (me.args[4] == 'completeImage') {
                         destBox = me.getDestBoxForCompleteImage(img.width, img.height, canvas.width, canvas.height);
-                    } else if(me.args[4] == 'completeCanvas') {
+                    } else if (me.args[4] == 'completeCanvas') {
                         sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                     }
                 } else {
@@ -434,7 +430,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             img.src = this.args[0];
         };
         Image.prototype.clear = function () {
-            if(this.el.tagName.toLowerCase() == 'canvas') {
+            if (this.el.tagName.toLowerCase() == 'canvas') {
                 var canvas = this.el;
                 canvas.width = canvas.width;
             } else {
@@ -444,13 +440,13 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         Image.prototype.createEl = function () {
             var img = document.createElement('img');
             var answer = img;
-            if(this.html.length > 0) {
+            if (this.html.length > 0) {
                 img.src = this.html;
             } else {
-                if(this.args.length > 0) {
-                    if(this.args[1] && this.args[2]) {
+                if (this.args.length > 0) {
+                    if (this.args[1] && this.args[2]) {
                         var canvas = document.createElement('canvas');
-                        if(this.args[0] != null) {
+                        if (this.args[0] != null) {
                             this.drawImageInCanvas(canvas, img);
                         } else {
                             canvas.width = this.args[1];
@@ -465,6 +461,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             }
             return answer;
         };
+
         Image.prototype.scale = function (factor) {
             this.clear();
             var img = document.createElement('img');
@@ -472,13 +469,9 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             var context = canvas.getContext('2d');
             var me = this;
             img.onload = function () {
-                var destBox = {
-                    top: 0,
-                    left: 0,
-                    width: canvas.width,
-                    height: canvas.height
-                };
+                var destBox = { top: 0, left: 0, width: canvas.width, height: canvas.height };
                 var sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
+
                 sourceBox.left = sourceBox.left + (sourceBox.width - sourceBox.width / factor) / 2;
                 sourceBox.top = sourceBox.top + (sourceBox.height - sourceBox.height / factor) / 2;
                 sourceBox.width = sourceBox.width / factor;
@@ -489,12 +482,12 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         return Image;
     })(BaseCell);
-    exports.Image = Image;    
+    exports.Image = Image;
+
     var Uploader = (function (_super) {
         __extends(Uploader, _super);
         function Uploader() {
             _super.apply(this, arguments);
-
         }
         Uploader.prototype.needLoad = function (fname) {
             return true;
@@ -507,7 +500,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.fileType = file.type;
             this.rawFile = file;
             this.fileChoosen();
-            if(!this.needLoad(this.fileName)) {
+            if (!this.needLoad(this.fileName)) {
                 return;
             }
             var me = this;
@@ -516,7 +509,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 me.file = ev.target.result;
                 me.loadDone();
             };
-            if(this.binary) {
+            if (this.binary) {
                 reader.readAsArrayBuffer(file);
             } else {
                 reader.readAsDataURL(file);
@@ -550,5 +543,5 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         };
         return Uploader;
     })(BaseCell);
-    exports.Uploader = Uploader;    
-})
+    exports.Uploader = Uploader;
+});

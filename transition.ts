@@ -1,4 +1,4 @@
-import interfaces = module("./interfaces")
+import interfaces = require("./interfaces")
 declare var $;
 
 
@@ -18,13 +18,13 @@ export class Transition implements interfaces.Transition{
 	this.parentBox = this.going.parent.getBox()
 
     }
-    pausecomp(millis)
-    {
-	var date = new Date();
-	var curDate = null;
-	do { curDate = new Date(); }
-	while(curDate-date < millis);
-    }
+    // pausecomp(millis)
+    // {
+    // 	var date = new Date();
+    // 	var curDate = null;
+    // 	do { curDate = new Date(); }
+    // 	while(curDate-date < millis);
+    // }
     renderNewScreen(){
 	this.app.resolve(this.selector)
 	//this.coming.forceRender()
@@ -116,7 +116,7 @@ export class Transition implements interfaces.Transition{
     }
 
     cover(leftOrTop:string,
-	  positive:bool){
+	  positive:boolean){
 	var widthOrHeight = 'height'
 	if(leftOrTop=='left'){
 	    widthOrHeight = 'width'
@@ -173,7 +173,7 @@ export class Transition implements interfaces.Transition{
 	this.cover('top',false)
     }
 
-    reveal(leftOrTop:string,positive:bool)
+    reveal(leftOrTop:string,positive:boolean)
     {
 	var me = this;
 	var widthOrHeight = 'height'

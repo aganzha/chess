@@ -1,4 +1,4 @@
-import interfaces = module("./interfaces")
+import interfaces = require("./interfaces")
 
 declare var $;
 //TODO! functions! not class
@@ -7,18 +7,18 @@ export class Utils{
     static makeFlyWeight():HTMLElement{
 	var di = document.createElement('div')
 	di.style['display'] = 'none'
-	di.id = flyWeightId
+	di.id = this.flyWeightId
 	document.getElementsByTagName('body')[0].appendChild(di)
 	return di
     }
     static destroyFlyWeight(){
-	$('#'+flyWeightId).remove()
+	$('#'+this.flyWeightId).remove()
     }
     static DomFromString(s:string):HTMLElement{
-	var flw = document.getElementById(flyWeightId);
+	var flw = document.getElementById(this.flyWeightId);
 	if(!flw){
-	    makeFlyWeight()
-	    return DomFromString(s)
+	    this.makeFlyWeight()
+	    return this.DomFromString(s)
 	}
 	flw.innerHTML = s
 	return <HTMLElement>flw.children[0];

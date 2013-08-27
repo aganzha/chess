@@ -23,7 +23,7 @@ export interface Cell{
     append(cell:Cell);
     appendDelayed(cell:Cell);
     forceDelayed(filler:DelayedCellFiller,selector?:CellSelector);
-    delayed:bool;
+    delayed:boolean;
     el:HTMLElement;
     tag:string;
     html:string;
@@ -38,6 +38,7 @@ export interface Cell{
     // у него есть el(элемент) но он еще не добавлен в DOM
     // этот метод НЕ НУЖНО использовать для delayed элементов
     afterAppend();
+    _renderred:boolean;
 
     updateEl(html:string);
     // этот метод вызывается, когда cell добавлен в parent.
@@ -71,7 +72,7 @@ export interface Screen extends Cell{
     afterSelfApear(other:Screen);
     replaceBy(other:Screen);
     forceRender();
-    resolved:bool;
+    resolved:boolean;
 }
 export interface ScreenMap{
     name:string;
@@ -81,7 +82,7 @@ export interface ScreenSelector{
     (screens:ScreenMap):Screen;
 }
 export interface CellSelector{
-    (cell:Cell):bool;
+    (cell:Cell):boolean;
 }
 
 export interface Transition{
@@ -120,7 +121,7 @@ export interface Application{
 }
 
 export interface Scrollable extends Cell{
-    scrollRequired():bool;
+    scrollRequired():boolean;
     getInitialBox():Box;
     getFirstItemBox():Box;
     pageSize:number;
@@ -139,7 +140,7 @@ export interface Valuable{
 export interface Draggable extends Cell{
     dX:number;//do not touch this numbers. just declare.
     dY:number;
-    onStartDrag:(el:HTMLElement)=>bool;//if want drag to begin -> return true!!!
+    onStartDrag:(el:HTMLElement)=>boolean;//if want drag to begin -> return true!!!
     onDrag:(box:Box)=>any;
     onDrop:(box:Box)=>any;
     confirmDrag(b:Box):Box;
@@ -147,7 +148,7 @@ export interface Draggable extends Cell{
 
 
 export interface Uploader{
-    binary:bool;
+    binary:boolean;
     getFileInput():HTMLInputElement;
     getDropArea():HTMLElement;
     loadDone();
@@ -156,7 +157,7 @@ export interface Uploader{
     fileName:string;
     fileType:string;
     rawFile:any;
-    needLoad(fname:string):bool;
+    needLoad(fname:string):boolean;
 }
 
 export interface Image{

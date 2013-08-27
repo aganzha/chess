@@ -1,7 +1,7 @@
-import interfaces = module("./interfaces")
-import transition = module("./transition")
-import pieces = module("./pieces")
-import utils = module("./utils")
+import interfaces = require("./interfaces")
+import transition = require("./transition")
+import pieces = require("./pieces")
+import utils = require("./utils")
 
 declare var $;
 
@@ -72,9 +72,9 @@ export class ChessApp{
 	    success:function(){
 		// screen в отличие от Cell не создается каждый раз заново,
 		// поэтому нужно чистить все перед его появлеием. 
-		var base = <pieces.BaseCell>newScreen
-		base._renderred = false
-
+		// var base = <pieces.BaseCell>newScreen
+		// base._renderred = false
+		newScreen._renderred = false
 		newScreen.beforeSelfApear(oldScreen,{
 		    success:function(){
 			var tr = new transition
@@ -99,10 +99,10 @@ export class ChessApp{
 	    }
 	})
     }
-    isCellDelayed(recordString:string):bool{
+    isCellDelayed(recordString:string):boolean{
 	return recordString[0] == '_'
     }
-    resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
+    resolveCells(board:{}, parent:interfaces.Cell, delayed:boolean){
 	// parent.beforeResolve()
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
