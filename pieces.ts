@@ -53,8 +53,6 @@ export class BaseCell implements interfaces.Cell{
 	    if(!selector(delayedCell)){
 		continue
 	    }
-	    // а вот зачем я снимал этот атрибут интересно? нипянятна...
-	    // delayedCell.delayed=false
 	    var klass = this.application.getCellClass(delayedCell.record)
 	    if(klass==null){
 		klass=BaseCell
@@ -66,19 +64,21 @@ export class BaseCell implements interfaces.Cell{
 	    	clone.args.push(delayedCell.args[j])
 	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
+	    // delayedCell.delayedChildren.forEach((dc)=>{clone.delayedChildren.push(dc)})
 	    this.append(clone)
 	    filler(clone)
 	    // вот тут важно, что на следующе уровни selector не передается
 	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
+
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
-	    // внизу дом уже срендерен предыдущем выражением, так что можно вызывать	    
 	    clone._safeAfterRender()
 	}
 	var newDelayedCells = []
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
-	    if(this.delayedChildren[i].delayed){
-		newDelayedCells.push(delayedCell)
+	    var dc = this.delayedChildren[i]
+	    if(dc.delayed){
+		newDelayedCells.push(dc)
 	    }
 	}
 	this.delayedChildren = newDelayedCells
@@ -86,8 +86,8 @@ export class BaseCell implements interfaces.Cell{
     getBox(){
 	var answer = <interfaces.Box>$(this.el).offset()
 	if(!answer.width || !answer.height){
-            var obj = this.el.getBoundingClientRect()
-       	    answer['width']= Math.round(obj.width)    
+	    var obj = this.el.getBoundingClientRect()
+       	    answer['width']= Math.round(obj.width)
        	    answer['height']= Math.round(obj.height)
        	}
 	return answer
@@ -267,7 +267,7 @@ export class BaseScreen extends BaseCell implements interfaces.Screen{
 	    $(this.el).children().first().remove()
 	},80)
     }
-    
+
 }
 export class ViewPort extends BaseCell{
     constructor(el:HTMLElement){
@@ -292,7 +292,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	    var me = this
 	    var img = <HTMLImageElement>this.el
 	    img.onload = function(){me.onload()}
-	    img.src=src	    
+	    img.src=src
 	}
     }
 
@@ -396,7 +396,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	else if(wrat<1 && hrat >=1){
 	    // console.log(12)//PASSED
 	    // нужно подтягивать ширину картинки к ширине канваса
-	    //tez(5,20,10,10)	    
+	    //tez(5,20,10,10)
 	    scaleHeight()
 	}
 	else if(hrat<1 && wrat >=1){
@@ -461,10 +461,10 @@ export class Image extends BaseCell implements interfaces.Image{
 	    						     canvas.width, canvas.height)
 	    }
 	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
-	     		      destBox.left,destBox.top,destBox.width,destBox.height)	    
+	     		      destBox.left,destBox.top,destBox.width,destBox.height)
 	    me.imageBox = destBox
 	    me.onload()
-	}).on('error',function(e){	    
+	}).on('error',function(e){
 	    errBack()
 	})
 	img.src = this.args[0]
@@ -513,7 +513,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	var context = canvas.getContext('2d')
 	var me = this
     	img.onload = function(){
-	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}	    
+	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
 	    var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
 	    						    canvas.width, canvas.height)
 	    // sourceBox уже соответствует размеру canvas

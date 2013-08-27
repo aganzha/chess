@@ -334,8 +334,7 @@ define(["require", "exports"], function(require, exports) {
                     'min-height': "",
                     'min-width': ""
                 });
-
-                console.log('da!', me.coming.parent.el, trParams);
+                me.removeIphoneFlash(me.coming.el);
                 me.success();
             }, 500);
         };

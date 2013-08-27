@@ -59,7 +59,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 if (!selector(delayedCell)) {
                     continue;
                 }
-
                 var klass = this.application.getCellClass(delayedCell.record);
                 if (klass == null) {
                     klass = BaseCell;
@@ -71,19 +70,22 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
+
                 this.append(clone);
                 filler(clone);
+
+                console.log('delayed cells beeeeeeeeeeeeeeeeee!', clone.record.cons, clone.delayedChildren, delayedCell.delayedChildren);
 
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
-
                 clone._safeAfterRender();
             }
             var newDelayedCells = [];
             for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
-                if (this.delayedChildren[i].delayed) {
-                    newDelayedCells.push(delayedCell);
+                var dc = this.delayedChildren[i];
+                if (dc.delayed) {
+                    newDelayedCells.push(dc);
                 }
             }
             this.delayedChildren = newDelayedCells;

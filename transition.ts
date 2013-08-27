@@ -359,8 +359,7 @@ export class Transition implements interfaces.Transition{
 		'min-height':"",//it was null! for zepto
 		'min-width':""
 	    })
-	    //me.removeIphoneFlash(me.coming.el)
-	    console.log('da!',me.coming.parent.el,trParams)
+	    me.removeIphoneFlash(me.coming.el)
 	    me.success()
 	},500)
     }
