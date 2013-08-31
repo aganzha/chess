@@ -413,6 +413,11 @@ export class Transition implements interfaces.Transition{
 	    height:box.height,
 	    overflow:'hidden'
 	})
+	// хак!	
+	var cssWidth = parseInt($(cell.el).css('min-width'))
+	if(!isNaN(cssWidth)){
+	    box.width = cssWidth
+	}	
 	return box
     }
     releasePosition(){
