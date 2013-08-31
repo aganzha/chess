@@ -74,8 +74,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 this.append(clone);
                 filler(clone);
 
-                console.log('delayed cells beeeeeeeeeeeeeeeeee!', clone.record.cons, clone.delayedChildren, delayedCell.delayedChildren);
-
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
