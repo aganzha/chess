@@ -13,14 +13,23 @@ define(["require", "exports"], function(require, exports) {
             this.fail = callbacks.fail;
             this.parentBox = this.going.parent.getBox();
         }
+        // pausecomp(millis)
+        // {
+        // 	var date = new Date();
+        // 	var curDate = null;
+        // 	do { curDate = new Date(); }
+        // 	while(curDate-date < millis);
+        // }
         Transition.prototype.renderNewScreen = function () {
             this.app.resolve(this.selector);
+            //this.coming.forceRender()
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();
             this.success();
         };
         Transition.prototype.redraw = function () {
+            //this.fixPosition(this.going)
             $(this.going.el).hide();
             this.renderNewScreen();
             this.success();
@@ -260,6 +269,7 @@ define(["require", "exports"], function(require, exports) {
             };
         };
 
+        // this is a hack. somehow it worked, but it is not required now
         Transition.prototype.removeIphoneFlash = function (el) {
             $(el).css({
                 '-webkit-transition': '0ms cubic-bezier(0.1, 0.57, 0.1, 1)',
@@ -271,6 +281,7 @@ define(["require", "exports"], function(require, exports) {
             var me = this;
             me.renderNewScreen();
 
+            //var itemBox = this.going.getBox()
             var itemBox = me.fixPosition(me.going);
             $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
@@ -290,6 +301,7 @@ define(["require", "exports"], function(require, exports) {
         Transition.prototype.slideRight = function () {
             var me = this;
 
+            //var itemBox = this.going.getBox()
             var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
                 width: itemBox.width * 2
@@ -344,6 +356,7 @@ define(["require", "exports"], function(require, exports) {
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
 
+            //var itemBox = this.going.getBox()
             $(me.coming.parent.el).css('min-height', itemBox.height * 2 + 'px');
             var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParams());
             $(me.going.parent.el).css(trParams);
@@ -385,6 +398,7 @@ define(["require", "exports"], function(require, exports) {
                 overflow: 'hidden'
             });
 
+            // хак!
             var cssWidth = parseInt($(cell.el).css('min-width'));
             if (!isNaN(cssWidth)) {
                 box.width = cssWidth;
@@ -398,6 +412,8 @@ define(["require", "exports"], function(require, exports) {
             });
         };
         Transition.prototype.resetParent = function () {
+            // $(this.coming.parent.el)
+            //     .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
             $(this.coming.parent.el).css({ width: null, height: null });
         };
         return Transition;

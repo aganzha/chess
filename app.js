@@ -9,6 +9,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             this.viewport = viewport;
             this.board = board;
             this.modules = modules;
+            // а можно еще все экраны прямо здесь делать (спрятанными) о как!
             this.globals = {};
             modules.push(pieces);
             viewport.application = this;
@@ -19,6 +20,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 var screen = this.instantiate(recordString, pieces.BaseScreen);
                 screen.board = board[recordString];
                 this.screens[recordString] = screen;
+                // this.screens[screen.record.cons] =screen
             }
         }
         ChessApp.prototype.getCellClass = function (record) {
@@ -42,6 +44,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             if (!screen.resolved) {
+                // screen may be allready resolved in case of Union transition
                 this.viewport.append(screen);
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
@@ -51,7 +54,9 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 });
             }
 
+            // install z-index here man!
             this.currentScreen = screen;
+            //console.log(this.currentScreen)
         };
         ChessApp.prototype.transit = function (selector, receiver) {
             utils.Utils.destroyFlyWeight();
@@ -60,6 +65,10 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
+                    // screen в отличие от Cell не создается каждый раз заново,
+                    // поэтому нужно чистить все перед его появлеием.
+                    // var base = <pieces.BaseCell>newScreen
+                    // base._renderred = false
                     newScreen._renderred = false;
                     newScreen.beforeSelfApear(oldScreen, {
                         success: function () {
@@ -70,6 +79,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                                     newScreen.afterSelfApear(oldScreen);
                                 },
                                 fail: function () {
+                                    // rollback current screen?
                                 }
                             });
                             receiver(tr);
@@ -86,6 +96,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             return recordString[0] == '_';
         };
         ChessApp.prototype.resolveCells = function (board, parent, delayed) {
+            // parent.beforeResolve()
             var _type = Object.prototype.toString.call(board);
             if (_type == "[object String]") {
                 parent.updateEl(board);
@@ -101,6 +112,10 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 cell.board = board[recordString];
                 cell.delayed = this.isCellDelayed(recordString);
 
+                // ячейка может быть с андескором, поэтому она "отложена"
+                // но она также может быть отложена и без андескора, т.к.
+                // она находитя в отложенном треде (ass:{_bass:{smass:{_kalabass ...
+                // все, что ниже ass - отложено. но только ячейки с андескором получают атрибут delayed
                 var di = delayed || cell.delayed;
                 this.resolveCells(board[recordString], cell, di);
                 if (di) {
