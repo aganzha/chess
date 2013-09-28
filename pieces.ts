@@ -106,9 +106,9 @@ export class BaseCell implements interfaces.Cell{
 	if(this.record.id){
 	    el.id=this.record.id;
 	}
-	this.fillExtraAttrs()
+	this.fillExtraAttrs(el)
     }
-    fillExtraAttrs(){
+    fillExtraAttrs(el){
     }
     tag='div';
     html='';

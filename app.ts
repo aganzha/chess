@@ -54,7 +54,7 @@ export class ChessApp{
 	    this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
-	    screen.bubbleDown(function(cell){		
+	    screen.bubbleDown(function(cell){
 		var base = <pieces.BaseCell>cell
 		base._safeAfterRender()
 	    });
@@ -71,7 +71,7 @@ export class ChessApp{
 	oldScreen.beforeSelfReplace(newScreen, {
 	    success:function(){
 		// screen в отличие от Cell не создается каждый раз заново,
-		// поэтому нужно чистить все перед его появлеием. 
+		// поэтому нужно чистить все перед его появлеием.
 		// var base = <pieces.BaseCell>newScreen
 		// base._renderred = false
 		newScreen._renderred = false

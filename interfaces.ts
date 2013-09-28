@@ -32,7 +32,7 @@ export interface Cell{
     destroy();
     record:CellRecord;
     getBox():Box;
-    fillExtraAttrs();
+    fillExtraAttrs(el:HTMLElement);
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children и у него есть parent!. 
     // у него есть el(элемент) но он еще не добавлен в DOM
