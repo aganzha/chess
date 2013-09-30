@@ -295,18 +295,23 @@ export class Transition implements interfaces.Transition{
 	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
+	    // it will be not possible to scroll screen on iphone 3!!!
+	    // height:itemBox.height+'px',
 	    float:'right'
 	})
 	$(me.going.el).css({
 	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
+	    // it will be not possible to scroll screen on iphone 3!!!
+	    // height:itemBox.height+'px',
 	    float:'left'
 	});
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
-	me.cleanUpTransform()
+	me.cleanUpTransform(()=>{
+	    // $(me.coming.el).css("height","")
+	    // $(me.going.el).css("height","")
+	})
     }
     slideRight(){
 	var me = this;
@@ -320,14 +325,16 @@ export class Transition implements interfaces.Transition{
 	$(me.going.parent.el).css(trParams)
 	$(me.going.el).css({
 	    width:itemBox.width,
-	    height:itemBox.height,
+	    // it will be not possible to scroll screen on iphone 3!!!
+	    // height:itemBox.height,
 	    float:'right'
 	});
 
 	me.renderNewScreen()
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
-	    height:itemBox.height+'px',
+	    // it will be not possible to scroll screen on iphone 3!!!
+	    // height:itemBox.height+'px',
 	    float:'left'
 	})
 	$(me.going.el).before($(me.coming.el));
@@ -339,10 +346,10 @@ export class Transition implements interfaces.Transition{
 					 width:itemBox.width*2
 				     })
 	    $(me.going.parent.el).css(trParams)
-	    me.cleanUpTransform()
+	    me.cleanUpTransform(()=>{})
 	},100)
     }
-    cleanUpTransform(){
+    cleanUpTransform(hook:()=>any){
 	var me = this
 	setTimeout(()=>{
 	    var bx = me.coming.getBox()
@@ -360,6 +367,7 @@ export class Transition implements interfaces.Transition{
 		'min-width':""
 	    })
 	    me.removeIphoneFlash(me.coming.el)
+	    hook()
 	    me.success()
 	},500)
     }
@@ -373,7 +381,7 @@ export class Transition implements interfaces.Transition{
 	var trParams = me.joinParams(me.getTransformParams(0,0-itemBox.height,0),
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
-	me.cleanUpTransform()
+	me.cleanUpTransform(()=>{})
     }
 
     slideDown(){
@@ -394,7 +402,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.going.parent.el).css(me.getTransitionParams())
 	    var trParams = me.getTransformParams(0,0,0)
 	    $(me.going.parent.el).css(trParams)
-	    me.cleanUpTransform()
+	    me.cleanUpTransform(()=>{})
 	},100)	
     }
 
