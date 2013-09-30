@@ -28,6 +28,7 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             this.args = [];
             this.tag = 'div';
             this.html = '';
+            this.exceptTags = ['input'];
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
@@ -117,14 +118,11 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         };
 
         BaseCell.prototype.createEl = function () {
-            var el = null;
-            try  {
-                var el = document.createElement(this.tag);
+            var el = document.createElement(this.tag);
+            if (this.exceptTags.indexOf(this.tag) < 0) {
                 el.innerHTML = this.html;
-            } catch (x) {
-                var tl = new TestEl();
-                el = tl;
             }
+
             return el;
         };
         BaseCell.prototype.prepareEl = function () {

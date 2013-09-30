@@ -112,17 +112,24 @@ export class BaseCell implements interfaces.Cell{
     }
     tag='div';
     html='';
+    exceptTags = ['input']
     createEl():HTMLElement{
-	var el = <HTMLElement>null
-	try{
-	    // этот try для node, в котором гоняются тесты
-	    var el = document.createElement(this.tag)
+	
+	var el = document.createElement(this.tag)
+	if(this.exceptTags.indexOf(this.tag)<0){
 	    el.innerHTML = this.html
 	}
-	catch(x){
-	    var tl = <any>new TestEl()
-	    el = <HTMLElement> tl
-	}
+
+	// Оппа! на третьем айфоне упало!
+	// try{
+	//     // этот try для node, в котором гоняются тесты
+	//     var el = document.createElement(this.tag)
+	//     el.innerHTML = this.html
+	// }
+	// catch(x){
+	//     var tl = <any>new TestEl()
+	//     el = <HTMLElement> tl
+	// }
 	return el
     }
     prepareEl(){
