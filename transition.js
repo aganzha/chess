@@ -386,10 +386,6 @@ define(["require", "exports"], function(require, exports) {
                 overflow: 'hidden'
             });
 
-            var cssWidth = parseInt($(cell.el).css('min-width'));
-            if (!isNaN(cssWidth)) {
-                box.width = cssWidth;
-            }
             return box;
         };
         Transition.prototype.releasePosition = function () {
