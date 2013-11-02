@@ -384,10 +384,8 @@ export class Transition implements interfaces.Transition{
 	me.cleanUpTransform(()=>{})
     }
 
-    slideDown(){
-	
+    slideDown(){	
 	var me = this;
-
 	var itemBox = this.fixPosition(me.going)
 	me.renderNewScreen()
 	this.fixPosition(me.coming)
@@ -398,12 +396,12 @@ export class Transition implements interfaces.Transition{
 	$(me.going.el).before($(me.coming.el));
 	$(me.going.parent.el).css(trParams)
 	var me = this
-	setTimeout(()=>{
+	 setTimeout(()=>{
 	    $(me.going.parent.el).css(me.getTransitionParams())
 	    var trParams = me.getTransformParams(0,0,0)
 	    $(me.going.parent.el).css(trParams)
 	    me.cleanUpTransform(()=>{})
-	},100)	
+	 },0)	
     }
 
     fixBackground(cell:interfaces.Cell, css:{}){
@@ -418,7 +416,11 @@ export class Transition implements interfaces.Transition{
 	var box = cell.parent.getBox()
 	$(cell.el).css({
 	    width:box.width,
+	    'min-width':box.width,
+	    'max-width':box.width,
 	    height:box.height,
+	    'min-height':box.height,
+	    'max-height':box.height,
 	    overflow:'hidden'
 	})
 	// // хак!	
