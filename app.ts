@@ -1,7 +1,7 @@
-import interfaces = require("./interfaces")
-import transition = require("./transition")
-import pieces = require("./pieces")
-import utils = require("./utils")
+import interfaces = module("./interfaces")
+import transition = module("./transition")
+import pieces = module("./pieces")
+import utils = module("./utils")
 
 declare var $;
 
@@ -99,10 +99,10 @@ export class ChessApp{
 	    }
 	})
     }
-    isCellDelayed(recordString:string):boolean{
+    isCellDelayed(recordString:string):bool{
 	return recordString[0] == '_'
     }
-    resolveCells(board:{}, parent:interfaces.Cell, delayed:boolean){
+    resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
 	// parent.beforeResolve()
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){

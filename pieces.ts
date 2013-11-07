@@ -1,5 +1,5 @@
-import interfaces = require("./interfaces")
-import utils = require("./utils")
+import interfaces = module("./interfaces")
+import utils = module("./utils")
 declare var $;
 
 export class TestEl {
@@ -20,7 +20,7 @@ export class BaseCell implements interfaces.Cell{
     parent:interfaces.Cell;
     children:interfaces.Cell[];
     delayedChildren:interfaces.Cell[];
-    delayed:boolean;
+    delayed:bool;
     board:{};
     args=[];
     guid:string;
@@ -112,7 +112,7 @@ export class BaseCell implements interfaces.Cell{
     }
     tag='div';
     html='';
-    exceptTags = ['input']
+    exceptTags = ['input'];
     createEl():HTMLElement{
 	
 	var el = document.createElement(this.tag)
@@ -142,7 +142,7 @@ export class BaseCell implements interfaces.Cell{
 	this.html = html
 	$(this.el).html(html)
     }
-    _renderred:boolean;
+    _renderred:bool;
     _safeAfterRender(){
 	if(this._renderred){
 	    return
@@ -204,7 +204,7 @@ export class BaseCell implements interfaces.Cell{
     }
 
     searchDown(collected:BaseCell[],
-	       cons?:string, className?:string,id?:string,once?:boolean){
+	       cons?:string, className?:string,id?:string,once?:bool){
 	for(var i=0,l=this.children.length;i<l;i++){
 	    var cell = <BaseCell>this.children[i];
 	    var rec = cell.record
@@ -251,7 +251,7 @@ export class BaseCell implements interfaces.Cell{
 }
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
-    resolved:boolean;
+    resolved:bool;
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }
@@ -289,7 +289,7 @@ export class ViewPort extends BaseCell{
 export class Image extends BaseCell implements interfaces.Image{
     onload(){
     }
-    draw(src:string,error?:boolean){
+    draw(src:string,error?:bool){
 	this.args[0] = src
 	if(this.el.tagName.toLowerCase()=='canvas'){
 	    var i = document.createElement('img')
@@ -431,7 +431,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	return {left:dX, top:dY, width:dWidth, height:dHeight}
     }
 
-    drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:boolean){
+    drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
 
 	var me = this
 	var errBack = ()=>{
@@ -548,7 +548,7 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
     fileSize:number;
     file:string;
     rawFile:any;
-    binary:boolean;
+    binary:bool;
     needLoad(fname:string){
 	return true
     }

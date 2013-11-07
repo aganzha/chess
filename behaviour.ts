@@ -1,4 +1,4 @@
-import interfaces = require("./interfaces")
+import interfaces = module("./interfaces")
 declare var $;
 
 export function makeScrollable(me:interfaces.Scrollable){

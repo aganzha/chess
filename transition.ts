@@ -1,4 +1,4 @@
-import interfaces = require("./interfaces")
+import interfaces = module("./interfaces")
 declare var $;
 
 
@@ -116,7 +116,7 @@ export class Transition implements interfaces.Transition{
     }
 
     cover(leftOrTop:string,
-	  positive:boolean){
+	  positive:bool){
 	var widthOrHeight = 'height'
 	if(leftOrTop=='left'){
 	    widthOrHeight = 'width'
@@ -173,7 +173,7 @@ export class Transition implements interfaces.Transition{
 	this.cover('top',false)
     }
 
-    reveal(leftOrTop:string,positive:boolean)
+    reveal(leftOrTop:string,positive:bool)
     {
 	var me = this;
 	var widthOrHeight = 'height'
