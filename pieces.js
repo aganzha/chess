@@ -72,13 +72,9 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
 
-                // delayedCell.delayedChildren.forEach((dc)=>{clone.delayedChildren.push(dc)})
                 this.append(clone);
                 filler(clone);
 
-                // вот тут важно, что на следующе уровни selector не передается
-                // это позволяет использовать его для отбора ячеек только самого верхнего уровня
-                // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
@@ -105,7 +101,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         BaseCell.prototype.fillElAttrs = function () {
             var el = this.el;
 
-            // hack used to reseting element to its original
             $(el).removeAttr('class');
             $(el).removeAttr('style');
             var classes = this.record.classes;
@@ -128,16 +123,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 el.innerHTML = this.html;
             }
 
-            // Оппа! на третьем айфоне упало!
-            // try{
-            //     // этот try для node, в котором гоняются тесты
-            //     var el = document.createElement(this.tag)
-            //     el.innerHTML = this.html
-            // }
-            // catch(x){
-            //     var tl = <any>new TestEl()
-            //     el = <HTMLElement> tl
-            // }
             return el;
         };
         BaseCell.prototype.prepareEl = function () {
@@ -188,8 +173,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             this.delayedChildren.push(cell);
         };
         BaseCell.prototype.render = function () {
-            // $(this.el).remove()
-            // this.el = null
             this.prepareEl();
             return this.el;
         };
@@ -324,7 +307,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         };
 
         Image.prototype.getSourceBoxForCompleteCanvas = function (imgWidth, imgHeight, canvasWidth, canvasHeight) {
-            // https://developer.mozilla.org/en-US/docs/HTML/Canvas/Tutorial/Using_images?redirectlocale=en-US&redirectslug=Canvas_tutorial%2FUsing_images
             var ratio = imgWidth / imgHeight;
             var sX = 0, sY = 0;
             var sWidth = imgWidth, sHeight = imgHeight;
@@ -346,35 +328,22 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             };
             if (wrat < 1 && hrat < 1) {
                 if (wrat <= hrat) {
-                    //tez(1,5,10,10)
-                    // нужно подтягивать ширину картинки к ширине канваса
                     cropHeight();
                 } else {
-                    ////tez(1,5,10,10)
-                    // нужно подтягивать высоту картинки к высоте канваса
                     cropWidth();
                 }
             } else if (wrat < 1 && hrat >= 1) {
-                // нужно подтягивать ширину картинки к ширине канваса
-                //tez(5,20,10,10)
                 cropHeight();
             } else if (hrat < 1 && wrat >= 1) {
-                ////tez(20,5,10,10)
-                // нужно подтягивать высоту картинки к высоте канваса
                 cropWidth();
             } else {
                 if (wrat > hrat) {
-                    //tez(100,50,10,10) нужно жать высоту картинки до высоты
-                    // канваса
                     cropWidth();
                 } else {
-                    // tez(50,100,10,10)
-                    // нужно жать ширину картинки до ширины канваса
                     cropHeight();
                 }
             }
 
-            //return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
             return { left: sX, top: sY, width: sWidth, height: sHeight };
         };
 
@@ -394,7 +363,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 dHeight = resultHeight;
             };
             var scaleHeight = function () {
-                // this case not tested yet
                 var resultHeight = canvasHeight;
                 var resultWidth = canvasHeight * ratio;
                 var restInWidth = (canvasWidth - resultWidth);
@@ -403,41 +371,22 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             };
             if (wrat < 1 && hrat < 1) {
                 if (wrat <= hrat) {
-                    //console.log(111)
-                    //tez(1,5,10,10)
-                    // нужно подтягивать высоту картинки к высоте канваса
                     scaleHeight();
                 } else {
-                    // console.log(112)
-                    ////tez(5,1,10,10)
-                    // нужно подтягивать ширину картинки к ширине канваса
                     scaleWidth();
                 }
             } else if (wrat < 1 && hrat >= 1) {
-                // console.log(12)//PASSED
-                // нужно подтягивать ширину картинки к ширине канваса
-                //tez(5,20,10,10)
                 scaleHeight();
             } else if (hrat < 1 && wrat >= 1) {
-                // console.log(13)
-                ////tez(20,5,10,10)
-                // нужно подтягивать высоту картинки к высоте канваса
                 scaleWidth();
             } else {
                 if (wrat > hrat) {
-                    //console.log(141)//PASSED
-                    //tez(100,50,10,10)
-                    // нужно жать ширину картинки до ширины канваса
                     scaleWidth();
                 } else {
-                    //console.log(142)//PASSED
-                    // tez(50,100,10,10)
-                    // нужно жать высоту картинки до высоты канваса
                     scaleHeight();
                 }
             }
 
-            //return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
             return { left: dX, top: dY, width: dWidth, height: dHeight };
         };
 
@@ -468,7 +417,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                         sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                     }
                 } else {
-                    // complete canvas by default
                     sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                 }
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
@@ -512,7 +460,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             return answer;
         };
 
-        // initialSourceBox:interfaces.Box;
         Image.prototype.scale = function (factor) {
             this.clear();
             var img = document.createElement('img');
@@ -523,12 +470,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
                 var destBox = { top: 0, left: 0, width: canvas.width, height: canvas.height };
                 var sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
 
-                // sourceBox уже соответствует размеру canvas
-                // его просто нужно умножить на factor
-                // зумаут мы не можем делать. мы и так показали картинку полностью. делать
-                // ее меньше канваса нет смысла. т.е. фактор будет точно больше 1
-                // скажем если фактор = 2, то исходную ширину(и высоту тоже) нужно РАЗДЕЛИТЬ на 2
-                // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
                 sourceBox.left = sourceBox.left + (sourceBox.width - sourceBox.width / factor) / 2;
                 sourceBox.top = sourceBox.top + (sourceBox.height - sourceBox.height / factor) / 2;
                 sourceBox.width = sourceBox.width / factor;
@@ -552,8 +493,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         Uploader.prototype.fileChoosen = function () {
         };
         Uploader.prototype.loadFile = function (file) {
-            // var files = e.target.files
-            // var file = files[0]
             this.fileName = file.name;
             this.fileSize = file.size;
             this.fileType = file.type;

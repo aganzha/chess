@@ -1,7 +1,6 @@
 define(["require", "exports"], function(require, exports) {
     
 
-    //TODO! functions! not class
     var Utils = (function () {
         function Utils() {
         }
@@ -83,8 +82,6 @@ define(["require", "exports"], function(require, exports) {
 
     function guid() {
         return s4() + s4();
-        // return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        //        s4() + '-' + s4() + s4() + s4();
     }
     exports.guid = guid;
 });
