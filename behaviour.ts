@@ -1,18 +1,32 @@
 import interfaces = module("./interfaces")
+import utils = module("./utils")
 declare var $;
 
+var minsize = utils.getMinSize()
+
 export function makeScrollable(me:interfaces.Scrollable){
-    $(me.el).on('scroll',function(some){scroll(me)})
+    if(minsize<600){
+	// phone
+	$(document).on('scroll',function(some){scroll(me)})
+    }
+    else{	
+	$(me.el).on('scroll',function(some){scroll(me)})
+    }
 }
 
 function scroll(me:interfaces.Scrollable){
     if(!me.scrollRequired()){
 	return
-    }
+    }    
     var first = me.getFirstItemBox()
     var initial = me.getInitialBox()
-    var passed = (initial.top - first.top)/first.height
+    var fromTop = fromTop = initial.top - first.top 
+    if(minsize<600){
+	fromTop = window.pageYOffset
+    }
+    var passed = fromTop/first.height
     var limit = passed % me.pageSize
+    // TODO! if scroll back and fourth inside first page - it loads and loads pages!!!
     if(limit>me.scrollAfterNo){
 	me.loadNextPage()
     }

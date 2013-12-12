@@ -78,4 +78,19 @@ define(["require", "exports"], function(require, exports) {
         return s4() + s4();
     }
     exports.guid = guid;
+    exports.getMinSize = function () {
+        var minsize = 1000000;
+        var makeMinSize = function (compare) {
+            if(compare < minsize) {
+                minsize = compare;
+            }
+        };
+        makeMinSize(window.innerWidth);
+        makeMinSize(window.innerHeight);
+        if(screen) {
+            makeMinSize(screen.availWidth);
+            makeMinSize(screen.availHeight);
+        }
+        return minsize;
+    };
 })

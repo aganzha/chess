@@ -86,3 +86,20 @@ export function guid() {
   // return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
   //        s4() + '-' + s4() + s4() + s4();
 }
+
+
+export var getMinSize = ()=>{
+    var minsize = 1000000
+    var makeMinSize = (compare)=>{
+	if(compare<minsize){
+	    minsize = compare;
+	}
+    }
+    makeMinSize(window.innerWidth)
+    makeMinSize(window.innerHeight)
+    if(screen){
+	makeMinSize(screen.availWidth);
+	makeMinSize(screen.availHeight);
+    }
+    return minsize
+}
