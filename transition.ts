@@ -292,26 +292,19 @@ export class Transition implements interfaces.Transition{
 	me.renderNewScreen()
 	//var itemBox = this.going.getBox()
 	var itemBox = me.fixPosition(me.going)
-	$(me.coming.parent.el).css('width',itemBox.width*2+'px')
+	$(me.coming.parent.el).css('width',itemBox.width*2+2+'px')
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
-	    // it will be not possible to scroll screen on iphone 3!!!
-	    // height:itemBox.height+'px',
 	    float:'right'
 	})
 	$(me.going.el).css({
 	    width:itemBox.width+'px',
-	    // it will be not possible to scroll screen on iphone 3!!!
-	    // height:itemBox.height+'px',
 	    float:'left'
 	});
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     me.getTransitionParams())
 	$(me.going.parent.el).css(trParams)
-	me.cleanUpTransform(()=>{
-	    // $(me.coming.el).css("height","")
-	    // $(me.going.el).css("height","")
-	})
+	me.cleanUpTransform(()=>{})
     }
     slideRight(){
 	var me = this;
@@ -319,7 +312,7 @@ export class Transition implements interfaces.Transition{
 	var itemBox = me.fixPosition(me.going)
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     {
-					 width:itemBox.width*2
+					 width:itemBox.width*2+2
 				     })
 	
 	$(me.going.parent.el).css(trParams)
@@ -333,18 +326,12 @@ export class Transition implements interfaces.Transition{
 	me.renderNewScreen()
 	$(me.coming.el).css({
 	    width:itemBox.width+'px',
-	    // it will be not possible to scroll screen on iphone 3!!!
-	    // height:itemBox.height+'px',
 	    float:'left'
 	})
 	$(me.going.el).before($(me.coming.el));
-
 	setTimeout(()=>{
 	    $(me.going.parent.el).css(me.getTransitionParams())
-	    trParams = me.joinParams(me.getTransformParams(0,0,0),
-				     {
-					 width:itemBox.width*2
-				     })
+	    trParams = me.getTransformParams(0,0,0)
 	    $(me.going.parent.el).css(trParams)
 	    me.cleanUpTransform(()=>{})
 	},100)

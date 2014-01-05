@@ -247,7 +247,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
+            $(me.coming.parent.el).css('width', itemBox.width * 2 + 2 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
                 float: 'right'
@@ -265,7 +265,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
-                width: itemBox.width * 2
+                width: itemBox.width * 2 + 2
             });
             $(me.going.parent.el).css(trParams);
             $(me.going.el).css({
@@ -280,9 +280,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             $(me.going.el).before($(me.coming.el));
             setTimeout(function () {
                 $(me.going.parent.el).css(me.getTransitionParams());
-                trParams = me.joinParams(me.getTransformParams(0, 0, 0), {
-                    width: itemBox.width * 2
-                });
+                trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
                 me.cleanUpTransform(function () {
                 });
