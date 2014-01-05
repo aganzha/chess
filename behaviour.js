@@ -27,9 +27,7 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         }
         var passed = fromTop / first.height;
         var limit = passed % me.pageSize;
-        alert('-' + limit);
-        if(limit > me.scrollAfterNo) {
-            alert('3');
+        if(limit > me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())) {
             me.loadNextPage();
         }
     }

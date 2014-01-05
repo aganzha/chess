@@ -27,7 +27,7 @@ function scroll(me:interfaces.Scrollable){
     var passed = fromTop/first.height
     var limit = passed % me.pageSize
     // TODO! if scroll back and fourth inside first page - it loads and loads pages!!!
-    if(limit>me.scrollAfterNo){
+    if(limit>me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())){
 	me.loadNextPage()
     }
 }    
