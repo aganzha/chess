@@ -59,7 +59,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                         'margin-left': '0px'
                     });
                     setTimeout(function () {
-                        me.releasePosition();
+                        me.releasePosition(me.coming);
                         me.success();
                     }, 250);
                 }, 250);
@@ -91,7 +91,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     display: 'block'
                 });
                 setTimeout(function () {
-                    me.releasePosition();
+                    me.releasePosition(me.coming);
                     me.success();
                 }, me.cssDelay);
             }, me.cssDelay);
@@ -126,7 +126,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 elCss[leftOrTop] = '0px';
                 $(me.coming.el).css(elCss);
                 setTimeout(function () {
-                    me.releasePosition();
+                    me.releasePosition(me.coming);
                     me.success();
                 }, 400);
             }, this.classDelay);
@@ -173,7 +173,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
                 $(me.going.el).css(targetCss);
                 setTimeout(function () {
-                    me.releasePosition();
+                    me.releasePosition(me.coming);
                     me.resetParent();
                     me.success();
                 }, 400);
@@ -247,7 +247,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            $(me.coming.parent.el).css('width', itemBox.width * 2 + 2 + 'px');
+            $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
                 float: 'right'
@@ -265,7 +265,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
-                width: itemBox.width * 2 + 2
+                width: itemBox.width * 2
             });
             $(me.going.parent.el).css(trParams);
             $(me.going.el).css({
@@ -342,22 +342,55 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             }
         };
         Transition.prototype.fixPosition = function (cell) {
+            var minheight = 2400;
+            var minwidth = 2400;
             var box = cell.parent.getBox();
+            var w = box.width;
+            var h = box.height;
+            if(screen.width < minwidth) {
+                minwidth = screen.width;
+            }
+            if(window.innerWidth < minwidth) {
+                minwidth = window.innerWidth;
+            }
+            if(window.outerWidth < minwidth) {
+                minwidth = window.outerWidth;
+            }
+            if(w > minwidth) {
+                w = minwidth;
+            }
+            if(screen.height < minheight) {
+                minwidth = screen.height;
+            }
+            if(window.innerWidth < minheight) {
+                minwidth = screen.width;
+            }
+            if(window , outerHeight < minheight) {
+                minheight = window.outerHeight;
+            }
+            if(h > minheight) {
+                h = minheight;
+            }
             $(cell.el).css({
-                width: box.width,
-                'min-width': box.width,
-                'max-width': box.width,
-                height: box.height,
-                'min-height': box.height,
-                'max-height': box.height,
+                width: w,
+                'min-width': w,
+                'max-width': w,
+                height: h,
+                'min-height': h,
+                'max-height': h,
                 overflow: 'hidden'
             });
-            return box;
+            return cell.getBox();
         };
-        Transition.prototype.releasePosition = function () {
-            $(this.coming.el).css({
-                width: '',
-                height: ''
+        Transition.prototype.releasePosition = function (cell) {
+            $(cell.el).css({
+                'width': '',
+                'min-width': '',
+                'max-width': '',
+                'height': '',
+                'min-height': '',
+                'max-height': '',
+                overflow: ''
             });
         };
         Transition.prototype.resetParent = function () {
