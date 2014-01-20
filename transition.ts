@@ -328,6 +328,7 @@ export class Transition implements interfaces.Transition{
 	    width:itemBox.width+'px',
 	    float:'left'
 	})
+
 	$(me.going.el).before($(me.coming.el));
 	setTimeout(()=>{
 	    $(me.going.parent.el).css(me.getTransitionParams())
@@ -336,6 +337,7 @@ export class Transition implements interfaces.Transition{
 	    me.cleanUpTransform(()=>{})
 	},100)
     }
+
     cleanUpTransform(hook:()=>any){
 	var me = this
 	setTimeout(()=>{

@@ -91,15 +91,16 @@ export function guid() {
 export var getMinSize = ()=>{
     var minsize = 1000000
     var makeMinSize = (compare)=>{
-	if(compare<minsize){
+	if(compare && compare<minsize){
 	    minsize = compare;
 	}
     }
-    makeMinSize(window.innerWidth)
-    makeMinSize(window.innerHeight)
-    if(screen){
-	makeMinSize(screen.availWidth);
-	makeMinSize(screen.availHeight);
-    }
+    makeMinSize(screen.width);
+    makeMinSize(screen.height);
+    makeMinSize(window.innerWidth);
+    makeMinSize(window.innerHeight);
+    makeMinSize(window.outerHeight);
+    makeMinSize(window.outerWidth);
+
     return minsize
 }

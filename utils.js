@@ -81,16 +81,16 @@ define(["require", "exports"], function(require, exports) {
     exports.getMinSize = function () {
         var minsize = 1000000;
         var makeMinSize = function (compare) {
-            if(compare < minsize) {
+            if(compare && compare < minsize) {
                 minsize = compare;
             }
         };
+        makeMinSize(screen.width);
+        makeMinSize(screen.height);
         makeMinSize(window.innerWidth);
         makeMinSize(window.innerHeight);
-        if(screen) {
-            makeMinSize(screen.availWidth);
-            makeMinSize(screen.availHeight);
-        }
+        makeMinSize(window.outerHeight);
+        makeMinSize(window.outerWidth);
         return minsize;
     };
 })
