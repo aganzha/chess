@@ -5,10 +5,9 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
     var minsize = utils.getMinSize();
     var currentScrollable = null;
     function makeScrollable(me) {
-        console.log(me.unique && currentScrollable);
+        me.currentPage = 0;
         if(me.unique && currentScrollable) {
             currentScrollable.off('scroll');
-            console.log('yay!');
         }
         if(minsize < 600) {
             $(document).on('scroll', function (some) {
@@ -21,7 +20,6 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             });
             currentScrollable = $(me.el);
         }
-        console.log(currentScrollable);
     }
     exports.makeScrollable = makeScrollable;
     function scroll(me) {
@@ -36,8 +34,12 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         }
         var passed = fromTop / first.height;
         var limit = passed % me.pageSize;
+        var currentPage = parseInt(passed / me.pageSize + '');
         if(limit > me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())) {
-            me.loadNextPage();
+            if(currentPage == me.currentPage) {
+                me.loadNextPage();
+                me.currentPage += 1;
+            }
         }
     }
     function makeCleanValuable(me) {
