@@ -22,6 +22,7 @@ export function makeScrollable(me:interfaces.Scrollable){
 }
 
 function scroll(me:interfaces.Scrollable){
+
     if(!me.scrollRequired()){
         return
     }
@@ -35,6 +36,7 @@ function scroll(me:interfaces.Scrollable){
     var limit = passed % me.pageSize
     var currentPage = parseInt(passed / me.pageSize + '')    
     if(limit>me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())){
+	me.scrollAfterPassed()
 	if(currentPage==me.currentPage){
 	    me.currentPage+=1
             me.loadNextPage()

@@ -129,6 +129,7 @@ export interface Scrollable extends Cell{
     loadNextPage();
     unique?:bool;
     currentPage?:number;
+    scrollAfterPassed();
 }
 
 export interface Valuable{
