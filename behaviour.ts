@@ -36,8 +36,8 @@ function scroll(me:interfaces.Scrollable){
     var currentPage = parseInt(passed / me.pageSize + '')    
     if(limit>me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())){
 	if(currentPage==me.currentPage){
-            me.loadNextPage()
 	    me.currentPage+=1
+            me.loadNextPage()
 	}
     }
 }
