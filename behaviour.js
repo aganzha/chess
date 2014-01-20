@@ -3,16 +3,25 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
     var utils = __utils__;
 
     var minsize = utils.getMinSize();
+    var currentScrollable = null;
     function makeScrollable(me) {
+        console.log(me.unique && currentScrollable);
+        if(me.unique && currentScrollable) {
+            currentScrollable.off('scroll');
+            console.log('yay!');
+        }
         if(minsize < 600) {
             $(document).on('scroll', function (some) {
                 scroll(me);
             });
+            currentScrollable = $(document);
         } else {
             $(me.el).on('scroll', function (some) {
                 scroll(me);
             });
+            currentScrollable = $(me.el);
         }
+        console.log(currentScrollable);
     }
     exports.makeScrollable = makeScrollable;
     function scroll(me) {

@@ -3,15 +3,23 @@ import utils = module("./utils")
 declare var $;
 
 var minsize = utils.getMinSize()
+var currentScrollable = null
 
 export function makeScrollable(me:interfaces.Scrollable){
+
+    if(me.unique && currentScrollable){
+	currentScrollable.off('scroll')	
+	console.log('yay!')
+    }
     if(minsize<600){
 	// phone
 	$(document).on('scroll',function(some){scroll(me)})
+	currentScrollable = $(document)
     }
     else{	
 	$(me.el).on('scroll',function(some){scroll(me)})
-    }
+	currentScrollable = $(me.el)
+    }    
 }
 
 function scroll(me:interfaces.Scrollable){
