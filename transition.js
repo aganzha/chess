@@ -247,10 +247,10 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
+            $(me.coming.parent.el).css('width', itemBox.width * 3 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
-                float: 'right'
+                float: 'left'
             });
             $(me.going.el).css({
                 width: itemBox.width + 'px',
@@ -265,12 +265,12 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
-                width: itemBox.width * 2
+                width: itemBox.width * 3 + 'px'
             });
             $(me.going.parent.el).css(trParams);
             $(me.going.el).css({
-                width: itemBox.width,
-                float: 'right'
+                width: itemBox.width + 'px',
+                float: 'left'
             });
             me.renderNewScreen();
             $(me.coming.el).css({
@@ -282,8 +282,6 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.parent.el).css(me.getTransitionParams());
                 trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
-                me.cleanUpTransform(function () {
-                });
             }, 100);
         };
         Transition.prototype.cleanUpTransform = function (hook) {
@@ -344,43 +342,42 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         Transition.prototype.fixPosition = function (cell) {
             var minheight = 2400;
             var minwidth = 2400;
-            var box = cell.parent.getBox();
-            var w = box.width;
-            var h = box.height;
-            if(screen.width < minwidth) {
-                minwidth = screen.width;
-            }
-            if(window.innerWidth < minwidth) {
-                minwidth = window.innerWidth;
-            }
-            if(window.outerWidth < minwidth) {
-                minwidth = window.outerWidth;
-            }
-            if(w > minwidth) {
-                w = minwidth;
-            }
-            if(screen.height < minheight) {
-                minwidth = screen.height;
-            }
-            if(window.innerWidth < minheight) {
-                minwidth = screen.width;
-            }
-            if(window , outerHeight < minheight) {
-                minheight = window.outerHeight;
-            }
-            if(h > minheight) {
-                h = minheight;
+            var tag = cell.parent.el.tagName.toLowerCase();
+            if(tag == 'body') {
+                if(screen.width < minwidth) {
+                    minwidth = screen.width;
+                }
+                if(window.innerWidth < minwidth) {
+                    minwidth = window.innerWidth;
+                }
+                if(window.outerWidth < minwidth) {
+                    minwidth = window.outerWidth;
+                }
+                if(screen.height < minheight) {
+                    minwidth = screen.height;
+                }
+                if(window.innerWidth < minheight) {
+                    minwidth = window.innerWidth;
+                }
+                if(window.outerHeight < minheight) {
+                    minheight = window.outerHeight;
+                }
+            } else {
+                bx = cell.parent.getBox();
+                minheight = bx.height;
+                minwidth = bx.width;
             }
             $(cell.el).css({
-                width: w,
-                'min-width': w,
-                'max-width': w,
-                height: h,
-                'min-height': h,
-                'max-height': h,
+                width: minwidth,
+                'min-width': minwidth,
+                'max-width': minwidth,
+                height: minheight,
+                'min-height': minheight,
+                'max-height': minheight,
                 overflow: 'hidden'
             });
-            return cell.getBox();
+            var bx = cell.getBox();
+            return bx;
         };
         Transition.prototype.releasePosition = function (cell) {
             $(cell.el).css({
