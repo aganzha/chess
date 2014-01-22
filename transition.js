@@ -282,6 +282,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.going.parent.el).css(me.getTransitionParams());
                 trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
+                me.cleanUpTransform(function () {
+                });
             }, 100);
         };
         Transition.prototype.cleanUpTransform = function (hook) {

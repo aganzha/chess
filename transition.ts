@@ -331,7 +331,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.going.parent.el).css(me.getTransitionParams())
 	    trParams = me.getTransformParams(0,0,0)
 	    $(me.going.parent.el).css(trParams)
-	    // me.cleanUpTransform(()=>{})
+	    me.cleanUpTransform(()=>{})
 	},100)
     }
 
