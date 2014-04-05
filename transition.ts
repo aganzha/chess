@@ -360,8 +360,9 @@ export class Transition implements interfaces.Transition{
 
     slideUp(){
 	var me = this;
-	me.renderNewScreen()
 	var itemBox = me.fixPosition(me.going)
+	me.renderNewScreen()
+
 	// me.fixPosition(me.coming)
 
 	$(me.coming.parent.el).css('min-height',itemBox.height*2+'px')
@@ -433,9 +434,7 @@ export class Transition implements interfaces.Transition{
 	    bx = cell.parent.getBox()
 	    minheight = bx.height
 	    minwidth = bx.width
-	}
-
-	
+	}	
 
 	$(cell.el).css({
 	    width:minwidth,

@@ -308,8 +308,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         };
         Transition.prototype.slideUp = function () {
             var me = this;
-            me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
+            me.renderNewScreen();
             $(me.coming.parent.el).css('min-height', itemBox.height * 2 + 'px');
             var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParams());
             $(me.going.parent.el).css(trParams);
