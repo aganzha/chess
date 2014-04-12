@@ -78,23 +78,25 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 position: 'absolute',
                 opacity: '0.0'
             }).hide();
-            $(me.coming.el).addClass('fade');
-            $(me.going.el).addClass('fade');
+            var params = me.joinParams(me.getTransformParams(0, 0, 0), me.getTransitionParamsFor('opacity'));
+            var zero = {
+                'opacity': '0.0'
+            };
+            $(me.going.el).css(params).css(zero);
             setTimeout(function () {
-                $(me.going.el).css({
-                    opacity: '0.0'
-                });
-            }, this.classDelay);
-            setTimeout(function () {
+                $(me.going.el).hide();
                 $(me.coming.el).css({
-                    opacity: '1.0',
                     display: 'block'
                 });
+                $(me.coming.el).css(params);
                 setTimeout(function () {
-                    me.releasePosition(me.coming);
-                    me.success();
-                }, me.cssDelay);
-            }, me.cssDelay);
+                    $(me.coming.el).css({
+                        'opacity': '1.0'
+                    });
+                    me.cleanUpTransform(function () {
+                    });
+                }, 100);
+            }, 300);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
             var widthOrHeight = 'height';
@@ -200,12 +202,12 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 'transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)'
             };
         };
-        Transition.prototype.getTransitionParams = function () {
+        Transition.prototype.getTransitionParamsFor = function (property) {
             return {
-                '-webkit-transition': '-webkit-transform 0.3s ease-in',
-                '-moz-transition': '-webkit-transform 0.3s ease-in',
-                '-o-transition': '-webkit-transform 0.3s ease-in',
-                'transition': '-webkit-transform 0.3s ease-in'
+                '-webkit-transition': property + ' 0.3s ease-in',
+                '-moz-transition': property + ' 0.3s ease-in',
+                '-o-transition': property + ' 0.3s ease-in',
+                'transition': property + ' 0.3s ease-in'
             };
         };
         Transition.prototype.joinParams = function (p1, p2) {
@@ -256,7 +258,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 width: itemBox.width + 'px',
                 float: 'left'
             });
-            var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParams());
+            var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
             me.cleanUpTransform(function () {
             });
@@ -279,7 +281,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             });
             $(me.going.el).before($(me.coming.el));
             setTimeout(function () {
-                $(me.going.parent.el).css(me.getTransitionParams());
+                $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
                 trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
                 me.cleanUpTransform(function () {
@@ -311,7 +313,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var itemBox = me.fixPosition(me.going);
             me.renderNewScreen();
             $(me.coming.parent.el).css('min-height', itemBox.height * 2 + 'px');
-            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParams());
+            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
             me.cleanUpTransform(function () {
             });
@@ -328,7 +330,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             $(me.going.parent.el).css(trParams);
             var me = this;
             setTimeout(function () {
-                $(me.going.parent.el).css(me.getTransitionParams());
+                $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
                 var trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
                 me.cleanUpTransform(function () {
