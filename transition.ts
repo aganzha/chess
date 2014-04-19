@@ -18,16 +18,9 @@ export class Transition implements interfaces.Transition{
         this.parentBox = this.going.parent.getBox()
 
     }
-    // pausecomp(millis)
-    // {
-    //  var date = new Date();
-    //  var curDate = null;
-    //  do { curDate = new Date(); }
-    //  while(curDate-date < millis);
-    // }
+
     renderNewScreen(){
         this.app.resolve(this.selector)
-        //this.coming.forceRender()
     }
     union(){
         this.renderNewScreen()

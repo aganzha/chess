@@ -15,6 +15,7 @@ export class ChessApp{
 		public modules:{}[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
 	this.globals = {}
+	this.transitQueue = []
 	modules.push(pieces)
 	viewport.application = this
 	window['application'] =this
@@ -63,10 +64,27 @@ export class ChessApp{
 	this.currentScreen =screen
 	//console.log(this.currentScreen)
     }
+    transitQueue:any[];
+    transitLock:bool;
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
-	utils.Utils.destroyFlyWeight()
+	this.transitQueue.push({receiver:receiver, screen:selector(this.screens)})
+	this._doTransit()
+    }
+    _doTransit(){
+	if(this.transitQueue.length==0){
+	    return
+	}
+	if(this.transitLock){
+	    return
+	}
+	this.transitLock = true
+	var first = this.transitQueue[0]
+	this.transitQueue = this.transitQueue.slice(1)
+	utils.Utils.destroyFlyWeight()//???
 	var oldScreen = this.currentScreen
-	var newScreen = selector(this.screens)
+	var newScreen = first.screen
+	var receiver = first.receiver
+	var selector = ()=>{return first.screen}
 	var me = this
 	oldScreen.beforeSelfReplace(newScreen, {
 	    success:function(){
@@ -82,11 +100,18 @@ export class ChessApp{
 					{
 					    success:function(){
 						oldScreen.afterSelfReplace(newScreen)
+						// setTimeout(()=>{
+						//     console.log('aaaaaaaaaaaaa',me.currentScreen)
+						// }, 500)
 						me.currentScreen.fillElAttrs()
 						newScreen.afterSelfApear(oldScreen)
+						me.transitLock = false
+						me._doTransit()
 					    },
 					    fail:function(){
 						// rollback current screen?
+						me.transitLock = false
+						me._doTransit()
 					    }
 					})
 			receiver(tr)

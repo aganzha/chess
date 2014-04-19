@@ -13,6 +13,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             this.modules = modules;
             this.globals = {
             };
+            this.transitQueue = [];
             modules.push(pieces);
             viewport.application = this;
             window['application'] = this;
@@ -56,9 +57,29 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             this.currentScreen = screen;
         };
         ChessApp.prototype.transit = function (selector, receiver) {
+            this.transitQueue.push({
+                receiver: receiver,
+                screen: selector(this.screens)
+            });
+            this._doTransit();
+        };
+        ChessApp.prototype._doTransit = function () {
+            if(this.transitQueue.length == 0) {
+                return;
+            }
+            if(this.transitLock) {
+                return;
+            }
+            this.transitLock = true;
+            var first = this.transitQueue[0];
+            this.transitQueue = this.transitQueue.slice(1);
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
-            var newScreen = selector(this.screens);
+            var newScreen = first.screen;
+            var receiver = first.receiver;
+            var selector = function () {
+                return first.screen;
+            };
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
@@ -70,8 +91,12 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                                     oldScreen.afterSelfReplace(newScreen);
                                     me.currentScreen.fillElAttrs();
                                     newScreen.afterSelfApear(oldScreen);
+                                    me.transitLock = false;
+                                    me._doTransit();
                                 },
                                 fail: function () {
+                                    me.transitLock = false;
+                                    me._doTransit();
                                 }
                             });
                             receiver(tr);
