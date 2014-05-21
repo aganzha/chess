@@ -86,16 +86,13 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             setTimeout(function () {
                 $(me.going.el).hide();
                 $(me.coming.el).css({
-                    display: 'block'
+                    display: 'block',
+                    opacity: '1.0'
                 });
-                $(me.coming.el).css(params);
                 setTimeout(function () {
-                    $(me.coming.el).css({
-                        'opacity': '1.0'
-                    });
                     me.cleanUpTransform(function () {
                     });
-                }, 100);
+                }, 1000);
             }, 300);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
@@ -303,7 +300,6 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                     'min-height': "",
                     'min-width': ""
                 });
-                me.removeIphoneFlash(me.coming.el);
                 hook();
                 me.success();
             }, 500);
@@ -348,17 +344,11 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var minwidth = 2400;
             var tag = cell.parent.el.tagName.toLowerCase();
             if(tag == 'body') {
-                if(screen.width < minwidth) {
-                    minwidth = screen.width;
-                }
                 if(window.innerWidth < minwidth) {
                     minwidth = window.innerWidth;
                 }
                 if(window.outerWidth < minwidth) {
                     minwidth = window.outerWidth;
-                }
-                if(screen.height < minheight) {
-                    minwidth = screen.height;
                 }
                 if(window.innerWidth < minheight) {
                     minwidth = window.innerWidth;
