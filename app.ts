@@ -52,9 +52,10 @@ export class ChessApp{
 	var screen = selector(this.screens)
 	if(!screen.resolved){
 	    // screen may be allready resolved in case of Union transition
-	    this.viewport.append(screen)
+	    // this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
+	    this.viewport.append(screen)// may be here? TODO! 
 	    screen.bubbleDown(function(cell){
 		var base = <pieces.BaseCell>cell
 		base._safeAfterRender()
@@ -140,6 +141,7 @@ export class ChessApp{
 	    return
 	}
 	for(var recordString in board){
+	    console.log('--',parent,recordString)
 	    var cell = this.instantiate(recordString, pieces.BaseCell)
 	    cell.board = board[recordString]
 	    cell.delayed = this.isCellDelayed(recordString)

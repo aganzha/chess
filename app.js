@@ -46,9 +46,9 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
         ChessApp.prototype.resolve = function (selector) {
             var screen = selector(this.screens);
             if(!screen.resolved) {
-                this.viewport.append(screen);
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
+                this.viewport.append(screen);
                 screen.bubbleDown(function (cell) {
                     var base = cell;
                     base._safeAfterRender();
@@ -124,6 +124,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 return;
             }
             for(var recordString in board) {
+                console.log('--', parent, recordString);
                 var cell = this.instantiate(recordString, pieces.BaseCell);
                 cell.board = board[recordString];
                 cell.delayed = this.isCellDelayed(recordString);
