@@ -41,9 +41,9 @@ export interface Cell{
     _renderred:bool;
     createEl():HTMLElement;
     updateEl(html:string);
-    // этот метод вызывается, когда cell добавлен в parent.
-    // у него уже есть children, но нет parent у него есть el(элемент) но он еще не добавлен в DOM
-    // у него нет parent!
+    // этот метод вызывается, когда cell добавлен в parent. 
+    // Т.е. для child вызывается afterAppend, а для parent - afterResolve
+    // соотв все children на месте. а вот parent еще нет!
     afterResolve();
     args:any[];
     board:{};
@@ -51,9 +51,7 @@ export interface Cell{
     find(cons?:string, className?:string,id?:string):Cell;
 
     bubbleDown(callable:(cell:Cell)=>any);
-    // этот метод вызывается, когда cell добавлен в parent.
-    // у него уже есть children. у него есть el(элемент) и он добавлен в DOM
-    // этот метод нужно использовать для delayed элементов
+    // Элемент добавлен в DOM
     afterRender();
     appendDomMethod(el:HTMLElement);
     log(...args: any[]);

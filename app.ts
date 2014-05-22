@@ -141,7 +141,6 @@ export class ChessApp{
 	    return
 	}
 	for(var recordString in board){
-	    console.log('--',parent,recordString)
 	    var cell = this.instantiate(recordString, pieces.BaseCell)
 	    cell.board = board[recordString]
 	    cell.delayed = this.isCellDelayed(recordString)
