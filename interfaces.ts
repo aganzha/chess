@@ -110,12 +110,14 @@ export interface Application{
     viewport:Cell;
     resolve(selector:ScreenSelector);
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
+    proceed(screen:string,transition:string);
     // instantiate(record:string):Cell;
     getCellClass(record:CellRecord);
     globals:{};
     on(event:string,callback:Function);
     off(event:string,callback?:Function);
     fire(event:string, ...args: any[]);
+    
 }
 
 export interface Scrollable extends Cell{

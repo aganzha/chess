@@ -63,14 +63,22 @@ export class ChessApp{
 	}
 	// install z-index here man!
 	this.currentScreen =screen
-	//console.log(this.currentScreen)
     }
     transitQueue:any[];
     transitLock:bool;
+
+    proceed(screen:string,transition:string){
+	this.transit((screens)=>{
+	    return screens[screen]
+	},(tr:interfaces.Transition)=>{
+	    tr[transition]()
+	})
+    }
     transit(selector:interfaces.ScreenSelector, receiver:(Transition)=>any){
 	this.transitQueue.push({receiver:receiver, screen:selector(this.screens)})
 	this._doTransit()
     }
+
     _doTransit(){
 	if(this.transitQueue.length==0){
 	    return

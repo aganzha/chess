@@ -56,6 +56,13 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             }
             this.currentScreen = screen;
         };
+        ChessApp.prototype.proceed = function (screen, transition) {
+            this.transit(function (screens) {
+                return screens[screen];
+            }, function (tr) {
+                tr[transition]();
+            });
+        };
         ChessApp.prototype.transit = function (selector, receiver) {
             this.transitQueue.push({
                 receiver: receiver,
