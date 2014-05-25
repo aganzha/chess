@@ -205,33 +205,34 @@ export class BaseCell implements interfaces.Cell{
 
     searchDown(collected:BaseCell[],
 	       cons?:string, className?:string,id?:string,once?:bool){
+
+	var classMatch = (rec)=>{
+	    if(className){
+		return rec.classes.indexOf(className)>=0
+	    }
+	    return true
+	}
+	var idMatch = (rec)=>{
+	    if(id){
+		return rec.id==id
+	    }
+	    return true
+	}
+	var consMatch = (rec)=>{
+	    if(cons){
+		return rec.cons==cons
+	    }
+	    return true
+	}
 	for(var i=0,l=this.children.length;i<l;i++){
 	    var cell = <BaseCell>this.children[i];
-	    var rec = cell.record
-	    var pushed = false
-
-	    if(!pushed && cons && rec.cons == cons){
+	    if(consMatch(cell.record) && classMatch(cell.record) && idMatch(cell.record)){
 		collected.push(cell)
-		pushed=true
+		if(once){
+		    break
+		}		
 	    }
-	    if(!pushed && className){
-		for(var j=0,m=rec.classes.length;j<m;j++){
-		    if(rec.classes[j] == className){
-			pushed=true
-			collected.push(cell)
-			break
-		    }
-		}
-	    }
-	    if(!pushed && id && rec.id == id){
-		collected.push(cell)
-		pushed=true
-	    }
-	    if(once && pushed){
-	    }
-	    else{
-		cell.searchDown(collected, cons, className, id, once)
-	    }
+	    cell.searchDown(collected, cons, className, id, once)
 	}
     }
     query(cons?:string, className?:string,id?:string):interfaces.Cell[]{

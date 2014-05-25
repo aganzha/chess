@@ -187,31 +187,33 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             return utils.Utils.DomFromString(s);
         };
         BaseCell.prototype.searchDown = function (collected, cons, className, id, once) {
+            var classMatch = function (rec) {
+                if(className) {
+                    return rec.classes.indexOf(className) >= 0;
+                }
+                return true;
+            };
+            var idMatch = function (rec) {
+                if(id) {
+                    return rec.id == id;
+                }
+                return true;
+            };
+            var consMatch = function (rec) {
+                if(cons) {
+                    return rec.cons == cons;
+                }
+                return true;
+            };
             for(var i = 0, l = this.children.length; i < l; i++) {
                 var cell = this.children[i];
-                var rec = cell.record;
-                var pushed = false;
-                if(!pushed && cons && rec.cons == cons) {
+                if(consMatch(cell.record) && classMatch(cell.record) && idMatch(cell.record)) {
                     collected.push(cell);
-                    pushed = true;
-                }
-                if(!pushed && className) {
-                    for(var j = 0, m = rec.classes.length; j < m; j++) {
-                        if(rec.classes[j] == className) {
-                            pushed = true;
-                            collected.push(cell);
-                            break;
-                        }
+                    if(once) {
+                        break;
                     }
                 }
-                if(!pushed && id && rec.id == id) {
-                    collected.push(cell);
-                    pushed = true;
-                }
-                if(once && pushed) {
-                } else {
-                    cell.searchDown(collected, cons, className, id, once);
-                }
+                cell.searchDown(collected, cons, className, id, once);
             }
         };
         BaseCell.prototype.query = function (cons, className, id) {
