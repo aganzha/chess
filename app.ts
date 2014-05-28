@@ -55,7 +55,6 @@ export class ChessApp{
 	    // this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
 	    screen.resolved=true;
-	    console.log('screen resolved!', screen.children)
 	    this.viewport.append(screen)// may be here? TODO! 
 	    screen.bubbleDown(function(cell){
 		var base = <pieces.BaseCell>cell

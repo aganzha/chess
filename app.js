@@ -48,7 +48,6 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             if(!screen.resolved) {
                 this.resolveCells(screen.board, screen, false);
                 screen.resolved = true;
-                console.log('screen resolved!', screen.children);
                 this.viewport.append(screen);
                 screen.bubbleDown(function (cell) {
                     var base = cell;
