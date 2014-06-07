@@ -244,11 +244,12 @@ export class Transition implements interfaces.Transition{
     // }
 
     getTransitionParamsFor(property){
+	var tr_function = ' 0.25s ease-in';
 	return      {
-	    '-webkit-transition': property+' 0.3s ease-in',
-	    '-moz-transition': property+' 0.3s ease-in',
-	    '-o-transition': property+' 0.3s ease-in',
-	    'transition': property+' 0.3s ease-in'
+	    '-webkit-transition': property+tr_function,
+	    '-moz-transition': property+tr_function,
+	    '-o-transition': property+tr_function,
+	    'transition': property+tr_function
 	}
     }
 

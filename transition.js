@@ -200,11 +200,12 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             };
         };
         Transition.prototype.getTransitionParamsFor = function (property) {
+            var tr_function = ' 0.25s ease-in';
             return {
-                '-webkit-transition': property + ' 0.3s ease-in',
-                '-moz-transition': property + ' 0.3s ease-in',
-                '-o-transition': property + ' 0.3s ease-in',
-                'transition': property + ' 0.3s ease-in'
+                '-webkit-transition': property + tr_function,
+                '-moz-transition': property + tr_function,
+                '-o-transition': property + tr_function,
+                'transition': property + tr_function
             };
         };
         Transition.prototype.joinParams = function (p1, p2) {
