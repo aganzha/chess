@@ -408,42 +408,38 @@ export class Transition implements interfaces.Transition{
 	var minheight= 2400;
 	var minwidth = 2400;
 	var tag = cell.parent.el.tagName.toLowerCase()
-	if(tag=='body'){
-	    // the phone!
-	    // if(screen.width<minwidth){
-	    // 	minwidth = screen.width
-	    // }
-	    if(window.innerWidth<minwidth){
-		minwidth = window.innerWidth
-	    }
-	    if(window.outerWidth<minwidth){
-		minwidth = window.outerWidth
-	    }
+	var viewport = cell.parent
+	
+	// if(tag=='body'){
+	//     // the phone!
+	//     if(window.innerWidth<minwidth){
+	// 	minwidth = window.innerWidth
+	//     }
+	//     if(window.outerWidth<minwidth){
+	// 	minwidth = window.outerWidth
+	//     }
 
-	    // if(screen.height<minheight){
-	    // 	minwidth = screen.height
-	    // }
+	//     if(window.innerWidth<minheight){
+	// 	minwidth = window.innerWidth
+	//     }
+	//     if(window.outerHeight<minheight){
+	// 	minheight = window.outerHeight
+	//     }
+	// }
+	// else{
+	// this is not the phone. we are working inside other div!
+	bx = cell.parent.getBox()
+	minheight = bx.height
+	minwidth = bx.width
 
-	    if(window.innerWidth<minheight){
-		minwidth = window.innerWidth
-	    }
-	    if(window.outerHeight<minheight){
-		minheight = window.outerHeight
-	    }
-	}
-	else{
-	    // this is not the phone. we are working inside other div!
-	    bx = cell.parent.getBox()
-	    minheight = bx.height
-	    minwidth = bx.width
-	}
+	// }
 
 	$(cell.el).css({
 	    width:minwidth,
-	    'min-width':minwidth,
+	    // 'min-width':minwidth,
 	    'max-width':minwidth,
 	    height:minheight,
-	    'min-height':minheight,
+	    // 'min-height':minheight,
 	    'max-height':minheight,
 	    overflow:'hidden'
 	})

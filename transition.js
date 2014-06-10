@@ -344,30 +344,14 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var minheight = 2400;
             var minwidth = 2400;
             var tag = cell.parent.el.tagName.toLowerCase();
-            if(tag == 'body') {
-                if(window.innerWidth < minwidth) {
-                    minwidth = window.innerWidth;
-                }
-                if(window.outerWidth < minwidth) {
-                    minwidth = window.outerWidth;
-                }
-                if(window.innerWidth < minheight) {
-                    minwidth = window.innerWidth;
-                }
-                if(window.outerHeight < minheight) {
-                    minheight = window.outerHeight;
-                }
-            } else {
-                bx = cell.parent.getBox();
-                minheight = bx.height;
-                minwidth = bx.width;
-            }
+            var viewport = cell.parent;
+            bx = cell.parent.getBox();
+            minheight = bx.height;
+            minwidth = bx.width;
             $(cell.el).css({
                 width: minwidth,
-                'min-width': minwidth,
                 'max-width': minwidth,
                 height: minheight,
-                'min-height': minheight,
                 'max-height': minheight,
                 overflow: 'hidden'
             });

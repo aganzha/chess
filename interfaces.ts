@@ -40,7 +40,7 @@ export interface Cell{
     afterAppend();
     _renderred:bool;
     createEl():HTMLElement;
-    updateEl(html:string);
+    updateEl(html:string):Cell;
     // этот метод вызывается, когда cell добавлен в parent. 
     // Т.е. для child вызывается afterAppend, а для parent - afterResolve
     // соотв все children на месте. а вот parent еще нет!
