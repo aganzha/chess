@@ -141,6 +141,7 @@ export class BaseCell implements interfaces.Cell{
     updateEl(html:string){
 	this.html = html
 	$(this.el).html(html)
+	return this
     }
     _renderred:bool;
     _safeAfterRender(){

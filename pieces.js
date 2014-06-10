@@ -132,6 +132,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         BaseCell.prototype.updateEl = function (html) {
             this.html = html;
             $(this.el).html(html);
+            return this;
         };
         BaseCell.prototype._safeAfterRender = function () {
             if(this._renderred) {
