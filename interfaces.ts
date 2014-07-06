@@ -166,7 +166,7 @@ export interface Uploader{
 export interface Image{
     // args:  [image_source:string, width:number, height:number, 
     //           fallback_image_source:string, strategy:string]
-    // strategies: 'canvasComplete' 'imageComplete'
+    // strategies: 'completeCanvas' (default) 'completeImage'
     draw(imgSrc:string);
     clear();
     scale(factor:number);
