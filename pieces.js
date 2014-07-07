@@ -21,6 +21,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         return TestEl;
     })();
     exports.TestEl = TestEl;    
+    var registered_elements = [];
     var BaseCell = (function () {
         function BaseCell(record, application) {
             this.record = record;
@@ -117,6 +118,12 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         BaseCell.prototype.fillExtraAttrs = function (el) {
         };
         BaseCell.prototype.createEl = function () {
+            if(this.tag.match('-') && registered_elements.indexOf(this.tag) < 0) {
+                var d = document;
+                d.registerElement(this.tag);
+                registered_elements.push(this.tag);
+                console.log('lala@!', registered_elements);
+            }
             var el = document.createElement(this.tag);
             if(this.exceptTags.indexOf(this.tag) < 0) {
                 el.innerHTML = this.html;

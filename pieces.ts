@@ -15,6 +15,8 @@ export class TestEl {
 	return new TestEl()
     }
 }
+var registered_elements = []
+
 export class BaseCell implements interfaces.Cell{
     el:HTMLElement;
     parent:interfaces.Cell;
@@ -114,7 +116,11 @@ export class BaseCell implements interfaces.Cell{
     html='';
     exceptTags = ['input'];
     createEl():HTMLElement{
-	
+	if(this.tag.match('-') && registered_elements.indexOf(this.tag)<0){
+	    var d = <any>document
+	    d.registerElement(this.tag)
+	    registered_elements.push(this.tag)
+	}
 	var el = document.createElement(this.tag)
 	if(this.exceptTags.indexOf(this.tag)<0){
 	    el.innerHTML = this.html
