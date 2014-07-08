@@ -122,7 +122,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 var d = document;
                 d.registerElement(this.tag);
                 registered_elements.push(this.tag);
-                console.log('lala@!', registered_elements);
             }
             var el = document.createElement(this.tag);
             if(this.exceptTags.indexOf(this.tag) < 0) {

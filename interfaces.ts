@@ -108,7 +108,7 @@ export interface Application{
     currentScreen:Screen;
     screens:ScreenMap;
     viewport:Cell;
-    resolve(selector:ScreenSelector);
+    resolve(selector:ScreenSelector, is_static?:bool);
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
     proceed(screen:string,transition:string);
     // instantiate(record:string):Cell;

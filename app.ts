@@ -12,7 +12,7 @@ export class ChessApp{
     currentScreen:interfaces.Screen;
     globals:{};
     constructor(public viewport:pieces.ViewPort, public board:{},
-		public modules:{}[]){
+		public modules:{}[], public statics?:string[]){
 	// а можно еще все экраны прямо здесь делать (спрятанными) о как!
 	this.globals = {}
 	this.transitQueue = []
@@ -23,11 +23,18 @@ export class ChessApp{
 	// а зачем их сразу все делать а?
 	// а в них можно че-нить хранить. в destroy убивавется element
 	// и childrens, но инстанс скрина остается!
-	for(var recordString in board){
+	for(var recordString in board){	    
 	    var screen = this.instantiate(recordString, pieces.BaseScreen)
 	    screen.board = board[recordString]
 	    this.screens[recordString] =screen
 	    // this.screens[screen.record.cons] =screen
+	}
+	if(statics){
+	    statics.forEach((recordString)=>{
+		this.resolve((screens)=>{
+		    return screens[recordString]
+		}, true)
+	    })
 	}
     }
     getCellClass(record:interfaces.CellRecord){
@@ -41,21 +48,31 @@ export class ChessApp{
 	return klass
     }
     instantiate(recordString:string, baseClass:any){
-	var record = this.getCellRecord(recordString)
+	var record = this.getCellRecord(recordString, baseClass)
 	var klass = this.getCellClass(record)
 	if(klass==null){
 	    klass=baseClass
 	}
 	return new klass(record, this)
     }
-    resolve(selector:interfaces.ScreenSelector){
+    resolve(selector:interfaces.ScreenSelector, is_static?:bool){
 	var screen = selector(this.screens)
 	if(!screen.resolved){
-	    // screen may be allready resolved in case of Union transition
+	    // screen may be allready resolved in case of Union transition or static
 	    // this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
-	    screen.resolved=true;
-	    this.viewport.append(screen)// may be here? TODO! 
+	    screen.resolved=true;	    
+	    this.viewport.append(screen)
+	    if(is_static){
+		// staics are not normally appended!
+		screen.render()
+		$(this.viewport.el).after(screen.el)
+		screen.afterAppend()
+	    }
+	    else{
+		this.viewport.append(screen)
+	    }
+
 	    screen.bubbleDown(function(cell){
 		var base = <pieces.BaseCell>cell
 		base._safeAfterRender()
@@ -176,12 +193,19 @@ export class ChessApp{
 	}
 	return klass
     }
-    getCellRecord(cellString:string):interfaces.CellRecord{
+    getCellRecord(cellString:string, baseClass:any):interfaces.CellRecord{
+
 	var klasses = cellString.split('.')
 	var cons = klasses[0].split('#')[0]
 	cons = this.checkUnderscore(cons)
 	var id='';
 	var classes=  [];
+	if(baseClass == pieces.BaseCell){
+	    classes.push('BaseCell')
+	}
+	else if(baseClass == pieces.BaseScreen){
+	    classes.push('BaseScreen')
+	}
 	for(var c=0,l=klasses.length;c<l;c++){
 	    var splitted = klasses[c].split('#')
 	    var cl = this.checkUnderscore(splitted[0])
@@ -190,6 +214,7 @@ export class ChessApp{
 		id=splitted[1]
 	    }
 	}
+	
 	return {cons:cons,classes:classes,id:id}
     }
     on(event:string, arg:Function){
