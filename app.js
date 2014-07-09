@@ -12,7 +12,6 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             this.board = board;
             this.modules = modules;
             this.statics = statics;
-            var _this = this;
             this.globals = {
             };
             this.transitQueue = [];
@@ -25,13 +24,6 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 var screen = this.instantiate(recordString, pieces.BaseScreen);
                 screen.board = board[recordString];
                 this.screens[recordString] = screen;
-            }
-            if(statics) {
-                statics.forEach(function (recordString) {
-                    _this.resolve(function (screens) {
-                        return screens[recordString];
-                    }, true);
-                });
             }
         }
         ChessApp.prototype.getCellClass = function (record) {
@@ -53,6 +45,14 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             return new klass(record, this);
         };
         ChessApp.prototype.resolve = function (selector, is_static) {
+            var _this = this;
+            if(this.statics && !is_static) {
+                this.statics.forEach(function (recordString) {
+                    _this.resolve(function (screens) {
+                        return screens[recordString];
+                    }, true);
+                });
+            }
             var screen = selector(this.screens);
             if(!screen.resolved) {
                 this.resolveCells(screen.board, screen, false);

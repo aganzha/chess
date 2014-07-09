@@ -28,14 +28,7 @@ export class ChessApp{
 	    screen.board = board[recordString]
 	    this.screens[recordString] =screen
 	    // this.screens[screen.record.cons] =screen
-	}
-	if(statics){
-	    statics.forEach((recordString)=>{
-		this.resolve((screens)=>{
-		    return screens[recordString]
-		}, true)
-	    })
-	}
+	}	
     }
     getCellClass(record:interfaces.CellRecord){
 	var klass = null
@@ -56,6 +49,16 @@ export class ChessApp{
 	return new klass(record, this)
     }
     resolve(selector:interfaces.ScreenSelector, is_static?:bool){
+
+	if(this.statics && !is_static){
+	    this.statics.forEach((recordString)=>{
+		this.resolve((screens)=>{
+		    return screens[recordString]
+		}, true)
+	    })
+	}
+
+
 	var screen = selector(this.screens)
 	if(!screen.resolved){
 	    // screen may be allready resolved in case of Union transition or static
