@@ -134,7 +134,33 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             this.cover('left', true);
         };
         Transition.prototype.coverRight = function () {
-            this.cover('left', false);
+            var me = this;
+            var itemBox = me.fixPosition(me.going);
+            $(me.going.parent.el).css({
+                width: itemBox.width * 3 + 'px'
+            });
+            $(me.going.el).css({
+                width: itemBox.width + 'px'
+            });
+            me.renderNewScreen();
+            $(me.coming.el).css({
+                width: itemBox.width + 'px',
+                position: 'absolute',
+                'z-index': 99
+            });
+            $(me.going.el).before(me.coming.el);
+            $(me.coming.el).css(me.getTransformParams(0 - itemBox.width, 0, 0));
+            $(me.coming.el).css(me.getTransitionParamsFor('-webkit-transform'));
+            setTimeout(function () {
+                var trParams = me.getTransformParams(0, 0, 0);
+                $(me.coming.el).css(trParams);
+                me.cleanUpTransform(function () {
+                    $(me.coming.el).css({
+                        'position': 'inherit',
+                        'z-index': 'inherit'
+                    });
+                });
+            }, 50);
         };
         Transition.prototype.coverUp = function () {
             this.cover('top', true);

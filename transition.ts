@@ -154,7 +154,34 @@ export class Transition implements interfaces.Transition{
 	this.cover('left',true)
     }
     coverRight(){
-	this.cover('left',false)
+	//this.cover('left',false)
+	var me = this;
+	var itemBox = me.fixPosition(me.going)
+	$(me.going.parent.el).css({
+	    width:itemBox.width*3+'px'
+	})
+
+	$(me.going.el).css({
+	    width:itemBox.width+'px',
+	});
+
+	me.renderNewScreen()
+	$(me.coming.el).css({
+	    width:itemBox.width+'px',
+	    position:'absolute',
+	    'z-index':99
+	})
+	$(me.going.el).before(me.coming.el)
+	$(me.coming.el).css(me.getTransformParams(0-itemBox.width,0,0))
+	$(me.coming.el).css(me.getTransitionParamsFor('-webkit-transform'))
+	setTimeout(()=>{
+	    var trParams = me.getTransformParams(0,0,0)
+	    $(me.coming.el).css(trParams)
+	    me.cleanUpTransform(()=>{
+		$(me.coming.el).css({'position':'inherit','z-index':'inherit'})
+	    })
+	}, 50)
+	
     }
     coverUp(){
 	this.cover('top',true)
