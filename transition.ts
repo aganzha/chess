@@ -154,16 +154,15 @@ export class Transition implements interfaces.Transition{
 	this.cover('left',true)
     }
     coverRight(){
-	//this.cover('left',false)
 	var me = this;
 	var itemBox = me.fixPosition(me.going)
 	$(me.going.parent.el).css({
 	    width:itemBox.width*3+'px'
 	})
 
-	$(me.going.el).css({
-	    width:itemBox.width+'px',
-	});
+	// $(me.going.el).css({
+	//     width:itemBox.width+'px',
+	// });
 
 	me.renderNewScreen()
 	$(me.coming.el).css({
@@ -179,6 +178,7 @@ export class Transition implements interfaces.Transition{
 	    $(me.coming.el).css(trParams)
 	    me.cleanUpTransform(()=>{
 		$(me.coming.el).css({'position':'inherit','z-index':'inherit'})
+		me.releasePosition(me.going)
 	    })
 	}, 50)
 	
@@ -240,7 +240,34 @@ export class Transition implements interfaces.Transition{
 	this.reveal('left',true)
     }
     revealRight(){
-	this.reveal('left',false)
+
+	var me = this;
+	$(me.going.el).css({
+	    'position':'absolute',
+	    'z-index':99
+	});
+	me.renderNewScreen()
+	$(me.coming.el).css({
+	    'position':'absolute',
+	    'z-index':0
+	})
+	$(me.going.el).css(me.getTransformParams(0,0,0))
+	$(me.going.el).css(me.getTransitionParamsFor('-webkit-transform'))
+	var bx = me.going.getBox()
+	setTimeout(()=>{
+	    var trParams = me.getTransformParams(0-bx.width,0,0)
+	    $(me.going.el).css(trParams)
+	    me.cleanUpTransform(()=>{
+		$(me.coming.el).css({
+		    'position':'inherit',
+		    'z-index':'inherit'
+		})
+		$(me.going.el).css({
+		    'position':'inherit',
+		    'z-index':'inherit'
+		})
+	    })
+	}, 50)	    
     }
     revealUp(){
 	this.reveal('top',false)
@@ -432,55 +459,31 @@ export class Transition implements interfaces.Transition{
 
     fixPosition(cell:interfaces.Cell){
 
-	var minheight= 2400;
-	var minwidth = 2400;
-	var tag = cell.parent.el.tagName.toLowerCase()
-	var viewport = cell.parent
 	
-	// if(tag=='body'){
-	//     // the phone!
-	//     if(window.innerWidth<minwidth){
-	// 	minwidth = window.innerWidth
-	//     }
-	//     if(window.outerWidth<minwidth){
-	// 	minwidth = window.outerWidth
-	//     }
-
-	//     if(window.innerWidth<minheight){
-	// 	minwidth = window.innerWidth
-	//     }
-	//     if(window.outerHeight<minheight){
-	// 	minheight = window.outerHeight
-	//     }
-	// }
-	// else{
-	// this is not the phone. we are working inside other div!
-	bx = cell.parent.getBox()
-	minheight = bx.height
-	minwidth = bx.width
-
-	// }
+	var bx = cell.parent.getBox()
+	var minheight = bx.height
+	var minwidth = bx.width
 
 	$(cell.el).css({
-	    width:minwidth,
+	    'width':minwidth,
 	    // 'min-width':minwidth,
 	    'max-width':minwidth,
-	    height:minheight,
+	    'height':minheight,
 	    // 'min-height':minheight,
 	    'max-height':minheight,
-	    overflow:'hidden'
+	    'overflow':'hidden'
 	})
 	var bx = cell.getBox()
-	return bx//box TODO! ??? why cell box?
+	return bx
     }
 
     releasePosition(cell:interfaces.Cell){
 	$(cell.el).css({
 	    'width':'',
-	    'min-width':'',
+	    // 'min-width':'',
 	    'max-width':'',
 	    'height':'',
-	    'min-height':'',
+	    // 'min-height':'',
 	    'max-height':'',
 	    overflow:''
 	})

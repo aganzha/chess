@@ -139,9 +139,6 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             $(me.going.parent.el).css({
                 width: itemBox.width * 3 + 'px'
             });
-            $(me.going.el).css({
-                width: itemBox.width + 'px'
-            });
             me.renderNewScreen();
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
@@ -159,6 +156,7 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                         'position': 'inherit',
                         'z-index': 'inherit'
                     });
+                    me.releasePosition(me.going);
                 });
             }, 50);
         };
@@ -208,7 +206,33 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             this.reveal('left', true);
         };
         Transition.prototype.revealRight = function () {
-            this.reveal('left', false);
+            var me = this;
+            $(me.going.el).css({
+                'position': 'absolute',
+                'z-index': 99
+            });
+            me.renderNewScreen();
+            $(me.coming.el).css({
+                'position': 'absolute',
+                'z-index': 0
+            });
+            $(me.going.el).css(me.getTransformParams(0, 0, 0));
+            $(me.going.el).css(me.getTransitionParamsFor('-webkit-transform'));
+            var bx = me.going.getBox();
+            setTimeout(function () {
+                var trParams = me.getTransformParams(0 - bx.width, 0, 0);
+                $(me.going.el).css(trParams);
+                me.cleanUpTransform(function () {
+                    $(me.coming.el).css({
+                        'position': 'inherit',
+                        'z-index': 'inherit'
+                    });
+                    $(me.going.el).css({
+                        'position': 'inherit',
+                        'z-index': 'inherit'
+                    });
+                });
+            }, 50);
         };
         Transition.prototype.revealUp = function () {
             this.reveal('top', false);
@@ -367,19 +391,15 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             }
         };
         Transition.prototype.fixPosition = function (cell) {
-            var minheight = 2400;
-            var minwidth = 2400;
-            var tag = cell.parent.el.tagName.toLowerCase();
-            var viewport = cell.parent;
-            bx = cell.parent.getBox();
-            minheight = bx.height;
-            minwidth = bx.width;
+            var bx = cell.parent.getBox();
+            var minheight = bx.height;
+            var minwidth = bx.width;
             $(cell.el).css({
-                width: minwidth,
+                'width': minwidth,
                 'max-width': minwidth,
-                height: minheight,
+                'height': minheight,
                 'max-height': minheight,
-                overflow: 'hidden'
+                'overflow': 'hidden'
             });
             var bx = cell.getBox();
             return bx;
@@ -387,10 +407,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
         Transition.prototype.releasePosition = function (cell) {
             $(cell.el).css({
                 'width': '',
-                'min-width': '',
                 'max-width': '',
                 'height': '',
-                'min-height': '',
                 'max-height': '',
                 overflow: ''
             });
