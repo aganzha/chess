@@ -153,8 +153,8 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
                 $(me.coming.el).css(trParams);
                 me.cleanUpTransform(function () {
                     $(me.coming.el).css({
-                        'position': 'inherit',
-                        'z-index': 'inherit'
+                        'position': '',
+                        'z-index': ''
                     });
                     me.releasePosition(me.going);
                 });

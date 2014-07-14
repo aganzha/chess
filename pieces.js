@@ -120,7 +120,9 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         BaseCell.prototype.createEl = function () {
             if(this.tag.match('-') && registered_elements.indexOf(this.tag) < 0) {
                 var d = document;
-                d.registerElement(this.tag);
+                if(d['registerElement']) {
+                    d.registerElement(this.tag);
+                }
                 registered_elements.push(this.tag);
             }
             var el = document.createElement(this.tag);

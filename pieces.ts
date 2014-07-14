@@ -118,7 +118,9 @@ export class BaseCell implements interfaces.Cell{
     createEl():HTMLElement{
 	if(this.tag.match('-') && registered_elements.indexOf(this.tag)<0){
 	    var d = <any>document
-	    d.registerElement(this.tag)
+	    if(d['registerElement']){
+		d.registerElement(this.tag)
+	    }
 	    registered_elements.push(this.tag)
 	}
 	var el = document.createElement(this.tag)

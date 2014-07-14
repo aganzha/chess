@@ -177,7 +177,7 @@ export class Transition implements interfaces.Transition{
 	    var trParams = me.getTransformParams(0,0,0)
 	    $(me.coming.el).css(trParams)
 	    me.cleanUpTransform(()=>{
-		$(me.coming.el).css({'position':'inherit','z-index':'inherit'})
+		$(me.coming.el).css({'position':'','z-index':''})
 		me.releasePosition(me.going)
 	    })
 	}, 50)
