@@ -71,6 +71,9 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             }
             this.currentScreen = screen;
         };
+        ChessApp.prototype.getScreen = function (scr) {
+            return this.screens[scr];
+        };
         ChessApp.prototype.proceed = function (screen, transition) {
             this.transit(function (screens) {
                 return screens[screen];
@@ -113,6 +116,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                                     oldScreen.afterSelfReplace(newScreen);
                                     me.currentScreen.fillElAttrs();
                                     newScreen.afterSelfApear(oldScreen);
+                                    me.fire('transitCompleted', newScreen, oldScreen);
                                     me.transitLock = false;
                                     me._doTransit();
                                 },

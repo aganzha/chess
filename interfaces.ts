@@ -117,7 +117,7 @@ export interface Application{
     on(event:string,callback:Function);
     off(event:string,callback?:Function);
     fire(event:string, ...args: any[]);
-    
+    getScreen(scr:string):Screen;
 }
 
 export interface Scrollable extends Cell{

@@ -23,12 +23,12 @@ export class ChessApp{
 	// а зачем их сразу все делать а?
 	// а в них можно че-нить хранить. в destroy убивавется element
 	// и childrens, но инстанс скрина остается!
-	for(var recordString in board){	    
+	for(var recordString in board){
 	    var screen = this.instantiate(recordString, pieces.BaseScreen)
 	    screen.board = board[recordString]
 	    this.screens[recordString] =screen
 	    // this.screens[screen.record.cons] =screen
-	}	
+	}
     }
     getCellClass(record:interfaces.CellRecord){
 	var klass = null
@@ -64,7 +64,7 @@ export class ChessApp{
 	    // screen may be allready resolved in case of Union transition or static
 	    // this.viewport.append(screen)
 	    this.resolveCells(screen.board, screen, false)
-	    screen.resolved=true;	    
+	    screen.resolved=true;
 
 	    if(is_static){
 		// staics are not normally appended!
@@ -86,6 +86,10 @@ export class ChessApp{
     }
     transitQueue:any[];
     transitLock:bool;
+
+    getScreen(scr:string){
+	return this.screens[scr]
+    }
 
     proceed(screen:string,transition:string){
 	this.transit((screens)=>{
@@ -129,11 +133,10 @@ export class ChessApp{
 					{
 					    success:function(){
 						oldScreen.afterSelfReplace(newScreen)
-						// setTimeout(()=>{
-						//     console.log('aaaaaaaaaaaaa',me.currentScreen)
-						// }, 500)
 						me.currentScreen.fillElAttrs()
 						newScreen.afterSelfApear(oldScreen)
+						// thats for statics, for emaple
+						me.fire('transitCompleted', newScreen, oldScreen)
 						me.transitLock = false
 						me._doTransit()
 					    },
@@ -217,7 +220,7 @@ export class ChessApp{
 		id=splitted[1]
 	    }
 	}
-	
+
 	return {cons:cons,classes:classes,id:id}
     }
     on(event:string, arg:Function){
