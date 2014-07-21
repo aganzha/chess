@@ -165,7 +165,7 @@ export class ChessApp{
 	    return
 	}
 	if(_type == "[object Array]"){
-	    parent.args = <any>board
+	    parent.args = (<any>board).map((arg)=>{return arg})
 	    return
 	}
 	for(var recordString in board){

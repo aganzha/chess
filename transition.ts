@@ -181,7 +181,7 @@ export class Transition implements interfaces.Transition{
 		me.releasePosition(me.going)
 	    })
 	}, 50)
-	
+
     }
     coverUp(){
 	this.cover('top',true)
@@ -267,7 +267,7 @@ export class Transition implements interfaces.Transition{
 		    'z-index':'inherit'
 		})
 	    })
-	}, 50)	    
+	}, 50)
     }
     revealUp(){
 	this.reveal('top',false)
@@ -395,20 +395,15 @@ export class Transition implements interfaces.Transition{
 	var me = this
 	setTimeout(()=>{
 	    var bx = me.coming.getBox()
-	    var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(),
-						       me.removeTransformParams()),
-					 {
-					     width:null,
-					     height:null
-					 })
-	    $(me.coming.parent.el).css(trParams)
-	    $(me.coming.parent.el).css({
+	    var trParams = me.joinParams(me.removeTransitionParams(),
+						       me.removeTransformParams())
+	    var clParams = {
 		'width':"",
 		'height':"",
-		'min-height':"",//it was null! for zepto
+		'min-height':"",
 		'min-width':""
-	    })
-	    //me.removeIphoneFlash(me.coming.el)
+	    }
+	    $(me.coming.parent.el).css(me.joinParams(trParams,clParams))
 	    hook()
 	    me.success()
 	},500)
@@ -459,7 +454,7 @@ export class Transition implements interfaces.Transition{
 
     fixPosition(cell:interfaces.Cell){
 
-	
+
 	var bx = cell.parent.getBox()
 	var minheight = bx.height
 	var minwidth = bx.width

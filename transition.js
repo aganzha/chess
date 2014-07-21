@@ -340,17 +340,14 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             var me = this;
             setTimeout(function () {
                 var bx = me.coming.getBox();
-                var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
-                    width: null,
-                    height: null
-                });
-                $(me.coming.parent.el).css(trParams);
-                $(me.coming.parent.el).css({
+                var trParams = me.joinParams(me.removeTransitionParams(), me.removeTransformParams());
+                var clParams = {
                     'width': "",
                     'height': "",
                     'min-height': "",
                     'min-width': ""
-                });
+                };
+                $(me.coming.parent.el).css(me.joinParams(trParams, clParams));
                 hook();
                 me.success();
             }, 500);
