@@ -443,44 +443,45 @@ export class Image extends BaseCell implements interfaces.Image{
 	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
 	return {left:dX, top:dY, width:dWidth, height:dHeight}
     }
-    requestAnimFrame(){
-	var me = this
-	var w = <any>window
-	return w.requestAnimationFrame   ||
-	    w.webkitRequestAnimationFrame ||
-	    w.mozRequestAnimationFrame    ||
-	    w.oRequestAnimationFrame      ||
-	    w.msRequestAnimationFrame     ||
-	    function(/* function */ callback, /* DOMElement */ element){
-		w.setTimeout(callback, 1000/60);
-	    };
-	
-    }
-    alpha=0;
-    fadeLoop(canvas,src,_draw){
+    // requestAnimFrame(){
+    // 	var me = this
+    // 	var w = <any>window
+    // 	return w.requestAnimationFrame   ||
+    // 	    w.webkitRequestAnimationFrame ||
+    // 	    w.mozRequestAnimationFrame    ||
+    // 	    w.oRequestAnimationFrame      ||
+    // 	    w.msRequestAnimationFrame     ||
+    // 	    function(/* function */ callback, /* DOMElement */ element){
+    // 		w.setTimeout(callback, 1000/60);
+    // 	    };
 
-	this.alpha +=2
-	canvas.width = canvas.width
-	var ne = this.alpha*this.alpha/100
-	if(ne>100){
-	    ne = 100
-	}
-	canvas.getContext('2d').globalAlpha = ne
-	_draw()
-	if(src != this.args[0]){
-	    return
-	}
-	var me = this
-	var raf = this.requestAnimFrame()
-	if(ne<100){
-	    raf(()=>{
-		this.fadeLoop(canvas,src, _draw)
-	    })
-	}
-	else{
-	    this.onload()
-	}
-    }
+    // }
+    // alpha=0;
+    // fadeLoop(canvas,src,_draw){
+
+    // 	this.alpha +=2
+    // 	canvas.width = canvas.width
+    // 	var ne = this.alpha*this.alpha/100
+    // 	if(ne>100){
+    // 	    ne = 100
+    // 	}
+    // 	canvas.getContext('2d').globalAlpha = ne
+    // 	_draw()
+    // 	if(src != this.args[0]){
+    // 	    return
+    // 	}
+    // 	var me = this
+    // 	var raf = this.requestAnimFrame()
+    // 	if(ne<100){
+    // 	    raf(()=>{
+    // 		this.fadeLoop(canvas,src, _draw)
+    // 	    })
+    // 	}
+    // 	else{
+    // 	    this.onload()
+    // 	}
+    // }
+    drawed:string;
     drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, effect?:string){
 
 	var me = this
@@ -492,8 +493,10 @@ export class Image extends BaseCell implements interfaces.Image{
 	if(!this.args[0]){
 	    errBack()
 	}
-	canvas.width = this.args[1]
-	canvas.height = this.args[2]
+	if(!this.drawed){
+	    canvas.width = this.args[1]
+	    canvas.height = this.args[2]
+	}
 	$(img).on('load',function(){
 	    var ratio = img.width/img.height
 
@@ -523,35 +526,26 @@ export class Image extends BaseCell implements interfaces.Image{
 	     			  destBox.left,destBox.top,destBox.width,destBox.height)
 		me.imageBox = destBox
 	    }
+
 	    switch(effect){
 	    case 'fade':
-		// var alpha=0
-		// var loop = ()=>{
-		//     alpha +=2
-		//     canvas.width = canvas.width
-		//     var ne = alpha*alpha/100
-		//     if(ne>100){
-		// 	ne = 100
-		//     }
-		//     context.globalAlpha = ne
-		//     _draw()
-		//     if(ne<100){
-		// 	me.requestAnimFrame()(loop)
-		//     }
-		//     else{
-		// 	me.onload()
-		//     }
-		// }
-		// loop()
-		me.alpha  =0
-		me.fadeLoop(canvas,me.args[0],_draw)
+		$(canvas).css(utils.getTransitionParamsFor('opacity'))
+		setTimeout(()=>{
+		    $(canvas).css('opacity', '0.2')
+		    setTimeout(()=>{
+			_draw()
+			$(canvas).css('opacity', '1.0')
+		    }, 300)
+		}, 50)
+		// me.alpha  =0
+		// me.fadeLoop(canvas,me.args[0],_draw)
 		break
 	    default:
 		_draw()
 		me.onload()
 		break
 	    }
-
+	    me.drawed = me.args[0]
 	}).on('error',function(e){
 	    if(img.src != me.args[3]){
 		errBack()

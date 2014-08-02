@@ -295,7 +295,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         function Image() {
             _super.apply(this, arguments);
 
-            this.alpha = 0;
         }
         Image.prototype.onload = function () {
         };
@@ -402,36 +401,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 height: dHeight
             };
         };
-        Image.prototype.requestAnimFrame = function () {
-            var me = this;
-            var w = window;
-            return w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.mozRequestAnimationFrame || w.oRequestAnimationFrame || w.msRequestAnimationFrame || function (callback, element) {
-                w.setTimeout(callback, 1000 / 60);
-            };
-        };
-        Image.prototype.fadeLoop = function (canvas, src, _draw) {
-            var _this = this;
-            this.alpha += 2;
-            canvas.width = canvas.width;
-            var ne = this.alpha * this.alpha / 100;
-            if(ne > 100) {
-                ne = 100;
-            }
-            canvas.getContext('2d').globalAlpha = ne;
-            _draw();
-            if(src != this.args[0]) {
-                return;
-            }
-            var me = this;
-            var raf = this.requestAnimFrame();
-            if(ne < 100) {
-                raf(function () {
-                    _this.fadeLoop(canvas, src, _draw);
-                });
-            } else {
-                this.onload();
-            }
-        };
         Image.prototype.drawImageInCanvas = function (canvas, img, effect) {
             var me = this;
             var errBack = function () {
@@ -442,8 +411,10 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             if(!this.args[0]) {
                 errBack();
             }
-            canvas.width = this.args[1];
-            canvas.height = this.args[2];
+            if(!this.drawed) {
+                canvas.width = this.args[1];
+                canvas.height = this.args[2];
+            }
             $(img).on('load', function () {
                 var ratio = img.width / img.height;
                 var context = canvas.getContext('2d');
@@ -474,14 +445,21 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 };
                 switch(effect) {
                     case 'fade':
-                        me.alpha = 0;
-                        me.fadeLoop(canvas, me.args[0], _draw);
+                        $(canvas).css(utils.getTransitionParamsFor('opacity'));
+                        setTimeout(function () {
+                            $(canvas).css('opacity', '0.2');
+                            setTimeout(function () {
+                                _draw();
+                                $(canvas).css('opacity', '1.0');
+                            }, 300);
+                        }, 50);
                         break;
                     default:
                         _draw();
                         me.onload();
                         break;
                 }
+                me.drawed = me.args[0];
             }).on('error', function (e) {
                 if(img.src != me.args[3]) {
                     errBack();
