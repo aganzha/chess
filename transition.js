@@ -1,5 +1,7 @@
-define(["require", "exports", "./interfaces"], function(require, exports, __interfaces__) {
+define(["require", "exports", "./interfaces", "./utils"], function(require, exports, __interfaces__, __utils__) {
     var interfaces = __interfaces__;
+
+    var utils = __utils__;
 
     var Transition = (function () {
         function Transition(app, selector, callbacks) {
@@ -241,22 +243,10 @@ define(["require", "exports", "./interfaces"], function(require, exports, __inte
             this.reveal('top', true);
         };
         Transition.prototype.getTransformParams = function (x, y, z) {
-            return {
-                '-webkit-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-moz-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-ms-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-o-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                'transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)'
-            };
+            return utils.getTransformParams(x, y, z);
         };
         Transition.prototype.getTransitionParamsFor = function (property) {
-            var tr_function = ' 0.25s ease-in';
-            return {
-                '-webkit-transition': property + tr_function,
-                '-moz-transition': property + tr_function,
-                '-o-transition': property + tr_function,
-                'transition': property + tr_function
-            };
+            return utils.getTransitionParamsFor(property);
         };
         Transition.prototype.joinParams = function (p1, p2) {
             var res = {

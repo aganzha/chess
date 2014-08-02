@@ -104,3 +104,36 @@ export var getMinSize = ()=>{
 
     return minsize
 }
+
+
+export function getTransformParams(x,y,z){
+    return {
+	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
+	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
+	}
+}
+
+export function getTransitionParamsFor(property, delay?:string, fu?:string){
+    var tr_function = ' '
+    if(delay){
+	tr_function+=delay+' '
+    }
+    else{
+	tr_function+='0.25s '
+    }
+    if(fu){
+	 tr_function+=fu
+    }
+    else{
+	 tr_function+='ease-in'
+    }
+    return {
+	'-webkit-transition': property+tr_function,
+	'-moz-transition': property+tr_function,
+	'-o-transition': property+tr_function,
+	'transition': property+tr_function
+    }
+}

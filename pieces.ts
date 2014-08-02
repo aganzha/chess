@@ -66,9 +66,12 @@ export class BaseCell implements interfaces.Cell{
 	    	clone.args.push(delayedCell.args[j])
 	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
-	    // delayedCell.delayedChildren.forEach((dc)=>{clone.delayedChildren.push(dc)})
-	    this.append(clone)
+
 	    filler(clone)
+	    this.append(clone)
+
+
+	    // filler(clone)
 	    // вот тут важно, что на следующе уровни selector не передается
 	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
@@ -239,7 +242,7 @@ export class BaseCell implements interfaces.Cell{
 		collected.push(cell)
 		if(once){
 		    break
-		}		
+		}
 	    }
 	    cell.searchDown(collected, cons, className, id, once)
 	}
@@ -299,11 +302,11 @@ export class ViewPort extends BaseCell{
 export class Image extends BaseCell implements interfaces.Image{
     onload(){
     }
-    draw(src:string,error?:bool){
+    draw(src:string, effect?:string){
 	this.args[0] = src
 	if(this.el.tagName.toLowerCase()=='canvas'){
 	    var i = document.createElement('img')
-	    this.drawImageInCanvas(<HTMLCanvasElement>this.el, <HTMLImageElement>i, error)
+	    this.drawImageInCanvas(<HTMLCanvasElement>this.el, <HTMLImageElement>i, effect)
 	}
 	else{
 	    var me = this
@@ -440,13 +443,50 @@ export class Image extends BaseCell implements interfaces.Image{
 	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
 	return {left:dX, top:dY, width:dWidth, height:dHeight}
     }
+    requestAnimFrame(){
+	var me = this
+	var w = <any>window
+	return w.requestAnimationFrame   ||
+	    w.webkitRequestAnimationFrame ||
+	    w.mozRequestAnimationFrame    ||
+	    w.oRequestAnimationFrame      ||
+	    w.msRequestAnimationFrame     ||
+	    function(/* function */ callback, /* DOMElement */ element){
+		w.setTimeout(callback, 1000/60);
+	    };
+	
+    }
+    alpha=0;
+    fadeLoop(canvas,src,_draw){
 
-    drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, error?:bool){
+	this.alpha +=2
+	canvas.width = canvas.width
+	var ne = this.alpha*this.alpha/100
+	if(ne>100){
+	    ne = 100
+	}
+	canvas.getContext('2d').globalAlpha = ne
+	_draw()
+	if(src != this.args[0]){
+	    return
+	}
+	var me = this
+	var raf = this.requestAnimFrame()
+	if(ne<100){
+	    raf(()=>{
+		this.fadeLoop(canvas,src, _draw)
+	    })
+	}
+	else{
+	    this.onload()
+	}
+    }
+    drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, effect?:string){
 
 	var me = this
 	var errBack = ()=>{
-	    if(me.args[3] && !error){
-		me.draw(me.args[3], true)
+	    if(me.args[3]){
+		me.draw(me.args[3])
 	    }
 	}
 	if(!this.args[0]){
@@ -477,12 +517,45 @@ export class Image extends BaseCell implements interfaces.Image{
 	    	sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
 	    						     canvas.width, canvas.height)
 	    }
-	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
-	     		      destBox.left,destBox.top,destBox.width,destBox.height)
-	    me.imageBox = destBox
-	    me.onload()
+	    var _draw = ()=>{
+		context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,
+				  sourceBox.height,
+	     			  destBox.left,destBox.top,destBox.width,destBox.height)
+		me.imageBox = destBox
+	    }
+	    switch(effect){
+	    case 'fade':
+		// var alpha=0
+		// var loop = ()=>{
+		//     alpha +=2
+		//     canvas.width = canvas.width
+		//     var ne = alpha*alpha/100
+		//     if(ne>100){
+		// 	ne = 100
+		//     }
+		//     context.globalAlpha = ne
+		//     _draw()
+		//     if(ne<100){
+		// 	me.requestAnimFrame()(loop)
+		//     }
+		//     else{
+		// 	me.onload()
+		//     }
+		// }
+		// loop()
+		me.alpha  =0
+		me.fadeLoop(canvas,me.args[0],_draw)
+		break
+	    default:
+		_draw()
+		me.onload()
+		break
+	    }
+
 	}).on('error',function(e){
-	    errBack()
+	    if(img.src != me.args[3]){
+		errBack()
+	    }
 	})
 	img.src = this.args[0]
     }

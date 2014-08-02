@@ -233,6 +233,7 @@ export class ChessApp{
 	else{
 	    $(this.viewport.el).off(event)
 	}
+	return this
     }
     fire(event:string, ...args: any[]){
 	$(this.viewport.el).trigger(event,args)

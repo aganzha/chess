@@ -1,4 +1,5 @@
 import interfaces = module("./interfaces")
+import utils =  module("./utils")
 declare var $;
 
 
@@ -280,31 +281,11 @@ export class Transition implements interfaces.Transition{
 
 
     getTransformParams(x,y,z){
-	return {
-	    '-webkit-transform':'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-moz-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-ms-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    '-o-transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)',
-	    'transform': 'translate3d('+x+'px, '+y+'px, '+z+'px)'
-	}
+	return utils.getTransformParams(x,y,z)	
     }
-    // getTransitionParams(){
-    //  return      {
-    //      '-webkit-transition': '-webkit-transform 0.3s ease-in',
-    //      '-moz-transition': '-webkit-transform 0.3s ease-in',
-    //      '-o-transition': '-webkit-transform 0.3s ease-in',
-    //      'transition': '-webkit-transform 0.3s ease-in'
-    //  }
-    // }
 
     getTransitionParamsFor(property){
-	var tr_function = ' 0.25s ease-in';
-	return      {
-	    '-webkit-transition': property+tr_function,
-	    '-moz-transition': property+tr_function,
-	    '-o-transition': property+tr_function,
-	    'transition': property+tr_function
-	}
+	return utils.getTransitionParamsFor(property)
     }
 
 

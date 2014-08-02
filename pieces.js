@@ -74,8 +74,8 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
-                this.append(clone);
                 filler(clone);
+                this.append(clone);
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
@@ -295,14 +295,15 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         function Image() {
             _super.apply(this, arguments);
 
+            this.alpha = 0;
         }
         Image.prototype.onload = function () {
         };
-        Image.prototype.draw = function (src, error) {
+        Image.prototype.draw = function (src, effect) {
             this.args[0] = src;
             if(this.el.tagName.toLowerCase() == 'canvas') {
                 var i = document.createElement('img');
-                this.drawImageInCanvas(this.el, i, error);
+                this.drawImageInCanvas(this.el, i, effect);
             } else {
                 var me = this;
                 var img = this.el;
@@ -401,11 +402,41 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 height: dHeight
             };
         };
-        Image.prototype.drawImageInCanvas = function (canvas, img, error) {
+        Image.prototype.requestAnimFrame = function () {
+            var me = this;
+            var w = window;
+            return w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.mozRequestAnimationFrame || w.oRequestAnimationFrame || w.msRequestAnimationFrame || function (callback, element) {
+                w.setTimeout(callback, 1000 / 60);
+            };
+        };
+        Image.prototype.fadeLoop = function (canvas, src, _draw) {
+            var _this = this;
+            this.alpha += 2;
+            canvas.width = canvas.width;
+            var ne = this.alpha * this.alpha / 100;
+            if(ne > 100) {
+                ne = 100;
+            }
+            canvas.getContext('2d').globalAlpha = ne;
+            _draw();
+            if(src != this.args[0]) {
+                return;
+            }
+            var me = this;
+            var raf = this.requestAnimFrame();
+            if(ne < 100) {
+                raf(function () {
+                    _this.fadeLoop(canvas, src, _draw);
+                });
+            } else {
+                this.onload();
+            }
+        };
+        Image.prototype.drawImageInCanvas = function (canvas, img, effect) {
             var me = this;
             var errBack = function () {
-                if(me.args[3] && !error) {
-                    me.draw(me.args[3], true);
+                if(me.args[3]) {
+                    me.draw(me.args[3]);
                 }
             };
             if(!this.args[0]) {
@@ -437,11 +468,24 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 } else {
                     sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                 }
-                context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
-                me.imageBox = destBox;
-                me.onload();
+                var _draw = function () {
+                    context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
+                    me.imageBox = destBox;
+                };
+                switch(effect) {
+                    case 'fade':
+                        me.alpha = 0;
+                        me.fadeLoop(canvas, me.args[0], _draw);
+                        break;
+                    default:
+                        _draw();
+                        me.onload();
+                        break;
+                }
             }).on('error', function (e) {
-                errBack();
+                if(img.src != me.args[3]) {
+                    errBack();
+                }
             });
             img.src = this.args[0];
         };

@@ -205,6 +205,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             } else {
                 $(this.viewport.el).off(event);
             }
+            return this;
         };
         ChessApp.prototype.fire = function (event) {
             var args = [];
