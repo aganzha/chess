@@ -109,6 +109,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
                     newScreen._renderred = false;
+                    me.fire('transitCommenced', newScreen, oldScreen);
                     newScreen.beforeSelfApear(oldScreen, {
                         success: function () {
                             var tr = new transition.Transition(me, selector, {

@@ -123,4 +123,13 @@ define(["require", "exports"], function(require, exports) {
         };
     }
     exports.getTransitionParamsFor = getTransitionParamsFor;
+    function removeTransitionParams() {
+        return {
+            '-webkit-transition': "",
+            '-moz-transition': "",
+            '-o-transition': "",
+            'transition': ""
+        };
+    }
+    exports.removeTransitionParams = removeTransitionParams;
 })

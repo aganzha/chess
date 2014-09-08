@@ -44,7 +44,8 @@ export class BaseCell implements interfaces.Cell{
     log(...args: any[]){
 	console.log(arguments)
     }
-    forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector){
+    forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector,
+		preFiller?:interfaces.DelayedCellFiller){
 	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек
 	// (см каменты в app.ts->resolveCells
 	if(!selector){
@@ -67,16 +68,18 @@ export class BaseCell implements interfaces.Cell{
 	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
 
-	    filler(clone)
+	    if(preFiller){
+		preFiller(clone)
+	    }
 	    this.append(clone)
-
+	    filler(clone)
 
 	    // filler(clone)
 	    // вот тут важно, что на следующе уровни selector не передается
 	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
 
-	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
+	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed}, preFiller)
 	    clone._safeAfterRender()
 	}
 	var newDelayedCells = []
@@ -87,6 +90,14 @@ export class BaseCell implements interfaces.Cell{
 	    }
 	}
 	this.delayedChildren = newDelayedCells
+    }
+    on(event:string, hook:(Event)=>any){
+	$(this.el).on(event, (e)=>{
+	    hook(e)
+	})
+    }
+    trigger(event:string, params?:any){
+	$(this.el).trigger(event, params)
     }
     getBox(){
 	var answer = <interfaces.Box>$(this.el).offset()

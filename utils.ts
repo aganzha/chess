@@ -137,3 +137,12 @@ export function getTransitionParamsFor(property, delay?:string, fu?:string){
 	'transition': property+tr_function
     }
 }
+
+export function removeTransitionParams(){
+    return {
+	'-webkit-transition': "",
+	'-moz-transition': "",
+	'-o-transition': "",
+	'transition': "" //was null for zepto
+    }
+}

@@ -126,6 +126,7 @@ export class ChessApp{
 		// var base = <pieces.BaseCell>newScreen
 		// base._renderred = false
 		newScreen._renderred = false
+		me.fire('transitCommenced', newScreen, oldScreen)
 		newScreen.beforeSelfApear(oldScreen,{
 		    success:function(){
 			var tr = new transition
@@ -135,7 +136,6 @@ export class ChessApp{
 						oldScreen.afterSelfReplace(newScreen)
 						me.currentScreen.fillElAttrs()
 						newScreen.afterSelfApear(oldScreen)
-						// thats for statics, for emaple
 						me.fire('transitCompleted', newScreen, oldScreen)
 						me.transitLock = false
 						me._doTransit()

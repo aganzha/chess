@@ -340,7 +340,9 @@ export class Transition implements interfaces.Transition{
 	});
 	var trParams = me.joinParams(me.getTransformParams(0-itemBox.width,0,0),
 				     me.getTransitionParamsFor('-webkit-transform'))
+
 	$(me.going.parent.el).css(trParams)
+
 	me.cleanUpTransform(()=>{})
     }
     slideRight(){
@@ -363,11 +365,12 @@ export class Transition implements interfaces.Transition{
 	    float:'left'
 	})
 
-	$(me.going.el).before($(me.coming.el));
+	$(me.going.el).before($(me.coming.el))
 	setTimeout(()=>{
 	    $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'))
 	    trParams = me.getTransformParams(0,0,0)
 	    $(me.going.parent.el).css(trParams)
+
 	    me.cleanUpTransform(()=>{})
 	},100)
     }

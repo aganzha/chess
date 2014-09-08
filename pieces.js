@@ -52,7 +52,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             }
             console.log(arguments);
         };
-        BaseCell.prototype.forceDelayed = function (filler, selector) {
+        BaseCell.prototype.forceDelayed = function (filler, selector, preFiller) {
             if(!selector) {
                 selector = function (cell) {
                     return true;
@@ -74,11 +74,14 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
-                filler(clone);
+                if(preFiller) {
+                    preFiller(clone);
+                }
                 this.append(clone);
+                filler(clone);
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
-                });
+                }, preFiller);
                 clone._safeAfterRender();
             }
             var newDelayedCells = [];
@@ -89,6 +92,14 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                 }
             }
             this.delayedChildren = newDelayedCells;
+        };
+        BaseCell.prototype.on = function (event, hook) {
+            $(this.el).on(event, function (e) {
+                hook(e);
+            });
+        };
+        BaseCell.prototype.trigger = function (event, params) {
+            $(this.el).trigger(event, params);
         };
         BaseCell.prototype.getBox = function () {
             var answer = $(this.el).offset();
