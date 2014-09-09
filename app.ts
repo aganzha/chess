@@ -182,7 +182,7 @@ export class ChessApp{
 	    var di = delayed || cell.delayed
 	    // append как видно происходит снизу вверх.
 	    // самые вложенные ячейки апендятся друг в друга и вся эта куча
-	    // добавляется в дом, толуьо после последнего аппенда (в сам скрин)
+	    // добавляется в дом, только после последнего аппенда (в сам скрин)
 	    this.resolveCells(board[recordString], cell, di)
 	    if(di){
 		parent.appendDelayed(cell)

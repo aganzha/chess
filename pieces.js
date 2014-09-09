@@ -52,7 +52,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             }
             console.log(arguments);
         };
-        BaseCell.prototype.forceDelayed = function (filler, selector, preFiller) {
+        BaseCell.prototype.forceDelayed = function (filler, selector) {
             if(!selector) {
                 selector = function (cell) {
                     return true;
@@ -74,15 +74,11 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
-                if(preFiller) {
-                    preFiller(clone);
-                }
-                this.append(clone);
-                filler(clone);
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
-                }, preFiller);
-                clone._safeAfterRender();
+                });
+                filler(clone);
+                this.append(clone);
             }
             var newDelayedCells = [];
             for(var i = 0, l = this.delayedChildren.length; i < l; i++) {
