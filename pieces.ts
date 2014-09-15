@@ -208,6 +208,7 @@ export class BaseCell implements interfaces.Cell{
 	$(this.el).remove()
 	this.el = null
 	this.children = []
+	this.delayedChildren = []
 	var newParentsChildren = []
 	for(var i=0;i<this.parent.children.length;i++){
 	    var cel = this.parent.children[i]
