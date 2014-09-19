@@ -121,6 +121,7 @@ export class ChessApp{
 	    newScreen = new klass(JSON.parse(JSON.stringify(newScreen.record)), this)
 	    newScreen.args = oldScreen.args.map((arg)=>{return arg})
 	    newScreen.board = oldScreen.board
+	    this.screens[newScreen.record.cons] =newScreen
 	}
 	var receiver = first.receiver
 	var selector = ()=>{return first.screen}

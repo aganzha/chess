@@ -108,6 +108,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                     return arg;
                 });
                 newScreen.board = oldScreen.board;
+                this.screens[newScreen.record.cons] = newScreen;
             }
             var receiver = first.receiver;
             var selector = function () {
