@@ -16,6 +16,7 @@ export interface DelayedCellFiller{
 export interface Cell{
     guid:string;
     application:Application;
+    screen:Screen;
     init();
     parent:Cell;
     children:Cell[];
@@ -36,7 +37,6 @@ export interface Cell{
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children и у него есть parent!. 
     // у него есть el(элемент) но он еще не добавлен в DOM
-    // этот метод НЕ НУЖНО использовать для delayed элементов
     afterAppend();
     _renderred:bool;
     createEl():HTMLElement;
@@ -49,7 +49,6 @@ export interface Cell{
     board:{};
     query(cons?:string, className?:string,id?:string):Cell[];
     find(cons?:string, className?:string,id?:string):Cell;
-
     bubbleDown(callable:(cell:Cell)=>any);
     // Элемент добавлен в DOM
     afterRender();

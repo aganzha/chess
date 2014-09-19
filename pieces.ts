@@ -26,6 +26,7 @@ export class BaseCell implements interfaces.Cell{
     board:{};
     args=[];
     guid:string;
+    screen:interfaces.Screen;
     constructor(public record:interfaces.CellRecord,
 		public application:interfaces.Application){
 	this.children = <interfaces.Cell[]>[]
@@ -59,7 +60,7 @@ export class BaseCell implements interfaces.Cell{
 	    if(klass==null){
 		klass=BaseCell
 	    }
-	    var clone = new klass(delayedCell.record, this.application)
+	    var clone = new klass(JSON.parse(JSON.stringify(delayedCell.record)), this.application)
 	    clone.html = delayedCell.html
 	    clone.args = []
 	    for(var j=0;j<delayedCell.args.length;j++){

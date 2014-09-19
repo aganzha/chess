@@ -63,7 +63,7 @@ export class ChessApp{
 	if(!screen.resolved){
 	    // screen may be allready resolved in case of Union transition or static
 	    // this.viewport.append(screen)
-	    this.resolveCells(screen.board, screen, false)
+	    this.resolveCells(screen, screen.board, screen, false)
 	    screen.resolved=true;
 
 	    if(is_static){
@@ -116,6 +116,12 @@ export class ChessApp{
 	utils.Utils.destroyFlyWeight()//???
 	var oldScreen = this.currentScreen
 	var newScreen = first.screen
+	if(newScreen == oldScreen){
+	    var klass = this.getCellClass(newScreen.record)
+	    newScreen = new klass(JSON.parse(JSON.stringify(newScreen.record)), this)
+	    newScreen.args = oldScreen.args.map((arg)=>{return arg})
+	    newScreen.board = oldScreen.board
+	}
 	var receiver = first.receiver
 	var selector = ()=>{return first.screen}
 	var me = this
@@ -130,7 +136,7 @@ export class ChessApp{
 		newScreen.beforeSelfApear(oldScreen,{
 		    success:function(){
 			var tr = new transition
-			    .Transition(me,selector,
+			    .Transition(me,newScreen,oldScreen,
 					{
 					    success:function(){
 						oldScreen.afterSelfReplace(newScreen)
@@ -159,7 +165,7 @@ export class ChessApp{
     isCellDelayed(recordString:string):bool{
 	return recordString[0] == '_'
     }
-    resolveCells(board:{}, parent:interfaces.Cell, delayed:bool){
+    resolveCells(screen, board:{}, parent:interfaces.Cell, delayed:bool){
 	// parent.beforeResolve()
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
@@ -173,6 +179,7 @@ export class ChessApp{
 	}
 	for(var recordString in board){
 	    var cell = this.instantiate(recordString, pieces.BaseCell)
+	    cell.screen = screen
 	    cell.board = board[recordString]
 	    cell.delayed = this.isCellDelayed(recordString)
 	    // ячейка может быть с андескором, поэтому она "отложена"
@@ -183,7 +190,7 @@ export class ChessApp{
 	    // append как видно происходит снизу вверх.
 	    // самые вложенные ячейки апендятся друг в друга и вся эта куча
 	    // добавляется в дом, только после последнего аппенда (в сам скрин)
-	    this.resolveCells(board[recordString], cell, di)
+	    this.resolveCells(screen, board[recordString], cell, di)
 	    if(di){
 		parent.appendDelayed(cell)
 	    }
@@ -207,7 +214,7 @@ export class ChessApp{
 	var id='';
 	var classes=  [];
 	if(baseClass == pieces.BaseCell){
-	    classes.push('BaseCell')
+	    //classes.push('BaseCell')
 	}
 	else if(baseClass == pieces.BaseScreen){
 	    classes.push('BaseScreen')

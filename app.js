@@ -55,7 +55,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             }
             var screen = selector(this.screens);
             if(!screen.resolved) {
-                this.resolveCells(screen.board, screen, false);
+                this.resolveCells(screen, screen.board, screen, false);
                 screen.resolved = true;
                 if(is_static) {
                     screen.render();
@@ -101,6 +101,14 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             utils.Utils.destroyFlyWeight();
             var oldScreen = this.currentScreen;
             var newScreen = first.screen;
+            if(newScreen == oldScreen) {
+                var klass = this.getCellClass(newScreen.record);
+                newScreen = new klass(JSON.parse(JSON.stringify(newScreen.record)), this);
+                newScreen.args = oldScreen.args.map(function (arg) {
+                    return arg;
+                });
+                newScreen.board = oldScreen.board;
+            }
             var receiver = first.receiver;
             var selector = function () {
                 return first.screen;
@@ -112,7 +120,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                     me.fire('transitCommenced', newScreen, oldScreen);
                     newScreen.beforeSelfApear(oldScreen, {
                         success: function () {
-                            var tr = new transition.Transition(me, selector, {
+                            var tr = new transition.Transition(me, newScreen, oldScreen, {
                                 success: function () {
                                     oldScreen.afterSelfReplace(newScreen);
                                     me.currentScreen.fillElAttrs();
@@ -139,7 +147,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
         ChessApp.prototype.isCellDelayed = function (recordString) {
             return recordString[0] == '_';
         };
-        ChessApp.prototype.resolveCells = function (board, parent, delayed) {
+        ChessApp.prototype.resolveCells = function (screen, board, parent, delayed) {
             var _type = Object.prototype.toString.call(board);
             if(_type == "[object String]") {
                 parent.updateEl(board);
@@ -154,10 +162,11 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             }
             for(var recordString in board) {
                 var cell = this.instantiate(recordString, pieces.BaseCell);
+                cell.screen = screen;
                 cell.board = board[recordString];
                 cell.delayed = this.isCellDelayed(recordString);
                 var di = delayed || cell.delayed;
-                this.resolveCells(board[recordString], cell, di);
+                this.resolveCells(screen, board[recordString], cell, di);
                 if(di) {
                     parent.appendDelayed(cell);
                 } else {
@@ -179,7 +188,6 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             var id = '';
             var classes = [];
             if(baseClass == pieces.BaseCell) {
-                classes.push('BaseCell');
             } else if(baseClass == pieces.BaseScreen) {
                 classes.push('BaseScreen');
             }

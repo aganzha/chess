@@ -4,19 +4,21 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
     var utils = __utils__;
 
     var Transition = (function () {
-        function Transition(app, selector, callbacks) {
+        function Transition(app, coming, going, callbacks) {
             this.app = app;
-            this.selector = selector;
+            this.coming = coming;
+            this.going = going;
             this.classDelay = 200;
             this.cssDelay = 600;
-            this.going = app.currentScreen;
-            this.coming = selector(app.screens);
             this.success = callbacks.success;
             this.fail = callbacks.fail;
             this.parentBox = this.going.parent.getBox();
         }
         Transition.prototype.renderNewScreen = function () {
-            this.app.resolve(this.selector);
+            var _this = this;
+            this.app.resolve(function (screens) {
+                return _this.coming;
+            });
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();

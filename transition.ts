@@ -4,16 +4,13 @@ declare var $;
 
 
 export class Transition implements interfaces.Transition{
-    going:interfaces.Screen;
-    coming:interfaces.Screen;
     parentBox:interfaces.Box;
     success:Function;
     fail:Function;
     constructor(public app:interfaces.Application,
-		public selector:interfaces.ScreenSelector,
+		public coming:interfaces.Screen,
+		public going:interfaces.Screen,
 		callbacks:interfaces.CallBacks){
-	this.going = app.currentScreen
-	this.coming = selector(app.screens)
 	this.success = callbacks.success
 	this.fail = callbacks.fail
 	this.parentBox = this.going.parent.getBox()
@@ -21,7 +18,7 @@ export class Transition implements interfaces.Transition{
     }
 
     renderNewScreen(){
-	this.app.resolve(this.selector)
+	this.app.resolve((screens)=>{return this.coming})
     }
     union(){
 	this.renderNewScreen()
@@ -327,7 +324,6 @@ export class Transition implements interfaces.Transition{
     slideLeft(){
 	var me = this;
 	me.renderNewScreen()
-	//var itemBox = this.going.getBox()
 	var itemBox = me.fixPosition(me.going)
 	$(me.coming.parent.el).css('width',itemBox.width*3+'px')
 	$(me.coming.el).css({
