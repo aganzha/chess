@@ -159,6 +159,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
                 parent.args = (board).map(function (arg) {
                     return arg;
                 });
+                parent.afterResolve();
                 return;
             }
             for(var recordString in board) {

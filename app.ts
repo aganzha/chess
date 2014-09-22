@@ -65,7 +65,6 @@ export class ChessApp{
 	    // this.viewport.append(screen)
 	    this.resolveCells(screen, screen.board, screen, false)
 	    screen.resolved=true;
-
 	    if(is_static){
 		// staics are not normally appended!
 		screen.render()
@@ -73,7 +72,7 @@ export class ChessApp{
 		screen.afterAppend()
 	    }
 	    else{
-		this.viewport.append(screen)
+		this.viewport.append(<pieces.BaseScreen>screen)
 	    }
 
 	    screen.bubbleDown(function(cell){
@@ -176,6 +175,7 @@ export class ChessApp{
 	}
 	if(_type == "[object Array]"){
 	    parent.args = (<any>board).map((arg)=>{return arg})
+	    parent.afterResolve()
 	    return
 	}
 	for(var recordString in board){

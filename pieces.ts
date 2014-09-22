@@ -24,7 +24,7 @@ export class BaseCell implements interfaces.Cell{
     delayedChildren:interfaces.Cell[];
     delayed:bool;
     board:{};
-    args=[];
+    args:any[];
     guid:string;
     screen:interfaces.Screen;
     constructor(public record:interfaces.CellRecord,
@@ -32,8 +32,10 @@ export class BaseCell implements interfaces.Cell{
 	this.children = <interfaces.Cell[]>[]
 	this.delayedChildren = <interfaces.Cell[]>[]
 	this.delayed = false
-	this.init()
+	this.args = []
 	this.guid = utils.guid()
+	this._handlers = []
+	this.init()
     }
     map(callable:(cell:interfaces.Cell,i?:number)=>any){
 	for(var i=0;i<this.children.length;i++){
@@ -76,7 +78,6 @@ export class BaseCell implements interfaces.Cell{
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	    filler(clone)
 	    this.append(clone)
-
 	}
 	var newDelayedCells = []
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
@@ -87,10 +88,16 @@ export class BaseCell implements interfaces.Cell{
 	}
 	this.delayedChildren = newDelayedCells
     }
+    _handlers:{event:string;hook:(Event)=>any;}[];
     on(event:string, hook:(Event)=>any){
-	$(this.el).on(event, (e)=>{
-	    hook(e)
-	})
+	if(this.el){
+	    $(this.el).on(event, (e)=>{
+		hook(e)
+	    })
+	}
+	else{
+	    this._handlers.push({event:event,hook:hook})
+	}
     }
     trigger(event:string, params?:any){
 	$(this.el).trigger(event, params)
@@ -182,13 +189,15 @@ export class BaseCell implements interfaces.Cell{
 	}
     }
 
-    append(cell:interfaces.Cell){
-
+    append(cell:BaseCell){
 	this.prepareEl()
 	cell.parent = this
 	this.children.push(cell)
 	var ne = cell.render()
 	this.appendDomMethod(ne)
+	cell._handlers.forEach((eh)=>{
+	    cell.on(eh.event, eh.hook)
+	})
 	cell.afterAppend()
     }
 

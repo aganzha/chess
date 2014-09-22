@@ -26,7 +26,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
         function BaseCell(record, application) {
             this.record = record;
             this.application = application;
-            this.args = [];
             this.tag = 'div';
             this.html = '';
             this.exceptTags = [
@@ -35,8 +34,10 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
-            this.init();
+            this.args = [];
             this.guid = utils.guid();
+            this._handlers = [];
+            this.init();
         }
         BaseCell.prototype.map = function (callable) {
             for(var i = 0; i < this.children.length; i++) {
@@ -90,9 +91,16 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.delayedChildren = newDelayedCells;
         };
         BaseCell.prototype.on = function (event, hook) {
-            $(this.el).on(event, function (e) {
-                hook(e);
-            });
+            if(this.el) {
+                $(this.el).on(event, function (e) {
+                    hook(e);
+                });
+            } else {
+                this._handlers.push({
+                    event: event,
+                    hook: hook
+                });
+            }
         };
         BaseCell.prototype.trigger = function (event, params) {
             $(this.el).trigger(event, params);
@@ -174,6 +182,9 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.children.push(cell);
             var ne = cell.render();
             this.appendDomMethod(ne);
+            cell._handlers.forEach(function (eh) {
+                cell.on(eh.event, eh.hook);
+            });
             cell.afterAppend();
         };
         BaseCell.prototype.appendDomMethod = function (el) {
