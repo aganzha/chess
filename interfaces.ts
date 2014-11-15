@@ -1,3 +1,26 @@
+/*
+  Lifecicle of cells and pieces:
+  1. Screen
+  First screen is resolved. 
+  This means it is created outside of the dom.
+  beforeSelfApear is not called on it. It is responsibilities of the 
+  client who is calling resolve (particular cases are: in user code just after creating app when he call resolve, 
+  by transition which call resolve). Static screens are renderred only once.
+  2. Cells
+  During screen resolving, board are walked down to the deepes cells. Cells are created outside of the dom and 
+  appended to the higher level cells (which are not yet in DOM).
+  Finnally top level cells are appended to the screen element. And sceen element is appended to the viewport on
+  the very last step.
+  3. Delayed cells
+  are forced the same way as screens are rsolved. Recursivelly walking down to the deepest cells (or to the next delayed
+  cell, then created outside of the DOM and appended to their parents (which are not yet in the DOM of cause)
+  Final step - appending the topmost cell (delayed cell itself) to its parent.
+  
+  !!! So, general idea is to move all code to the afterAppend method of regular cells. Because manipulations with their HTML elements are cheap because of they are not a part of the DOM.
+  !!! It i not true for Screens, because Screen afterAppend is called when all structure is in DOM.
+  please call beforeAppend on screen. it will have all elements as chuildrens but will not have self.el at the moment of beforeAppend
+  
+*/
 export interface CallBacks{
     success:Function;
     fail?:Function;
@@ -65,6 +88,7 @@ export interface Box {
     height:number;
 }
 export interface Screen extends Cell{
+    beforeAppend();
     beforeSelfReplace(other:Screen, callBacks:CallBacks);
     beforeSelfApear(other:Screen,callBacks:CallBacks);
     afterSelfReplace(other:Screen);

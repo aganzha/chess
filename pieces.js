@@ -69,6 +69,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     klass = BaseCell;
                 }
                 var clone = new klass(JSON.parse(JSON.stringify(delayedCell.record)), this.application);
+                clone.screen = delayedCell.screen;
                 clone.html = delayedCell.html;
                 clone.args = [];
                 for(var j = 0; j < delayedCell.args.length; j++) {
@@ -267,6 +268,8 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             _super.apply(this, arguments);
 
         }
+        BaseScreen.prototype.beforeAppend = function () {
+        };
         BaseScreen.prototype.beforeSelfReplace = function (other, callBacks) {
             callBacks.success();
         };

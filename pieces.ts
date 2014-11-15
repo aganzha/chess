@@ -63,10 +63,11 @@ export class BaseCell implements interfaces.Cell{
 		klass=BaseCell
 	    }
 	    var clone = new klass(JSON.parse(JSON.stringify(delayedCell.record)), this.application)
+	    clone.screen = delayedCell.screen
 	    clone.html = delayedCell.html
 	    clone.args = []
 	    for(var j=0;j<delayedCell.args.length;j++){
-	    	clone.args.push(delayedCell.args[j])
+		clone.args.push(delayedCell.args[j])
 	    }
 	    clone.delayedChildren = delayedCell.delayedChildren
 
@@ -74,7 +75,7 @@ export class BaseCell implements interfaces.Cell{
 	    // вот тут важно, что на следующе уровни selector не передается
 	    // это позволяет использовать его для отбора ячеек только самого верхнего уровня
 	    // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
-	    
+
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	    filler(clone)
 	    this.append(clone)
@@ -106,9 +107,9 @@ export class BaseCell implements interfaces.Cell{
 	var answer = <interfaces.Box>$(this.el).offset()
 	if(!answer.width || !answer.height){
 	    var obj = this.el.getBoundingClientRect()
-       	    answer['width']= Math.round(obj.width)
-       	    answer['height']= Math.round(obj.height)
-       	}
+	    answer['width']= Math.round(obj.width)
+	    answer['height']= Math.round(obj.height)
+	}
 	return answer
     }
     fillElAttrs(){
@@ -282,6 +283,8 @@ export class BaseCell implements interfaces.Cell{
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
     resolved:bool;
+    beforeAppend(){
+    }
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }
@@ -312,7 +315,7 @@ export class ViewPort extends BaseCell{
 	super({cons:'',id:'',classes:[]}, null)
     }
     createEl(){
-    	return this.el
+	return this.el
     }
 }
 
@@ -461,42 +464,42 @@ export class Image extends BaseCell implements interfaces.Image{
 	return {left:dX, top:dY, width:dWidth, height:dHeight}
     }
     // requestAnimFrame(){
-    // 	var me = this
-    // 	var w = <any>window
-    // 	return w.requestAnimationFrame   ||
-    // 	    w.webkitRequestAnimationFrame ||
-    // 	    w.mozRequestAnimationFrame    ||
-    // 	    w.oRequestAnimationFrame      ||
-    // 	    w.msRequestAnimationFrame     ||
-    // 	    function(/* function */ callback, /* DOMElement */ element){
-    // 		w.setTimeout(callback, 1000/60);
-    // 	    };
+    //	var me = this
+    //	var w = <any>window
+    //	return w.requestAnimationFrame   ||
+    //	    w.webkitRequestAnimationFrame ||
+    //	    w.mozRequestAnimationFrame    ||
+    //	    w.oRequestAnimationFrame      ||
+    //	    w.msRequestAnimationFrame     ||
+    //	    function(/* function */ callback, /* DOMElement */ element){
+    //		w.setTimeout(callback, 1000/60);
+    //	    };
 
     // }
     // alpha=0;
     // fadeLoop(canvas,src,_draw){
 
-    // 	this.alpha +=2
-    // 	canvas.width = canvas.width
-    // 	var ne = this.alpha*this.alpha/100
-    // 	if(ne>100){
-    // 	    ne = 100
-    // 	}
-    // 	canvas.getContext('2d').globalAlpha = ne
-    // 	_draw()
-    // 	if(src != this.args[0]){
-    // 	    return
-    // 	}
-    // 	var me = this
-    // 	var raf = this.requestAnimFrame()
-    // 	if(ne<100){
-    // 	    raf(()=>{
-    // 		this.fadeLoop(canvas,src, _draw)
-    // 	    })
-    // 	}
-    // 	else{
-    // 	    this.onload()
-    // 	}
+    //	this.alpha +=2
+    //	canvas.width = canvas.width
+    //	var ne = this.alpha*this.alpha/100
+    //	if(ne>100){
+    //	    ne = 100
+    //	}
+    //	canvas.getContext('2d').globalAlpha = ne
+    //	_draw()
+    //	if(src != this.args[0]){
+    //	    return
+    //	}
+    //	var me = this
+    //	var raf = this.requestAnimFrame()
+    //	if(ne<100){
+    //	    raf(()=>{
+    //		this.fadeLoop(canvas,src, _draw)
+    //	    })
+    //	}
+    //	else{
+    //	    this.onload()
+    //	}
     // }
     drawed:string;
     drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, effect?:string){
@@ -523,24 +526,24 @@ export class Image extends BaseCell implements interfaces.Image{
 	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
 
 	    if(me.args[4]){
-	    	if(me.args[4]=='completeImage'){
-	    	    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
-	    						    canvas.width, canvas.height)
-	    	}
-	    	else if(me.args[4]=='completeCanvas'){
-	    	    sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-	    							 canvas.width, canvas.height)
-	    	}
+		if(me.args[4]=='completeImage'){
+		    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
+							    canvas.width, canvas.height)
+		}
+		else if(me.args[4]=='completeCanvas'){
+		    sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+								 canvas.width, canvas.height)
+		}
 	    }
 	    else{
 		// complete canvas by default
-	    	sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-	    						     canvas.width, canvas.height)
+		sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+							     canvas.width, canvas.height)
 	    }
 	    var _draw = ()=>{
 		context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,
 				  sourceBox.height,
-	     			  destBox.left,destBox.top,destBox.width,destBox.height)
+				  destBox.left,destBox.top,destBox.width,destBox.height)
 		me.imageBox = destBox
 	    }
 
@@ -609,14 +612,14 @@ export class Image extends BaseCell implements interfaces.Image{
     // initialSourceBox:interfaces.Box;
     scale(factor:number){
 	this.clear()
-    	var img = <HTMLImageElement>document.createElement('img')
-    	var canvas = <HTMLCanvasElement>this.el
+	var img = <HTMLImageElement>document.createElement('img')
+	var canvas = <HTMLCanvasElement>this.el
 	var context = canvas.getContext('2d')
 	var me = this
-    	img.onload = function(){
+	img.onload = function(){
 	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
 	    var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
-	    						    canvas.width, canvas.height)
+							    canvas.width, canvas.height)
 	    // sourceBox уже соответствует размеру canvas
 	    // его просто нужно умножить на factor
 	    // зумаут мы не можем делать. мы и так показали картинку полностью. делать
@@ -629,8 +632,8 @@ export class Image extends BaseCell implements interfaces.Image{
 	    sourceBox.height = sourceBox.height/factor
 	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
 			      destBox.left,destBox.top,destBox.width,destBox.height)
-    	}
-    	img.src = this.args[0]
+	}
+	img.src = this.args[0]
     }
 }
 

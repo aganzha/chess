@@ -57,6 +57,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function(r
             if(!screen.resolved) {
                 this.resolveCells(screen, screen.board, screen, false);
                 screen.resolved = true;
+                screen.beforeAppend();
                 if(is_static) {
                     screen.render();
                     $(this.viewport.el).after(screen.el);
