@@ -80,6 +80,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     return !cell.delayed;
                 });
                 filler(clone);
+                clone.beforeAppend();
                 this.append(clone);
             }
             var newDelayedCells = [];
@@ -166,6 +167,8 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             this.afterRender();
         };
         BaseCell.prototype.afterResolve = function () {
+        };
+        BaseCell.prototype.beforeAppend = function () {
         };
         BaseCell.prototype.afterAppend = function () {
         };
@@ -268,8 +271,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             _super.apply(this, arguments);
 
         }
-        BaseScreen.prototype.beforeAppend = function () {
-        };
         BaseScreen.prototype.beforeSelfReplace = function (other, callBacks) {
             callBacks.success();
         };

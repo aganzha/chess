@@ -57,6 +57,9 @@ export interface Cell{
     record:CellRecord;
     getBox():Box;
     fillExtraAttrs(el:HTMLElement);
+    // этот метод вызывается, когда cell НЕ добавлен в parent.
+    // у него есть el(элемент) и children но он еще не добавлен в DOM
+    beforeAppend();
     // этот метод вызывается, когда cell добавлен в parent.
     // у него уже есть children и у него есть parent!. 
     // у него есть el(элемент) но он еще не добавлен в DOM
@@ -88,7 +91,6 @@ export interface Box {
     height:number;
 }
 export interface Screen extends Cell{
-    beforeAppend();
     beforeSelfReplace(other:Screen, callBacks:CallBacks);
     beforeSelfApear(other:Screen,callBacks:CallBacks);
     afterSelfReplace(other:Screen);

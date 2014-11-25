@@ -122,6 +122,7 @@ export class ChessApp{
 	    newScreen.args = oldScreen.args.map((arg)=>{return arg})
 	    newScreen.board = oldScreen.board
 	    this.screens[newScreen.record.cons] =newScreen
+	    // console.log(oldScreen.args, newScreen.args, 'KK')
 	}
 	var receiver = first.receiver
 	var selector = ()=>{return first.screen}

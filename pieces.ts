@@ -78,6 +78,7 @@ export class BaseCell implements interfaces.Cell{
 
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	    filler(clone)
+	    clone.beforeAppend()
 	    this.append(clone)
 	}
 	var newDelayedCells = []
@@ -178,6 +179,8 @@ export class BaseCell implements interfaces.Cell{
 	this.afterRender()
     }
     afterResolve(){
+    }
+    beforeAppend(){
     }
     afterAppend(){
     }
@@ -283,8 +286,7 @@ export class BaseCell implements interfaces.Cell{
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
     resolved:bool;
-    beforeAppend(){
-    }
+    
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }
