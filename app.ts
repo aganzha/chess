@@ -65,9 +65,9 @@ export class ChessApp{
 	    // this.viewport.append(screen)
 	    this.resolveCells(screen, screen.board, screen, false)
 	    screen.resolved=true;
-	    screen.beforeAppend()
 	    if(is_static){
 		// staics are not normally appended!
+		screen.beforeAppend()
 		screen.render()
 		$(this.viewport.el).after(screen.el)
 		screen.afterAppend()

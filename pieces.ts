@@ -78,7 +78,6 @@ export class BaseCell implements interfaces.Cell{
 
 	    clone.forceDelayed(filler, function(cell:interfaces.Cell){return !cell.delayed})
 	    filler(clone)
-	    clone.beforeAppend()
 	    this.append(clone)
 	}
 	var newDelayedCells = []
@@ -194,6 +193,7 @@ export class BaseCell implements interfaces.Cell{
     }
 
     append(cell:BaseCell){
+	cell.beforeAppend()
 	this.prepareEl()
 	cell.parent = this
 	this.children.push(cell)

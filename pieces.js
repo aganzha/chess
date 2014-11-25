@@ -80,7 +80,6 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
                     return !cell.delayed;
                 });
                 filler(clone);
-                clone.beforeAppend();
                 this.append(clone);
             }
             var newDelayedCells = [];
@@ -181,6 +180,7 @@ define(["require", "exports", "./interfaces", "./utils"], function(require, expo
             }
         };
         BaseCell.prototype.append = function (cell) {
+            cell.beforeAppend();
             this.prepareEl();
             cell.parent = this;
             this.children.push(cell);
