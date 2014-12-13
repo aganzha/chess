@@ -1,26 +1,20 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "./utils"], function (require, exports, utils) {
     var Transition = (function () {
-        function Transition(app, selector, callbacks) {
+        function Transition(app, coming, going, callbacks) {
             this.app = app;
-            this.selector = selector;
+            this.coming = coming;
+            this.going = going;
             this.classDelay = 200;
             this.cssDelay = 600;
-            this.going = app.currentScreen;
-            this.coming = selector(app.screens);
             this.success = callbacks.success;
             this.fail = callbacks.fail;
             this.parentBox = this.going.parent.getBox();
         }
-        // pausecomp(millis)
-        // {
-        // 	var date = new Date();
-        // 	var curDate = null;
-        // 	do { curDate = new Date(); }
-        // 	while(curDate-date < millis);
-        // }
         Transition.prototype.renderNewScreen = function () {
-            this.app.resolve(this.selector);
-            //this.coming.forceRender()
+            var _this = this;
+            this.app.resolve(function (screens) {
+                return _this.coming;
+            });
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();
@@ -66,7 +60,7 @@ define(["require", "exports"], function (require, exports) {
                         'margin-left': '0px'
                     });
                     setTimeout(function () {
-                        me.releasePosition();
+                        me.releasePosition(me.coming);
                         me.success();
                     }, 250);
                 }, 250);
@@ -85,23 +79,19 @@ define(["require", "exports"], function (require, exports) {
                 position: 'absolute',
                 opacity: '0.0'
             }).hide();
-            $(me.coming.el).addClass('fade');
-            $(me.going.el).addClass('fade');
+            // $(me.coming.el).addClass('fade');
+            // $(me.going.el).addClass('fade');
+            var params = me.joinParams(me.getTransformParams(0, 0, 0), me.getTransitionParamsFor('opacity'));
+            var zero = { 'opacity': '0.0' };
+            $(me.going.el).css(params).css(zero);
             setTimeout(function () {
-                $(me.going.el).css({
-                    opacity: '0.0'
-                });
-            }, this.classDelay);
-            setTimeout(function () {
-                $(me.coming.el).css({
-                    opacity: '1.0',
-                    display: 'block'
-                });
+                $(me.going.el).hide();
+                $(me.coming.el).css({ display: 'block', opacity: '1.0' });
                 setTimeout(function () {
-                    me.releasePosition();
-                    me.success();
-                }, me.cssDelay);
-            }, me.cssDelay);
+                    me.cleanUpTransform(function () {
+                    });
+                }, 1000);
+            }, 300);
         };
         Transition.prototype.cover = function (leftOrTop, positive) {
             var widthOrHeight = 'height';
@@ -132,7 +122,7 @@ define(["require", "exports"], function (require, exports) {
                 elCss[leftOrTop] = '0px';
                 $(me.coming.el).css(elCss);
                 setTimeout(function () {
-                    me.releasePosition();
+                    me.releasePosition(me.coming);
                     me.success();
                 }, 400);
             }, this.classDelay);
@@ -141,7 +131,31 @@ define(["require", "exports"], function (require, exports) {
             this.cover('left', true);
         };
         Transition.prototype.coverRight = function () {
-            this.cover('left', false);
+            var me = this;
+            var itemBox = me.fixPosition(me.going);
+            $(me.going.parent.el).css({
+                width: itemBox.width * 3 + 'px'
+            });
+            // $(me.going.el).css({
+            //     width:itemBox.width+'px',
+            // });
+            me.renderNewScreen();
+            $(me.coming.el).css({
+                width: itemBox.width + 'px',
+                position: 'absolute',
+                'z-index': 99
+            });
+            $(me.going.el).before(me.coming.el);
+            $(me.coming.el).css(me.getTransformParams(0 - itemBox.width, 0, 0));
+            $(me.coming.el).css(me.getTransitionParamsFor('-webkit-transform'));
+            setTimeout(function () {
+                var trParams = me.getTransformParams(0, 0, 0);
+                $(me.coming.el).css(trParams);
+                me.cleanUpTransform(function () {
+                    $(me.coming.el).css({ 'position': '', 'z-index': '' });
+                    me.releasePosition(me.going);
+                });
+            }, 50);
         };
         Transition.prototype.coverUp = function () {
             this.cover('top', true);
@@ -179,7 +193,7 @@ define(["require", "exports"], function (require, exports) {
                 targetCss[leftOrTop] = positive ? itemBox[widthOrHeight] + 'px' : 0 - itemBox[widthOrHeight] + 'px';
                 $(me.going.el).css(targetCss);
                 setTimeout(function () {
-                    me.releasePosition();
+                    me.releasePosition(me.coming);
                     me.resetParent();
                     me.success();
                 }, 400);
@@ -189,7 +203,33 @@ define(["require", "exports"], function (require, exports) {
             this.reveal('left', true);
         };
         Transition.prototype.revealRight = function () {
-            this.reveal('left', false);
+            var me = this;
+            $(me.going.el).css({
+                'position': 'absolute',
+                'z-index': 99
+            });
+            me.renderNewScreen();
+            $(me.coming.el).css({
+                'position': 'absolute',
+                'z-index': 0
+            });
+            $(me.going.el).css(me.getTransformParams(0, 0, 0));
+            $(me.going.el).css(me.getTransitionParamsFor('-webkit-transform'));
+            var bx = me.going.getBox();
+            setTimeout(function () {
+                var trParams = me.getTransformParams(0 - bx.width, 0, 0);
+                $(me.going.el).css(trParams);
+                me.cleanUpTransform(function () {
+                    $(me.coming.el).css({
+                        'position': 'inherit',
+                        'z-index': 'inherit'
+                    });
+                    $(me.going.el).css({
+                        'position': 'inherit',
+                        'z-index': 'inherit'
+                    });
+                });
+            }, 50);
         };
         Transition.prototype.revealUp = function () {
             this.reveal('top', false);
@@ -198,21 +238,10 @@ define(["require", "exports"], function (require, exports) {
             this.reveal('top', true);
         };
         Transition.prototype.getTransformParams = function (x, y, z) {
-            return {
-                '-webkit-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-moz-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-ms-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                '-o-transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)',
-                'transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)'
-            };
+            return utils.getTransformParams(x, y, z);
         };
-        Transition.prototype.getTransitionParams = function () {
-            return {
-                '-webkit-transition': '-webkit-transform 0.3s ease-in',
-                '-moz-transition': '-webkit-transform 0.3s ease-in',
-                '-o-transition': '-webkit-transform 0.3s ease-in',
-                'transition': '-webkit-transform 0.3s ease-in'
-            };
+        Transition.prototype.getTransitionParamsFor = function (property) {
+            return utils.getTransitionParamsFor(property);
         };
         Transition.prototype.joinParams = function (p1, p2) {
             var res = {};
@@ -252,55 +281,41 @@ define(["require", "exports"], function (require, exports) {
         Transition.prototype.slideLeft = function () {
             var me = this;
             me.renderNewScreen();
-            //var itemBox = this.going.getBox()
             var itemBox = me.fixPosition(me.going);
-            $(me.coming.parent.el).css('width', itemBox.width * 2 + 'px');
+            $(me.coming.parent.el).css('width', itemBox.width * 3 + 'px');
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
-                // it will be not possible to scroll screen on iphone 3!!!
-                // height:itemBox.height+'px',
-                float: 'right'
+                float: 'left'
             });
             $(me.going.el).css({
                 width: itemBox.width + 'px',
-                // it will be not possible to scroll screen on iphone 3!!!
-                // height:itemBox.height+'px',
                 float: 'left'
             });
-            var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParams());
+            var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
             me.cleanUpTransform(function () {
-                // $(me.coming.el).css("height","")
-                // $(me.going.el).css("height","")
             });
         };
         Transition.prototype.slideRight = function () {
             var me = this;
-            //var itemBox = this.going.getBox()
             var itemBox = me.fixPosition(me.going);
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), {
-                width: itemBox.width * 2
+                width: itemBox.width * 3 + 'px'
             });
             $(me.going.parent.el).css(trParams);
             $(me.going.el).css({
-                width: itemBox.width,
-                // it will be not possible to scroll screen on iphone 3!!!
-                // height:itemBox.height,
-                float: 'right'
+                width: itemBox.width + 'px',
+                float: 'left'
             });
             me.renderNewScreen();
             $(me.coming.el).css({
                 width: itemBox.width + 'px',
-                // it will be not possible to scroll screen on iphone 3!!!
-                // height:itemBox.height+'px',
                 float: 'left'
             });
             $(me.going.el).before($(me.coming.el));
             setTimeout(function () {
-                $(me.going.parent.el).css(me.getTransitionParams());
-                trParams = me.joinParams(me.getTransformParams(0, 0, 0), {
-                    width: itemBox.width * 2
-                });
+                $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
+                trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
                 me.cleanUpTransform(function () {
                 });
@@ -310,30 +325,27 @@ define(["require", "exports"], function (require, exports) {
             var me = this;
             setTimeout(function () {
                 var bx = me.coming.getBox();
-                var trParams = me.joinParams(me.joinParams(me.removeTransitionParams(), me.removeTransformParams()), {
-                    width: null,
-                    height: null
-                });
-                $(me.coming.parent.el).css(trParams);
-                $(me.coming.parent.el).css({
+                var trParams = me.joinParams(me.removeTransitionParams(), me.removeTransformParams());
+                var clParams = {
                     'width': "",
                     'height': "",
                     'min-height': "",
                     'min-width': ""
-                });
-                me.removeIphoneFlash(me.coming.el);
+                };
+                $(me.coming.parent.el).css(me.joinParams(trParams, clParams));
                 hook();
                 me.success();
             }, 500);
         };
         Transition.prototype.slideUp = function () {
             var me = this;
-            me.renderNewScreen();
             var itemBox = me.fixPosition(me.going);
-            //var itemBox = this.going.getBox()
+            me.renderNewScreen();
+            // me.fixPosition(me.coming)
             $(me.coming.parent.el).css('min-height', itemBox.height * 2 + 'px');
-            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParams());
+            var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
+            // me.releasePosition(me.coming)
             me.cleanUpTransform(function () {
             });
         };
@@ -349,7 +361,7 @@ define(["require", "exports"], function (require, exports) {
             $(me.going.parent.el).css(trParams);
             var me = this;
             setTimeout(function () {
-                $(me.going.parent.el).css(me.getTransitionParams());
+                $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
                 var trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
                 me.cleanUpTransform(function () {
@@ -363,27 +375,30 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         Transition.prototype.fixPosition = function (cell) {
-            var box = cell.parent.getBox();
+            var bx = cell.parent.getBox();
+            var minheight = bx.height;
+            var minwidth = bx.width;
             $(cell.el).css({
-                width: box.width,
-                'min-width': box.width,
-                'max-width': box.width,
-                height: box.height,
-                'min-height': box.height,
-                'max-height': box.height,
-                overflow: 'hidden'
+                'width': minwidth,
+                // 'min-width':minwidth,
+                'max-width': minwidth,
+                'height': minheight,
+                // 'min-height':minheight,
+                'max-height': minheight,
+                'overflow': 'hidden'
             });
-            // // хак!	
-            // var cssWidth = parseInt($(cell.el).css('min-width'))
-            // if(!isNaN(cssWidth)){
-            //     box.width = cssWidth
-            // }	
-            return box;
+            var bx = cell.getBox();
+            return bx;
         };
-        Transition.prototype.releasePosition = function () {
-            $(this.coming.el).css({
-                width: '',
-                height: ''
+        Transition.prototype.releasePosition = function (cell) {
+            $(cell.el).css({
+                'width': '',
+                // 'min-width':'',
+                'max-width': '',
+                'height': '',
+                // 'min-height':'',
+                'max-height': '',
+                overflow: ''
             });
         };
         Transition.prototype.resetParent = function () {

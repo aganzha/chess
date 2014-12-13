@@ -1,22 +1,48 @@
-import interfaces = require("./interfaces")
+import interfaces = require"./interfaces")
+import utils = require"./utils")
 declare var $;
 
+var minsize = utils.getMinSize()
+var currentScrollable = null
+
 export function makeScrollable(me:interfaces.Scrollable){
-    $(me.el).on('scroll',function(some){scroll(me)})
+    me.currentPage = 0
+    if(me.unique && currentScrollable){
+        currentScrollable.off('scroll')
+    }
+    if(minsize<600){
+        // phone
+        $(document).on('scroll',function(some){scroll(me)})
+        currentScrollable = $(document)
+    }
+    else{
+        $(me.el).on('scroll',function(some){scroll(me)})
+        currentScrollable = $(me.el)
+    }
 }
 
 function scroll(me:interfaces.Scrollable){
+
     if(!me.scrollRequired()){
-	return
+        return
     }
     var first = me.getFirstItemBox()
     var initial = me.getInitialBox()
-    var passed = (initial.top - first.top)/first.height
-    var limit = passed % me.pageSize
-    if(limit>me.scrollAfterNo){
-	me.loadNextPage()
+    var fromTop = fromTop = initial.top - first.top
+    if(minsize<600){
+        fromTop = window.pageYOffset
     }
-}    
+    var passed = fromTop/first.height
+    var limit = passed % me.pageSize
+    var currentPage = parseInt(passed / me.pageSize + '')    
+    if(limit>me.scrollAfterNo || ($(window).scrollTop() + $(window).height() == $(document).height())){
+	me.scrollAfterPassed()
+	if(currentPage==me.currentPage){
+	    me.currentPage+=1
+            me.loadNextPage()
+	}
+    }
+}
 
 
 export function makeCleanValuable(me:interfaces.Valuable){
@@ -25,7 +51,7 @@ export function makeCleanValuable(me:interfaces.Valuable){
 
 function cleanDefaultValue(me:interfaces.Valuable){
     if(me.getValue()==me.defaultValue){
-	me.setValue('')
+        me.setValue('')
     }
 }
 
@@ -44,40 +70,40 @@ function stopPropagation(e:Event){
 }
 function beginDrag(e:MouseEvent, me:interfaces.Draggable){
     if (!me.onStartDrag(<HTMLElement>e.target))
-	return;
+        return;
     stopPropagation(e);
 
     var el = $(me.el)
 
     var x = parseInt(el.css('left'))-e.x
     if(!x){
-	x = el[0].offsetLeft-e.x;
+        x = el[0].offsetLeft-e.x;
     }
     var y = parseInt(el.css('top'))-e.y
     if(!y){
-	y = el[0].offsetTop-e.y;
+        y = el[0].offsetTop-e.y;
     }
     if(!me.dX){
-	me.dX = 0
+        me.dX = 0
     }
     if(!me.dY){
-	me.dY = 0
+        me.dY = 0
     }
-    
+
     var body = $('body')
     body.on('mousemove', function(e:MouseEvent){drag(e,me)});
     body.on('mouseup', function(e:MouseEvent){drop(e,me)});
-    
+
     me.dX += x;
-    me.dY += y;    
-    
+    me.dY += y;
+
     var box = me.confirmDrag({left:e.x+me.dX,top:e.y+me.dY,width:null,height:null})
     el.css({
-	position:'absolute',
-	'z-index':'999',
-	cursor:'move',
-	left:box.left+'px',
-	top:box.top+'px'
+        position:'absolute',
+        'z-index':'999',
+        cursor:'move',
+        left:box.left+'px',
+        top:box.top+'px'
     })
 }
 

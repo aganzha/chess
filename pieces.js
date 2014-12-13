@@ -18,19 +18,21 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         return TestEl;
     })();
     exports.TestEl = TestEl;
+    var registered_elements = [];
     var BaseCell = (function () {
         function BaseCell(record, application) {
             this.record = record;
             this.application = application;
-            this.args = [];
             this.tag = 'div';
             this.html = '';
             this.exceptTags = ['input'];
             this.children = [];
             this.delayedChildren = [];
             this.delayed = false;
-            this.init();
+            this.args = [];
             this.guid = utils.guid();
+            this._handlers = [];
+            this.init();
         }
         BaseCell.prototype.map = function (callable) {
             for (var i = 0; i < this.children.length; i++) {
@@ -63,23 +65,22 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 if (klass == null) {
                     klass = BaseCell;
                 }
-                var clone = new klass(delayedCell.record, this.application);
+                var clone = new klass(JSON.parse(JSON.stringify(delayedCell.record)), this.application);
+                clone.screen = delayedCell.screen;
                 clone.html = delayedCell.html;
                 clone.args = [];
                 for (var j = 0; j < delayedCell.args.length; j++) {
                     clone.args.push(delayedCell.args[j]);
                 }
                 clone.delayedChildren = delayedCell.delayedChildren;
-                // delayedCell.delayedChildren.forEach((dc)=>{clone.delayedChildren.push(dc)})
-                this.append(clone);
-                filler(clone);
                 // вот тут важно, что на следующе уровни selector не передается
                 // это позволяет использовать его для отбора ячеек только самого верхнего уровня
                 // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
                 clone.forceDelayed(filler, function (cell) {
                     return !cell.delayed;
                 });
-                clone._safeAfterRender();
+                filler(clone);
+                this.append(clone);
             }
             var newDelayedCells = [];
             for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
@@ -89,6 +90,19 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 }
             }
             this.delayedChildren = newDelayedCells;
+        };
+        BaseCell.prototype.on = function (event, hook) {
+            if (this.el) {
+                $(this.el).on(event, function (e) {
+                    hook(e);
+                });
+            }
+            else {
+                this._handlers.push({ event: event, hook: hook });
+            }
+        };
+        BaseCell.prototype.trigger = function (event, params) {
+            $(this.el).trigger(event, params);
         };
         BaseCell.prototype.getBox = function () {
             var answer = $(this.el).offset();
@@ -118,6 +132,13 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         BaseCell.prototype.fillExtraAttrs = function (el) {
         };
         BaseCell.prototype.createEl = function () {
+            if (this.tag.match('-') && registered_elements.indexOf(this.tag) < 0) {
+                var d = document;
+                if (d['registerElement']) {
+                    d.registerElement(this.tag);
+                }
+                registered_elements.push(this.tag);
+            }
             var el = document.createElement(this.tag);
             if (this.exceptTags.indexOf(this.tag) < 0) {
                 el.innerHTML = this.html;
@@ -143,6 +164,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         BaseCell.prototype.updateEl = function (html) {
             this.html = html;
             $(this.el).html(html);
+            return this;
         };
         BaseCell.prototype._safeAfterRender = function () {
             if (this._renderred) {
@@ -152,6 +174,8 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             this.afterRender();
         };
         BaseCell.prototype.afterResolve = function () {
+        };
+        BaseCell.prototype.beforeAppend = function () {
         };
         BaseCell.prototype.afterAppend = function () {
         };
@@ -164,11 +188,15 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             }
         };
         BaseCell.prototype.append = function (cell) {
+            cell.beforeAppend();
             this.prepareEl();
             cell.parent = this;
             this.children.push(cell);
             var ne = cell.render();
             this.appendDomMethod(ne);
+            cell._handlers.forEach(function (eh) {
+                cell.on(eh.event, eh.hook);
+            });
             cell.afterAppend();
         };
         BaseCell.prototype.appendDomMethod = function (el) {
@@ -187,6 +215,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             $(this.el).remove();
             this.el = null;
             this.children = [];
+            this.delayedChildren = [];
             var newParentsChildren = [];
             for (var i = 0; i < this.parent.children.length; i++) {
                 var cel = this.parent.children[i];
@@ -200,32 +229,33 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             return utils.Utils.DomFromString(s);
         };
         BaseCell.prototype.searchDown = function (collected, cons, className, id, once) {
+            var classMatch = function (rec) {
+                if (className) {
+                    return rec.classes.indexOf(className) >= 0;
+                }
+                return true;
+            };
+            var idMatch = function (rec) {
+                if (id) {
+                    return rec.id == id;
+                }
+                return true;
+            };
+            var consMatch = function (rec) {
+                if (cons) {
+                    return rec.cons == cons;
+                }
+                return true;
+            };
             for (var i = 0, l = this.children.length; i < l; i++) {
                 var cell = this.children[i];
-                var rec = cell.record;
-                var pushed = false;
-                if (!pushed && cons && rec.cons == cons) {
+                if (consMatch(cell.record) && classMatch(cell.record) && idMatch(cell.record)) {
                     collected.push(cell);
-                    pushed = true;
-                }
-                if (!pushed && className) {
-                    for (var j = 0, m = rec.classes.length; j < m; j++) {
-                        if (rec.classes[j] == className) {
-                            pushed = true;
-                            collected.push(cell);
-                            break;
-                        }
+                    if (once) {
+                        break;
                     }
                 }
-                if (!pushed && id && rec.id == id) {
-                    collected.push(cell);
-                    pushed = true;
-                }
-                if (once && pushed) {
-                }
-                else {
-                    cell.searchDown(collected, cons, className, id, once);
-                }
+                cell.searchDown(collected, cons, className, id, once);
             }
         };
         BaseCell.prototype.query = function (cons, className, id) {
@@ -295,11 +325,11 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         }
         Image.prototype.onload = function () {
         };
-        Image.prototype.draw = function (src, error) {
+        Image.prototype.draw = function (src, effect) {
             this.args[0] = src;
             if (this.el.tagName.toLowerCase() == 'canvas') {
                 var i = document.createElement('img');
-                this.drawImageInCanvas(this.el, i, error);
+                this.drawImageInCanvas(this.el, i, effect);
             }
             else {
                 var me = this;
@@ -435,18 +465,20 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             //return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
             return { left: dX, top: dY, width: dWidth, height: dHeight };
         };
-        Image.prototype.drawImageInCanvas = function (canvas, img, error) {
+        Image.prototype.drawImageInCanvas = function (canvas, img, effect) {
             var me = this;
             var errBack = function () {
-                if (me.args[3] && !error) {
-                    me.draw(me.args[3], true);
+                if (me.args[3]) {
+                    me.draw(me.args[3]);
                 }
             };
             if (!this.args[0]) {
                 errBack();
             }
-            canvas.width = this.args[1];
-            canvas.height = this.args[2];
+            if (!this.drawed) {
+                canvas.width = this.args[1];
+                canvas.height = this.args[2];
+            }
             $(img).on('load', function () {
                 var ratio = img.width / img.height;
                 var context = canvas.getContext('2d');
@@ -464,11 +496,31 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                     // complete canvas by default
                     sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height, canvas.width, canvas.height);
                 }
-                context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
-                me.imageBox = destBox;
-                me.onload();
+                var _draw = function () {
+                    context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
+                    me.imageBox = destBox;
+                };
+                switch (effect) {
+                    case 'fade':
+                        $(canvas).css(utils.getTransitionParamsFor('opacity'));
+                        setTimeout(function () {
+                            $(canvas).css('opacity', '0.2');
+                            setTimeout(function () {
+                                _draw();
+                                $(canvas).css('opacity', '1.0');
+                            }, 300);
+                        }, 50);
+                        break;
+                    default:
+                        _draw();
+                        me.onload();
+                        break;
+                }
+                me.drawed = me.args[0];
             }).on('error', function (e) {
-                errBack();
+                if (img.src != me.args[3]) {
+                    errBack();
+                }
             });
             img.src = this.args[0];
         };
