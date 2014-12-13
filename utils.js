@@ -1,6 +1,5 @@
-define(["require", "exports"], function(require, exports) {
-    
-
+define(["require", "exports"], function (require, exports) {
+    //TODO! functions! not class
     var Utils = (function () {
         function Utils() {
         }
@@ -34,13 +33,11 @@ define(["require", "exports"], function(require, exports) {
         return Utils;
     })();
     exports.Utils = Utils;
-
     function walkDown(parent, collected, cons, className, id) {
         for (var i = 0, l = parent.children.length; i < l; i++) {
             var cell = parent.children[i];
             var rec = cell.record;
             var pushed = false;
-
             if (!pushed && cons && rec.cons == cons) {
                 collected.push(cell);
                 pushed = true;
@@ -61,7 +58,6 @@ define(["require", "exports"], function(require, exports) {
             walkDown(cell, collected, cons, className, id);
         }
     }
-
     function bind(func, context) {
         var nativeBind = Function.prototype.bind;
         var slice = Array.prototype.slice;
@@ -74,14 +70,14 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.bind = bind;
     ;
-
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
     ;
-
     function guid() {
         return s4() + s4();
+        // return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        //        s4() + '-' + s4() + s4() + s4();
     }
     exports.guid = guid;
 });

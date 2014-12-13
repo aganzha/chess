@@ -568,7 +568,7 @@ export class Uploader extends BaseCell implements interfaces.Uploader{
 	var me = this
 	var reader = new FileReader();
 	reader.onload = function(ev){
-	    me.file = ev.target.result
+	    me.file = (<any>ev.target).result
 	    me.loadDone()
 	}
 	if(this.binary){
