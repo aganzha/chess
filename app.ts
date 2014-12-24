@@ -48,18 +48,16 @@ export class ChessApp{
 	}
 	return new klass(record, this)
     }
-    resolve(selector:interfaces.ScreenSelector, is_static?:boolean){
+    resolve(selector:string, is_static?:boolean){
 
 	if(this.statics && !is_static){
 	    this.statics.forEach((recordString)=>{
-		this.resolve((screens)=>{
-		    return screens[recordString]
-		}, true)
+		this.resolve(recordString, true)
 	    })
 	}
 
 
-	var screen = selector(this.screens)
+	var screen = this.screens[selector]
 	if(!screen.resolved){
 	    // screen may be allready resolved in case of Union transition or static
 	    // this.viewport.append(screen)

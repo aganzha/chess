@@ -40,12 +40,10 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
             var _this = this;
             if (this.statics && !is_static) {
                 this.statics.forEach(function (recordString) {
-                    _this.resolve(function (screens) {
-                        return screens[recordString];
-                    }, true);
+                    _this.resolve(recordString, true);
                 });
             }
-            var screen = selector(this.screens);
+            var screen = this.screens[selector];
             if (!screen.resolved) {
                 // screen may be allready resolved in case of Union transition or static
                 // this.viewport.append(screen)

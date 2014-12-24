@@ -135,7 +135,7 @@ export interface Application{
     currentScreen:Screen;
     screens:ScreenMap;
     viewport:Cell;
-    resolve(selector:ScreenSelector, is_static?:boolean);
+    resolve(selector:string, is_static?:boolean);
     transit(selector:ScreenSelector,receiver:(Transition)=>any);
     proceed(screen:string,transition:string);
     // instantiate(record:string):Cell;

@@ -11,10 +11,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             this.parentBox = this.going.parent.getBox();
         }
         Transition.prototype.renderNewScreen = function () {
-            var _this = this;
-            this.app.resolve(function (screens) {
-                return _this.coming;
-            });
+            this.app.resolve(this.coming.record.cons);
         };
         Transition.prototype.union = function () {
             this.renderNewScreen();

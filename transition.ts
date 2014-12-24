@@ -18,7 +18,7 @@ export class Transition implements interfaces.Transition{
     }
 
     renderNewScreen(){
-	this.app.resolve((screens)=>{return this.coming})
+	this.app.resolve(this.coming.record.cons)
     }
     union(){
 	this.renderNewScreen()
