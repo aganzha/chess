@@ -51,10 +51,12 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         BaseCell.prototype.forceDelayed = function (filler, selector) {
             // по умолчанию форсится все подряд. За исключением вложенных delayed ячеек
             // (см каменты в app.ts->resolveCells
+            var bubbleRender = false;
             if (!selector) {
                 selector = function (cell) {
                     return true;
                 };
+                bubbleRender = true;
             }
             for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
                 var delayedCell = this.delayedChildren[i];
@@ -90,6 +92,11 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 }
             }
             this.delayedChildren = newDelayedCells;
+            if (bubbleRender) {
+                this.bubbleDown(function (cell) {
+                    cell._safeAfterRender();
+                });
+            }
         };
         BaseCell.prototype.on = function (event, hook) {
             if (this.el) {

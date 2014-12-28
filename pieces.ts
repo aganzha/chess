@@ -50,8 +50,10 @@ export class BaseCell implements interfaces.Cell{
     forceDelayed(filler:interfaces.DelayedCellFiller, selector?:interfaces.CellSelector){
 	// по умолчанию форсится все подряд. За исключением вложенных delayed ячеек
 	// (см каменты в app.ts->resolveCells
+	var bubbleRender = false
 	if(!selector){
 	    selector = function(cell:interfaces.Cell){return true}
+	    bubbleRender = true
 	}
 	for(var i=0,l=this.delayedChildren.length;i<l;i++){
 	    var delayedCell = this.delayedChildren[i];
@@ -88,6 +90,11 @@ export class BaseCell implements interfaces.Cell{
 	    }
 	}
 	this.delayedChildren = newDelayedCells
+	if(bubbleRender){
+	    this.bubbleDown((cell:BaseCell)=>{
+		cell._safeAfterRender()
+	    });
+	}
     }
     _handlers:{event:string;hook:(Event)=>any;}[];
     on(event:string, hook:(Event)=>any){
@@ -286,7 +293,7 @@ export class BaseCell implements interfaces.Cell{
 
 export class BaseScreen extends BaseCell implements interfaces.Screen{
     resolved:boolean;
-    
+
     beforeSelfReplace(other:interfaces.Screen, callBacks:interfaces.CallBacks){
 	callBacks.success()
     }
