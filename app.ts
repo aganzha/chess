@@ -26,8 +26,9 @@ export class ChessApp{
 	for(var recordString in board){
 	    var screen = this.instantiate(recordString, pieces.BaseScreen)
 	    screen.board = board[recordString]
-	    this.screens[recordString] =screen
-	    // this.screens[screen.record.cons] =screen
+	    // ???
+	    //this.screens[recordString] =screen
+	    this.screens[screen.record.cons] =screen
 	}	
     }
     getCellClass(record:interfaces.CellRecord){
@@ -43,6 +44,7 @@ export class ChessApp{
     instantiate(recordString:string, baseClass:any){
 	var record = this.getCellRecord(recordString, baseClass)
 	var klass = this.getCellClass(record)
+	// console.log(recordString, klass, '<<')
 	if(klass==null){
 	    klass=baseClass
 	}
@@ -167,6 +169,7 @@ export class ChessApp{
     }
     resolveCells(screen, board:{}, parent:interfaces.Cell, delayed:boolean){
 	// parent.beforeResolve()
+
 	var _type= Object.prototype.toString.call( board)
 	if( _type == "[object String]"){
 	    parent.updateEl(<string>board)

@@ -174,6 +174,7 @@ export interface Draggable extends Cell{
     onDrag:(box:Box)=>any;
     onDrop:(box:Box)=>any;
     confirmDrag(b:Box):Box;
+    relative?:boolean;
 }
 
 

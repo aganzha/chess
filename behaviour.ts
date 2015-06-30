@@ -1,5 +1,5 @@
-import interfaces = require"./interfaces")
-import utils = require"./utils")
+import interfaces = require("./interfaces")
+import utils = require("./utils")
 declare var $;
 
 var minsize = utils.getMinSize()
@@ -98,13 +98,19 @@ function beginDrag(e:MouseEvent, me:interfaces.Draggable){
     me.dY += y;
 
     var box = me.confirmDrag({left:e.x+me.dX,top:e.y+me.dY,width:null,height:null})
-    el.css({
-        position:'absolute',
-        'z-index':'999',
-        cursor:'move',
-        left:box.left+'px',
-        top:box.top+'px'
-    })
+    if(me.relative){
+    }
+    else{
+	el.css({
+            position:'absolute',
+            'z-index':'999',
+            cursor:'move',
+            left:box.left+'px',
+            top:box.top+'px'
+	})
+    }
+    
+    
 }
 
 function drag(e:MouseEvent, me:interfaces.Draggable){
@@ -123,4 +129,11 @@ function drop(e:MouseEvent, me:interfaces.Draggable){
     // TODO! replace 9 and 999 in z-index by attributes in dragable!
     $(me.el).css({'z-index':9,cursor:'inherit'});
     me.onDrop({left:e.x+me.dX,top:e.y+me.dY,width:null,height:null})
+}
+
+
+// legacy
+export function getInputValue(me:interfaces.Valuable){
+    var val = me.getValue()
+    return val == me.defaultValue ? '' : val;
 }

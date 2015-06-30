@@ -85,8 +85,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 $(me.going.el).hide();
                 $(me.coming.el).css({ display: 'block', opacity: '1.0' });
                 setTimeout(function () {
-                    me.cleanUpTransform(function () {
-                    });
+                    me.cleanUpTransform(function () { });
                 }, 1000);
             }, 300);
         };
@@ -290,8 +289,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             });
             var trParams = me.joinParams(me.getTransformParams(0 - itemBox.width, 0, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
-            me.cleanUpTransform(function () {
-            });
+            me.cleanUpTransform(function () { });
         };
         Transition.prototype.slideRight = function () {
             var me = this;
@@ -314,8 +312,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
                 trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
-                me.cleanUpTransform(function () {
-                });
+                me.cleanUpTransform(function () { });
             }, 100);
         };
         Transition.prototype.cleanUpTransform = function (hook) {
@@ -343,8 +340,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             var trParams = me.joinParams(me.getTransformParams(0, 0 - itemBox.height, 0), me.getTransitionParamsFor('-webkit-transform'));
             $(me.going.parent.el).css(trParams);
             // me.releasePosition(me.coming)
-            me.cleanUpTransform(function () {
-            });
+            me.cleanUpTransform(function () { });
         };
         Transition.prototype.slideDown = function () {
             var me = this;
@@ -361,12 +357,12 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 $(me.going.parent.el).css(me.getTransitionParamsFor('-webkit-transform'));
                 var trParams = me.getTransformParams(0, 0, 0);
                 $(me.going.parent.el).css(trParams);
-                me.cleanUpTransform(function () {
-                });
+                me.cleanUpTransform(function () { });
             }, 0);
         };
         Transition.prototype.fixBackground = function (cell, css) {
-            var background = $(cell.el).css('background-color') || $(cell.el).css('background-image');
+            var background = $(cell.el).css('background-color') ||
+                $(cell.el).css('background-image');
             if (!background || background == 'rgba(0, 0, 0, 0)') {
                 css['background-color'] = 'white';
             }
@@ -401,7 +397,8 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         Transition.prototype.resetParent = function () {
             // $(this.coming.parent.el)
             //     .css({width:this.parentBox.width+'px',height:this.parentBox.height+'px'})
-            $(this.coming.parent.el).css({ width: null, height: null });
+            $(this.coming.parent.el)
+                .css({ width: null, height: null });
         };
         return Transition;
     })();

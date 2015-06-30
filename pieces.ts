@@ -529,7 +529,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	$(img).on('load',function(){
 	    var ratio = img.width/img.height
 
-	    var context = canvas.getContext('2d')
+	    var context = <CanvasRenderingContext2D>canvas.getContext('2d')
 
 	    var sourceBox = {top:0,left:0,width:img.width,height:img.height}
 	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
@@ -623,7 +623,7 @@ export class Image extends BaseCell implements interfaces.Image{
 	this.clear()
 	var img = <HTMLImageElement>document.createElement('img')
 	var canvas = <HTMLCanvasElement>this.el
-	var context = canvas.getContext('2d')
+	var context = <CanvasRenderingContext2D>canvas.getContext('2d')
 	var me = this
 	img.onload = function(){
 	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}

@@ -12,10 +12,15 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
             viewport.application = this;
             window['application'] = this;
             this.screens = {};
+            // а зачем их сразу все делать а?
+            // а в них можно че-нить хранить. в destroy убивавется element
+            // и childrens, но инстанс скрина остается!
             for (var recordString in board) {
                 var screen = this.instantiate(recordString, pieces.BaseScreen);
                 screen.board = board[recordString];
-                this.screens[recordString] = screen;
+                // ???
+                //this.screens[recordString] =screen
+                this.screens[screen.record.cons] = screen;
             }
         }
         ChessApp.prototype.getCellClass = function (record) {
@@ -31,6 +36,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
         ChessApp.prototype.instantiate = function (recordString, baseClass) {
             var record = this.getCellRecord(recordString, baseClass);
             var klass = this.getCellClass(record);
+            // console.log(recordString, klass, '<<')
             if (klass == null) {
                 klass = baseClass;
             }
@@ -97,16 +103,12 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
             if (newScreen == oldScreen) {
                 var klass = this.getCellClass(newScreen.record);
                 newScreen = new klass(JSON.parse(JSON.stringify(newScreen.record)), this);
-                newScreen.args = oldScreen.args.map(function (arg) {
-                    return arg;
-                });
+                newScreen.args = oldScreen.args.map(function (arg) { return arg; });
                 newScreen.board = oldScreen.board;
                 this.screens[newScreen.record.cons] = newScreen;
             }
             var receiver = first.receiver;
-            var selector = function () {
-                return first.screen;
-            };
+            var selector = function () { return first.screen; };
             var me = this;
             oldScreen.beforeSelfReplace(newScreen, {
                 success: function () {
@@ -118,7 +120,8 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
                     me.fire('transitCommenced', newScreen, oldScreen);
                     newScreen.beforeSelfApear(oldScreen, {
                         success: function () {
-                            var tr = new transition.Transition(me, newScreen, oldScreen, {
+                            var tr = new transition
+                                .Transition(me, newScreen, oldScreen, {
                                 success: function () {
                                     oldScreen.afterSelfReplace(newScreen);
                                     me.currentScreen.fillElAttrs();
@@ -155,9 +158,7 @@ define(["require", "exports", "./transition", "./pieces", "./utils"], function (
                 return;
             }
             if (_type == "[object Array]") {
-                parent.args = board.map(function (arg) {
-                    return arg;
-                });
+                parent.args = board.map(function (arg) { return arg; });
                 parent.afterResolve();
                 return;
             }

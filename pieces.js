@@ -53,9 +53,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             // (см каменты в app.ts->resolveCells
             var bubbleRender = false;
             if (!selector) {
-                selector = function (cell) {
-                    return true;
-                };
+                selector = function (cell) { return true; };
                 bubbleRender = true;
             }
             for (var i = 0, l = this.delayedChildren.length; i < l; i++) {
@@ -78,9 +76,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 // вот тут важно, что на следующе уровни selector не передается
                 // это позволяет использовать его для отбора ячеек только самого верхнего уровня
                 // т.е. передается уже совсем другой селектор (см камент вначале ф-ии)
-                clone.forceDelayed(filler, function (cell) {
-                    return !cell.delayed;
-                });
+                clone.forceDelayed(filler, function (cell) { return !cell.delayed; });
                 filler(clone);
                 this.append(clone);
             }
@@ -341,9 +337,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
             else {
                 var me = this;
                 var img = this.el;
-                img.onload = function () {
-                    me.onload();
-                };
+                img.onload = function () { me.onload(); };
                 img.src = src;
             }
         };
@@ -517,6 +511,8 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                                 $(canvas).css('opacity', '1.0');
                             }, 300);
                         }, 50);
+                        // me.alpha  =0
+                        // me.fadeLoop(canvas,me.args[0],_draw)
                         break;
                     default:
                         _draw();
@@ -644,7 +640,9 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 var dt = e.dataTransfer;
                 var files = dt.files;
                 me.loadFile(files[0]);
-            }).on('dragover', stop).on('dragenter', stop);
+            })
+                .on('dragover', stop)
+                .on('dragenter', stop);
         };
         Uploader.prototype.getFileInput = function () {
             return this.el;
