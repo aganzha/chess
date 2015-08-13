@@ -332,145 +332,145 @@ export class Image extends BaseCell implements interfaces.Image{
     onload(){
     }
     draw(src:string, effect?:string){
-	this.args[0] = src
-	if(this.el.tagName.toLowerCase()=='canvas'){
-	    var i = document.createElement('img')
-	    this.drawImageInCanvas(<HTMLCanvasElement>this.el, <HTMLImageElement>i, effect)
-	}
-	else{
-	    var me = this
-	    var img = <HTMLImageElement>this.el
-	    img.onload = function(){me.onload()}
-	    img.src=src
-	}
+	    this.args[0] = src
+	    if(this.el.tagName.toLowerCase()=='canvas'){
+	        var i = document.createElement('img')
+	        this.drawImageInCanvas(<HTMLCanvasElement>this.el, <HTMLImageElement>i, effect)
+	    }
+	    else{
+	        var me = this
+	        var img = <HTMLImageElement>this.el
+	        img.onload = function(){me.onload()}
+	        img.src=src
+	    }
     }
 
     getSourceBoxForCompleteCanvas(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
-	// https://developer.mozilla.org/en-US/docs/HTML/Canvas/Tutorial/Using_images?redirectlocale=en-US&redirectslug=Canvas_tutorial%2FUsing_images
-	var ratio = imgWidth/imgHeight
-	var sX=0,sY=0
-	var sWidth = imgWidth,sHeight = imgHeight
-	var wrat = imgWidth/canvasWidth
-	var hrat = imgHeight/canvasHeight
-	var cropHeight = function(){
-	    var resultWidth = canvasWidth
-	    var resultHeight = canvasWidth/ratio
-	    var croppedFromHeight = (resultHeight-canvasHeight)
-	    sY = croppedFromHeight/2*wrat
-	    sHeight = sHeight-(2*sY)
-	}
-	var cropWidth = function(){
-	    var resultHeight = canvasHeight
-	    var resultWidth = canvasHeight*ratio
-	    var croppedFromWidth = (resultWidth-canvasWidth)
-	    sX = (croppedFromWidth/2)*hrat
-	    sWidth = sWidth-(2*sX)
-	}
-	if(wrat<1 && hrat<1){
-	    if(wrat<=hrat){
-		//tez(1,5,10,10)
-		// нужно подтягивать ширину картинки к ширине канваса
-		cropHeight()
+	    // https://developer.mozilla.org/en-US/docs/HTML/Canvas/Tutorial/Using_images?redirectlocale=en-US&redirectslug=Canvas_tutorial%2FUsing_images
+	    var ratio = imgWidth/imgHeight
+	    var sX=0,sY=0
+	    var sWidth = imgWidth,sHeight = imgHeight
+	    var wrat = imgWidth/canvasWidth
+	    var hrat = imgHeight/canvasHeight
+	    var cropHeight = function(){
+	        var resultWidth = canvasWidth
+	        var resultHeight = canvasWidth/ratio
+	        var croppedFromHeight = (resultHeight-canvasHeight)
+	        sY = croppedFromHeight/2*wrat
+	        sHeight = sHeight-(2*sY)
 	    }
-	    else{
-		////tez(1,5,10,10)
-		// нужно подтягивать высоту картинки к высоте канваса
-		cropWidth()
+	    var cropWidth = function(){
+	        var resultHeight = canvasHeight
+	        var resultWidth = canvasHeight*ratio
+	        var croppedFromWidth = (resultWidth-canvasWidth)
+	        sX = (croppedFromWidth/2)*hrat
+	        sWidth = sWidth-(2*sX)
 	    }
-	}
-	else if(wrat<1 && hrat >=1){
-	    // нужно подтягивать ширину картинки к ширине канваса
-	    //tez(5,20,10,10)
-	    cropHeight()
-	}
-	else if(hrat<1 && wrat >=1){
-	    ////tez(20,5,10,10)
-	    // нужно подтягивать высоту картинки к высоте канваса
-	    cropWidth()
-	}
-	else{//wrat>=1 && hrat>=1
-	    if(wrat>hrat){
-		//tez(100,50,10,10) нужно жать высоту картинки до высоты
-		// канваса
-		cropWidth()
+	    if(wrat<1 && hrat<1){
+	        if(wrat<=hrat){
+		        //tez(1,5,10,10)
+		        // нужно подтягивать ширину картинки к ширине канваса
+		        cropHeight()
+	        }
+	        else{
+		        ////tez(1,5,10,10)
+		        // нужно подтягивать высоту картинки к высоте канваса
+		        cropWidth()
+	        }
 	    }
-	    else{
-		// tez(50,100,10,10)
-		// нужно жать ширину картинки до ширины канваса
-		cropHeight()
+	    else if(wrat<1 && hrat >=1){
+	        // нужно подтягивать ширину картинки к ширине канваса
+	        //tez(5,20,10,10)
+	        cropHeight()
 	    }
-	}
-	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
-	return {left:sX, top:sY, width:sWidth, height:sHeight}
+	    else if(hrat<1 && wrat >=1){
+	        ////tez(20,5,10,10)
+	        // нужно подтягивать высоту картинки к высоте канваса
+	        cropWidth()
+	    }
+	    else{//wrat>=1 && hrat>=1
+	        if(wrat>hrat){
+		        //tez(100,50,10,10) нужно жать высоту картинки до высоты
+		        // канваса
+		        cropWidth()
+	        }
+	        else{
+		        // tez(50,100,10,10)
+		        // нужно жать ширину картинки до ширины канваса
+		        cropHeight()
+	        }
+	    }
+	    //return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
+	    return {left:sX, top:sY, width:sWidth, height:sHeight}
     }
     imageBox:interfaces.Box;
     getDestBoxForCompleteImage(imgWidth, imgHeight, canvasWidth, canvasHeight):interfaces.Box{
-	var ratio = imgWidth/imgHeight
-	var dX=0,dY=0
-	var dWidth = imgWidth,dHeight = imgHeight
-	var dWidth = canvasWidth,dHeight=canvasHeight
-	var wrat = imgWidth/canvasWidth
-	var hrat = imgHeight/canvasHeight
+	    var ratio = imgWidth/imgHeight
+	    var dX=0,dY=0
+	    var dWidth = imgWidth,dHeight = imgHeight
+	    var dWidth = canvasWidth,dHeight=canvasHeight
+	    var wrat = imgWidth/canvasWidth
+	    var hrat = imgHeight/canvasHeight
 
-	var scaleWidth = function(){
-	    var resultWidth = canvasWidth
-	    var resultHeight = canvasWidth/ratio
-	    var restInHeight = (canvasHeight-resultHeight)
-	    dY = restInHeight/2
-	    dHeight = resultHeight
-	}
-	var scaleHeight = function(){
-	    // this case not tested yet
-	    var resultHeight = canvasHeight
-	    var resultWidth = canvasHeight*ratio
-	    var restInWidth = (canvasWidth-resultWidth)
-	    dX = restInWidth/2
-	    dWidth = resultWidth
-	}
-	if(wrat<1 && hrat<1){
-	    //console.log(1)
-	    if(wrat<=hrat){
-		//console.log(111)
-		//tez(1,5,10,10)
-		// нужно подтягивать высоту картинки к высоте канваса
-		scaleHeight()
+	    var scaleWidth = function(){
+	        var resultWidth = canvasWidth
+	        var resultHeight = canvasWidth/ratio
+	        var restInHeight = (canvasHeight-resultHeight)
+	        dY = restInHeight/2
+	        dHeight = resultHeight
 	    }
-	    else{
-		// console.log(112)
-		////tez(5,1,10,10)
-		// нужно подтягивать ширину картинки к ширине канваса
-		scaleWidth()
+	    var scaleHeight = function(){
+	        // this case not tested yet
+	        var resultHeight = canvasHeight
+	        var resultWidth = canvasHeight*ratio
+	        var restInWidth = (canvasWidth-resultWidth)
+	        dX = restInWidth/2
+	        dWidth = resultWidth
 	    }
-	}
-	else if(wrat<1 && hrat >=1){
-	    // console.log(12)//PASSED
-	    // нужно подтягивать ширину картинки к ширине канваса
-	    //tez(5,20,10,10)
-	    scaleHeight()
-	}
-	else if(hrat<1 && wrat >=1){
-	    // console.log(13)
-	    ////tez(20,5,10,10)
-	    // нужно подтягивать высоту картинки к высоте канваса
-	    scaleWidth()
-	}
-	else{//wrat>=1 && hrat>=1
-	    //console.log(14)//PASSED
-	    if(wrat>hrat){
-		//console.log(141)//PASSED
-		//tez(100,50,10,10)
-		// нужно жать ширину картинки до ширины канваса
-		scaleWidth()
+	    if(wrat<1 && hrat<1){
+	        //console.log(1)
+	        if(wrat<=hrat){
+		        //console.log(111)
+		        //tez(1,5,10,10)
+		        // нужно подтягивать высоту картинки к высоте канваса
+		        scaleHeight()
+	        }
+	        else{
+		        // console.log(112)
+		        ////tez(5,1,10,10)
+		        // нужно подтягивать ширину картинки к ширине канваса
+		        scaleWidth()
+	        }
 	    }
-	    else{
-		//console.log(142)//PASSED
-		// tez(50,100,10,10)
-		// нужно жать высоту картинки до высоты канваса
-		scaleHeight()
+	    else if(wrat<1 && hrat >=1){
+	        // console.log(12)//PASSED
+	        // нужно подтягивать ширину картинки к ширине канваса
+	        //tez(5,20,10,10)
+	        scaleHeight()
 	    }
-	}
-	//return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
-	return {left:dX, top:dY, width:dWidth, height:dHeight}
+	    else if(hrat<1 && wrat >=1){
+	        // console.log(13)
+	        ////tez(20,5,10,10)
+	        // нужно подтягивать высоту картинки к высоте канваса
+	        scaleWidth()
+	    }
+	    else{//wrat>=1 && hrat>=1
+	        //console.log(14)//PASSED
+	        if(wrat>hrat){
+		        //console.log(141)//PASSED
+		        //tez(100,50,10,10)
+		        // нужно жать ширину картинки до ширины канваса
+		        scaleWidth()
+	        }
+	        else{
+		        //console.log(142)//PASSED
+		        // tez(50,100,10,10)
+		        // нужно жать высоту картинки до высоты канваса
+		        scaleHeight()
+	        }
+	    }
+	    //return {left:sX, top:sY, width:canvasWidth, height:canvasHeight}
+	    return {left:dX, top:dY, width:dWidth, height:dHeight}
     }
     // requestAnimFrame(){
     //	var me = this
@@ -513,136 +513,136 @@ export class Image extends BaseCell implements interfaces.Image{
     drawed:string;
     drawImageInCanvas(canvas:HTMLCanvasElement,img:HTMLImageElement, effect?:string){
 
-	var me = this
-	var errBack = ()=>{
-	    if(me.args[3]){
-		me.draw(me.args[3])
+	    var me = this
+	    var errBack = ()=>{
+	        if(me.args[3]){
+		        me.draw(me.args[3])
+	        }
 	    }
-	}
-	if(!this.args[0]){
-	    errBack()
-	}
-	if(!this.drawed){
-	    canvas.width = this.args[1]
-	    canvas.height = this.args[2]
-	}
-	$(img).on('load',function(){
-	    var ratio = img.width/img.height
+	    if(!this.args[0]){
+	        errBack()
+	    }
+	    if(!this.drawed){//???
+	        canvas.width = this.args[1]
+	        canvas.height = this.args[2]
+	    }
+	    $(img).on('load',function(){
+	        var ratio = img.width/img.height
 
-	    var context = <CanvasRenderingContext2D>canvas.getContext('2d')
+	        var context = <CanvasRenderingContext2D>canvas.getContext('2d')
 
-	    var sourceBox = {top:0,left:0,width:img.width,height:img.height}
-	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
+	        var sourceBox = {top:0,left:0,width:img.width,height:img.height}
+	        var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
 
-	    if(me.args[4]){
-		if(me.args[4]=='completeImage'){
-		    destBox = me.getDestBoxForCompleteImage(img.width, img.height,
-							    canvas.width, canvas.height)
-		}
-		else if(me.args[4]=='completeCanvas'){
-		    sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-								 canvas.width, canvas.height)
-		}
-	    }
-	    else{
-		// complete canvas by default
-		sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
-							     canvas.width, canvas.height)
-	    }
-	    var _draw = ()=>{
-		context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,
-				  sourceBox.height,
-				  destBox.left,destBox.top,destBox.width,destBox.height)
-		me.imageBox = destBox
-	    }
+	        if(me.args[4]){
+		        if(me.args[4]=='completeImage'){
+		            destBox = me.getDestBoxForCompleteImage(img.width, img.height,
+							                                canvas.width, canvas.height)
+		        }
+		        else if(me.args[4]=='completeCanvas'){
+		            sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+								                                 canvas.width, canvas.height)
+		        }
+	        }
+	        else{
+		        // complete canvas by default
+		        sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+							                                 canvas.width, canvas.height)
+	        }
+	        var _draw = ()=>{
+		        context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,
+				                  sourceBox.height,
+				                  destBox.left,destBox.top,destBox.width,destBox.height)
+		        me.imageBox = destBox
+	        }
 
-	    switch(effect){
-	    case 'fade':
-		$(canvas).css(utils.getTransitionParamsFor('opacity'))
-		setTimeout(()=>{
-		    $(canvas).css('opacity', '0.2')
-		    setTimeout(()=>{
-			_draw()
-			$(canvas).css('opacity', '1.0')
-		    }, 300)
-		}, 50)
-		// me.alpha  =0
-		// me.fadeLoop(canvas,me.args[0],_draw)
-		break
-	    default:
-		_draw()
-		me.onload()
-		break
-	    }
-	    me.drawed = me.args[0]
-	}).on('error',function(e){
-	    if(img.src != me.args[3]){
-		errBack()
-	    }
-	})
-	img.src = this.args[0]
+	        switch(effect){
+	        case 'fade':
+		        $(canvas).css(utils.getTransitionParamsFor('opacity'))
+		        setTimeout(()=>{
+		            $(canvas).css('opacity', '0.2')
+		            setTimeout(()=>{
+			            _draw()
+			            $(canvas).css('opacity', '1.0')
+		            }, 300)
+		        }, 50)
+		        // me.alpha  =0
+		        // me.fadeLoop(canvas,me.args[0],_draw)
+		        break
+	        default:
+		        _draw()
+		        me.onload()
+		        break
+	        }
+	        me.drawed = me.args[0]
+	    }).on('error',function(e){
+	        if(img.src != me.args[3]){
+		        errBack()
+	        }
+	    })
+	    img.src = this.args[0]
     }
     clear(){
-	if(this.el.tagName.toLowerCase()=='canvas'){
-	    var canvas = <HTMLCanvasElement>this.el
-	    canvas.width = canvas.width
-	}
-	else{
-	    $(this.el).attr('scr','')
-	}
+	    if(this.el.tagName.toLowerCase()=='canvas'){
+	        var canvas = <HTMLCanvasElement>this.el
+	        canvas.width = canvas.width
+	    }
+	    else{
+	        $(this.el).attr('scr','')
+	    }
     }
     createEl(){
-	var img = <HTMLImageElement>document.createElement('img')
-	var answer = <HTMLElement>img
-	if(this.html.length>0){
-	    img.src = this.html
-	}
-	else{
-	    if(this.args.length>0){
-		if(this.args[1] && this.args[2]){
-		    var canvas = <HTMLCanvasElement>document.createElement('canvas')
-		    if(this.args[0]!=null){
-			this.drawImageInCanvas(canvas,img)
-		    }
-		    else{
-			canvas.width = this.args[1]
-			canvas.height = this.args[2]
-		    }
-		    answer = canvas
-		}
-		else{
-		    img.src = this.args[0]
-		    answer = img
-		}
+	    var img = <HTMLImageElement>document.createElement('img')
+	    var answer = <HTMLElement>img
+	    if(this.html.length>0){
+	        img.src = this.html
 	    }
-	}
-	return answer
+	    else{
+	        if(this.args.length>0){
+		        if(this.args[1] && this.args[2]){
+		            var canvas = <HTMLCanvasElement>document.createElement('canvas')
+		            if(this.args[0]!=null){
+			            this.drawImageInCanvas(canvas,img)
+		            }
+		            else{
+			            canvas.width = this.args[1]
+			            canvas.height = this.args[2]
+		            }
+		            answer = canvas
+		        }
+		        else{
+		            img.src = this.args[0]
+		            answer = img
+		        }
+	        }
+	    }
+	    return answer
     }
     // initialSourceBox:interfaces.Box;
     scale(factor:number){
-	this.clear()
-	var img = <HTMLImageElement>document.createElement('img')
-	var canvas = <HTMLCanvasElement>this.el
-	var context = <CanvasRenderingContext2D>canvas.getContext('2d')
-	var me = this
-	img.onload = function(){
-	    var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
-	    var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
-							    canvas.width, canvas.height)
-	    // sourceBox уже соответствует размеру canvas
-	    // его просто нужно умножить на factor
-	    // зумаут мы не можем делать. мы и так показали картинку полностью. делать
-	    // ее меньше канваса нет смысла. т.е. фактор будет точно больше 1
-	    // скажем если фактор = 2, то исходную ширину(и высоту тоже) нужно РАЗДЕЛИТЬ на 2
-	    // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
-	    sourceBox.left = sourceBox.left+(sourceBox.width-sourceBox.width/factor)/2
-	    sourceBox.top = sourceBox.top+(sourceBox.height-sourceBox.height/factor)/2
-	    sourceBox.width = sourceBox.width/factor
-	    sourceBox.height = sourceBox.height/factor
-	    context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
-			      destBox.left,destBox.top,destBox.width,destBox.height)
-	}
-	img.src = this.args[0]
+	    this.clear()
+	    var img = <HTMLImageElement>document.createElement('img')
+	    var canvas = <HTMLCanvasElement>this.el
+	    var context = <CanvasRenderingContext2D>canvas.getContext('2d')
+	    var me = this
+	    img.onload = function(){
+	        var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
+	        var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
+							                                canvas.width, canvas.height)
+	        // sourceBox уже соответствует размеру canvas
+	        // его просто нужно умножить на factor
+	        // зумаут мы не можем делать. мы и так показали картинку полностью. делать
+	        // ее меньше канваса нет смысла. т.е. фактор будет точно больше 1
+	        // скажем если фактор = 2, то исходную ширину(и высоту тоже) нужно РАЗДЕЛИТЬ на 2
+	        // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
+	        sourceBox.left = sourceBox.left+(sourceBox.width-sourceBox.width/factor)/2
+	        sourceBox.top = sourceBox.top+(sourceBox.height-sourceBox.height/factor)/2
+	        sourceBox.width = sourceBox.width/factor
+	        sourceBox.height = sourceBox.height/factor
+	        context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
+			                  destBox.left,destBox.top,destBox.width,destBox.height)
+	    }
+	    img.src = this.args[0]
     }
 }
 
