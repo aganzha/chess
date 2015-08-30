@@ -110,7 +110,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
         body.off('mousemove');
         body.off('mouseup');
         // TODO! replace 9 and 999 in z-index by attributes in dragable!
-        $(me.el).css({ 'z-index': 9, cursor: 'inherit' });
+        $(me.el).css({ 'z-index': 9, cursor: '' });
         me.onDrop({ left: e.x + me.dX, top: e.y + me.dY, width: null, height: null });
     }
     // legacy
