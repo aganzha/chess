@@ -574,7 +574,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 // refactoreeeeeeeeeeeee
                 // var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
                 // var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
-                // 				                                canvas.width, canvas.height)
+                //                                              canvas.width, canvas.height)
                 // refactoreeeeeeeeeeeee
                 var sourceBox = { top: 0, left: 0, width: img.width, height: img.height };
                 var destBox = { top: 0, left: 0, width: canvas.width, height: canvas.height };
@@ -598,11 +598,34 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
                 sourceBox.left = sourceBox.left + (sourceBox.width - sourceBox.width / factor) / 2;
                 sourceBox.top = sourceBox.top + (sourceBox.height - sourceBox.height / factor) / 2;
+                var croppedWidth = sourceBox.width - sourceBox.width / factor;
+                var croppedHeight = sourceBox.height - sourceBox.height / factor;
                 sourceBox.width = sourceBox.width / factor;
                 sourceBox.height = sourceBox.height / factor;
                 if (shift) {
-                    sourceBox.left += (shift.left - canvas.width / 2) / sourceBox.width * canvas.width;
-                    sourceBox.top += (shift.top - canvas.height / 2) / sourceBox.height * canvas.height;
+                    var le = shift.left - canvas.width / 2;
+                    var ratio = sourceBox.width / canvas.width;
+                    var leftOffsetRequired = le * ratio;
+                    if (Math.abs(leftOffsetRequired) > croppedWidth) {
+                        if (leftOffsetRequired < 0) {
+                            leftOffsetRequired = 0 - Math.abs(croppedWidth);
+                        }
+                        else {
+                            leftOffsetRequired = Math.abs(croppedWidth);
+                        }
+                    }
+                    var to = shift.left - canvas.width / 2;
+                    var ratio = sourceBox.height / canvas.height;
+                    var topOffsetRequired = to * ratio;
+                    if (Math.abs(topOffsetRequired) > croppedHeight) {
+                        if (topOffsetRequired < 0) {
+                            topOffsetRequired = 0 - Math.abs(croppedHeight);
+                        }
+                        else {
+                            topOffsetRequired = Math.abs(croppedHeight);
+                        }
+                    }
+                    sourceBox.left = +leftOffsetRequired;
                 }
                 me.clear();
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
