@@ -619,26 +619,56 @@ export class Image extends BaseCell implements interfaces.Image{
 	    return answer
     }
     // initialSourceBox:interfaces.Box;
-    scale(factor:number){
+    scale(factor:number, shift?:interfaces.Box){
 	    this.clear()
 	    var img = <HTMLImageElement>document.createElement('img')
 	    var canvas = <HTMLCanvasElement>this.el
 	    var context = <CanvasRenderingContext2D>canvas.getContext('2d')
 	    var me = this
 	    img.onload = function(){
+
+            // refactoreeeeeeeeeeeee
+            // var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
+	        // var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
+			// 				                                canvas.width, canvas.height)
+            // refactoreeeeeeeeeeeee
+            var sourceBox = {top:0,left:0,width:img.width,height:img.height}
 	        var destBox = {top:0,left:0,width:canvas.width,height:canvas.height}
-	        var sourceBox= me.getSourceBoxForCompleteCanvas(img.width, img.height,
+
+	        if(me.args[4]){
+		        if(me.args[4]=='completeImage'){
+		            destBox = me.getDestBoxForCompleteImage(img.width, img.height,
 							                                canvas.width, canvas.height)
-	        // sourceBox уже соответствует размеру canvas
+		        }
+		        else if(me.args[4]=='completeCanvas'){
+		            sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+								                                 canvas.width, canvas.height)
+		        }
+	        }
+	        else{
+		        // complete canvas by default
+		        sourceBox = me.getSourceBoxForCompleteCanvas(img.width, img.height,
+							                                 canvas.width, canvas.height)
+	        }
+
+
+
+
+            // sourceBox уже соответствует размеру canvas
 	        // его просто нужно умножить на factor
 	        // зумаут мы не можем делать. мы и так показали картинку полностью. делать
 	        // ее меньше канваса нет смысла. т.е. фактор будет точно больше 1
 	        // скажем если фактор = 2, то исходную ширину(и высоту тоже) нужно РАЗДЕЛИТЬ на 2
 	        // т.е. в том же канвасе показать исходник меньшего размера. соотв он растянется тогда!
 	        sourceBox.left = sourceBox.left+(sourceBox.width-sourceBox.width/factor)/2
-	        sourceBox.top = sourceBox.top+(sourceBox.height-sourceBox.height/factor)/2
+	        sourceBox.top = sourceBox.top+(sourceBox.height-sourceBox.height/factor)/2            
 	        sourceBox.width = sourceBox.width/factor
 	        sourceBox.height = sourceBox.height/factor
+            if (shift){
+                sourceBox.left+=(shift.left-canvas.width/2)/sourceBox.width*canvas.width
+                sourceBox.top+=(shift.top-canvas.height/2)/sourceBox.height*canvas.height
+            }
+            me.clear()
 	        context.drawImage(img,sourceBox.left,sourceBox.top,sourceBox.width,sourceBox.height,
 			                  destBox.left,destBox.top,destBox.width,destBox.height)
 	    }
