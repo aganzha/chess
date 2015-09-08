@@ -600,34 +600,34 @@ define(["require", "exports", "./utils"], function (require, exports, utils) {
                 sourceBox.top = sourceBox.top + (sourceBox.height - sourceBox.height / factor) / 2;
                 var croppedWidth = sourceBox.width - sourceBox.width / factor;
                 var croppedHeight = sourceBox.height - sourceBox.height / factor;
+                var wRatio = sourceBox.width / canvas.width;
+                var hRatio = sourceBox.height / canvas.height;
                 sourceBox.width = sourceBox.width / factor;
                 sourceBox.height = sourceBox.height / factor;
                 if (shift) {
                     var le = shift.left - canvas.width / 2;
-                    var ratio = sourceBox.width / canvas.width;
-                    var leftOffsetRequired = le * ratio;
-                    // if(Math.abs(leftOffsetRequired)>croppedWidth){
-                    //     if(leftOffsetRequired<0){
-                    //         leftOffsetRequired = 0 - Math.abs(croppedWidth)
-                    //     }
-                    //     else{
-                    //         leftOffsetRequired = Math.abs(croppedWidth)
-                    //     }
-                    // }
+                    var leftOffsetRequired = Math.abs(le * wRatio);
+                    // console.log('waaaaaaaaaaaaat1', croppedWidth, leftOffsetRequired)
+                    if (leftOffsetRequired > croppedWidth) {
+                        leftOffsetRequired = croppedWidth;
+                    }
                     var to = shift.top - canvas.height / 2;
-                    var ratio = sourceBox.height / canvas.height;
-                    var topOffsetRequired = to * ratio;
-                    // if(Math.abs(topOffsetRequired)>croppedHeight){
-                    //     if(topOffsetRequired<0){
-                    //         topOffsetRequired = 0- Math.abs(croppedHeight)
-                    //     }
-                    //     else{
-                    //         topOffsetRequired = Math.abs(croppedHeight)
-                    //     }
-                    // }
-                    console.log(le, leftOffsetRequired, croppedWidth);
-                    sourceBox.left = +leftOffsetRequired;
-                    sourceBox.top = +topOffsetRequired;
+                    var topOffsetRequired = Math.abs(to * hRatio);
+                    if (topOffsetRequired > croppedHeight) {
+                        topOffsetRequired = croppedHeight;
+                    }
+                    if (shift.left < 0) {
+                        sourceBox.left = +leftOffsetRequired;
+                    }
+                    else {
+                        sourceBox.left - +leftOffsetRequired;
+                    }
+                    if (shift.top > 0) {
+                        sourceBox.top = +topOffsetRequired;
+                    }
+                    else {
+                        sourceBox.top - +topOffsetRequired;
+                    }
                 }
                 me.clear();
                 context.drawImage(img, sourceBox.left, sourceBox.top, sourceBox.width, sourceBox.height, destBox.left, destBox.top, destBox.width, destBox.height);
